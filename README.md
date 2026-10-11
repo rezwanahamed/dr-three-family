@@ -180,3 +180,6 @@ Treatments and articles share the Search & social settings section: SEO title, m
 
 
 Articles now share the treatment Delete action and confirmation flow. Confirmed removals persist locally, remove matching drafts, and appear in Activity and exported `deletions` with the correct content section. The public website and media files remain unchanged until deletion exports are integrated into publishing.
+
+
+Pages also expose the shared Search & social settings: SEO title, meta description, keywords, canonical URL, robots, social sharing title/description and image alt text. Existing page paths and description editing remain available. These values persist in local drafts and JSON exports; publishing integration is required to apply them to live page metadata.

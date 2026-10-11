@@ -257,7 +257,7 @@
     return title.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/['’]/g,'').replace(/&/g,' and ').replace(/[^\p{L}\p{N}\p{M}]+/gu,'-').replace(/^-+|-+$/g,'').slice(0,100).replace(/-+$/g,'')||fallback;
   }
   function uniqueContentSlug(title){
-    const base=titleSlug(title,$('#editor-form').elements.section.value==='articles'?'article':'treatment'),used=new Set(['dashboard','static','media']);
+    const base=titleSlug(title,({articles:'article',pages:'page'})[$('#editor-form').elements.section.value]||'treatment'),used=new Set(['dashboard','static','media']);
     let latest=[];try{latest=JSON.parse(localStorage.getItem(key))?.drafts||[];}catch{}
     for(const record of [...records,...store.drafts,...latest,...(store.deletions||[])]){
       if(record.id===editing)continue;
@@ -271,15 +271,19 @@
     return previous?.slug||(previous?.url&&!['/services/','/blog/'].includes(previous.url)?previous.url.replace(/^\/+|\/+$/g,''):uniqueContentSlug($('#editor-form').elements.title.value));
   }
   function updateSlugPreview(){
-    const preview=$('#treatment-slug-preview'),form=$('#editor-form');preview.hidden=!['treatments','articles'].includes(form.elements.section.value);
+    const preview=$('#treatment-slug-preview'),form=$('#editor-form');preview.hidden=!['treatments','articles','pages'].includes(form.elements.section.value);
+    if(form.elements.section.value==='pages'){const previous=all().find(record=>record.id===editing);preview.textContent=form.elements.title.value.trim()?`URL: ${previous?.url||`/${uniqueContentSlug(form.elements.title.value)}/`}`:'The URL is generated automatically from the page title.';return;}
     preview.textContent=form.elements.title.value.trim()?`Slug: ${contentSlug()}`:'The slug is generated automatically from the title.';
   }
   $('#editor-form').elements.title.addEventListener('input',updateSlugPreview);
   function updateEditorFields(){
-    const form=$('#editor-form'),isDoctor=form.elements.section.value==='doctors',isClinic=['clinic','gallery'].includes(form.elements.section.value),isTreatment=form.elements.section.value==='treatments',isLocation=form.elements.section.value==='locations',isArticle=form.elements.section.value==='articles';
+    const form=$('#editor-form'),isDoctor=form.elements.section.value==='doctors',isClinic=['clinic','gallery'].includes(form.elements.section.value),isTreatment=form.elements.section.value==='treatments',isLocation=form.elements.section.value==='locations',isArticle=form.elements.section.value==='articles',isPage=form.elements.section.value==='pages';
     $('#editor-form').dataset.section=form.elements.section.value;
-    $('#location-fields').hidden=!isLocation;$('#location-fields').disabled=!isLocation;$('.image-upload').hidden=isLocation;
-    $('#seo-fields').hidden=!(isArticle||isTreatment);$('#seo-fields').disabled=!(isArticle||isTreatment);
+    $('#location-fields').hidden=!isLocation;$('#location-fields').disabled=!isLocation;$('.image-upload').hidden=isLocation||isPage;
+    form.elements.image_alt.closest('label').hidden=isPage;form.elements.image_alt.disabled=isPage;
+    $('#seo-fields').hidden=!(isArticle||isTreatment||isPage);$('#seo-fields').disabled=!(isArticle||isTreatment||isPage);
+    $('#seo-description-help').textContent=isPage?'Leave blank to use the page description.':'Leave blank to use short details.';
+    $('#seo-image-label').textContent=isPage?'Image alt text':'Thumbnail alt text';
     $('#content-fields').hidden=!(isTreatment||isArticle);$('#content-fields').disabled=!(isTreatment||isArticle);
     $('#treatment-fields').hidden=!isTreatment;$('#treatment-fields').disabled=!isTreatment;
     $('#treatment-details').contentEditable=String(isTreatment||isArticle);
@@ -298,8 +302,8 @@
     $('#editor-name-label').textContent=isDoctor?'Doctor name':isLocation?'Branch name':'Title';
     for(const name of ['description','url']){
       const field=form.elements.namedItem(name);
-      field.closest('label').hidden=isDoctor||isLocation||((isTreatment||isArticle)&&name==='description')||((isClinic||isTreatment||isArticle)&&name==='url');
-      field.disabled=isDoctor||isLocation||((isTreatment||isArticle)&&name==='description')||((isClinic||isTreatment||isArticle)&&name==='url');
+      field.closest('label').hidden=isDoctor||isLocation||((isTreatment||isArticle)&&name==='description')||((isClinic||isTreatment||isArticle||isPage)&&name==='url');
+      field.disabled=isDoctor||isLocation||((isTreatment||isArticle)&&name==='description')||((isClinic||isTreatment||isArticle||isPage)&&name==='url');
     }
     updateSlugPreview();
     $('#editor-title').textContent=isArticle?(editing?'Edit article':'Add article'):isLocation?(editing?'Edit location':'Add location'):isDoctor?(editing?'Edit doctor':'Add doctor'):(isClinic?(editing?'Edit photo':'Add photo'):(editing?'Edit content':'Add content'));
@@ -320,7 +324,7 @@
       if(form.elements.section.value==='treatments'){const service=record?.service||serviceCatalog().find(item=>record?.url===`/${item.id}/`)?.id||'';
       fillServices(service);fillTreatments(record?.treatment||'');}syncDetails();
     }
-    if(['articles','treatments'].includes(form.elements.section.value)){for(const name of ['seo_title','meta_description','keywords','canonical_url','og_title','og_description','image_alt'])form.elements[name].value=record?.[name]||'';form.elements.robots.value=record?.robots||'index,follow';}
+    if(['articles','treatments','pages'].includes(form.elements.section.value)){for(const name of ['seo_title','meta_description','keywords','canonical_url','og_title','og_description','image_alt'])form.elements[name].value=record?.[name]||'';form.elements.robots.value=record?.robots||'index,follow';}
     if(form.elements.section.value==='locations'){for(const name of ['area','address','phone','hours','map_pin'])form.elements[name].value=record?.[name]||'';form.elements.location_order.value=record?.order||Math.max(0,...all().filter(item=>item.section==='locations').map(item=>Number(item.order)||0))+1;}
     $('#location-map-preview').hidden=true;$('#location-map-preview').innerHTML='';
     $('#rich-link-panel').hidden=true;richLinkRange=null;$('#new-service').hidden=true;$('#new-treatment').hidden=true;$('#catalog-status').textContent='';
@@ -330,7 +334,7 @@
   }
   $('#add').onclick=()=>openEditor();function closeEditor(){syncDetails();if(JSON.stringify(Object.fromEntries(new FormData($('#editor-form'))))!==editorInitial){$('#discard-notice').hidden=false;motion($('#discard-notice'),[{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}]);$('#keep-editing').focus();}else closeDialog($('#editor'));}
   $('#close-editor').onclick=$('#cancel-editor').onclick=closeEditor;$('#editor').addEventListener('cancel',e=>{e.preventDefault();closeEditor();});$('#keep-editing').onclick=()=>{$('#discard-notice').hidden=true;$('#editor-form input[name="title"]').focus();};$('#discard-editing').onclick=()=>closeDialog($('#editor'));
-  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}syncDetails();const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['articles','treatments'].includes(data.section)){
+  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}syncDetails();const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(data.section==='pages'){const previous=all().find(record=>record.id===editing);data.url=previous?.url||`/${uniqueContentSlug(data.title)}/`;data.slug=previous?.slug??data.url.replace(/^\/+|\/+$/g,'');if(previous?.image_alt)data.image_alt=previous.image_alt;}if(['articles','treatments','pages'].includes(data.section)){
       if(data.canonical_url&&!/^https?:\/\//i.test(data.canonical_url)){toast('Canonical URLs must begin with https:// or http://.');return;}
       if(!['index,follow','noindex,follow','noindex,nofollow'].includes(data.robots)){toast('Select a valid search engine visibility option.');return;}
       const keywords=new Map(data.keywords.split(',').map(word=>word.trim()).filter(Boolean).map(word=>[word.toLowerCase(),word]));data.keywords=[...keywords.values()].join(', ');
