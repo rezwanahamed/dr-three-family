@@ -20,6 +20,31 @@ def seeds():
     return {'records': records + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology']}
 
 
+def gallery_name(value):
+    name = ' '.join(str(value).split())
+    return 'Our space' if name.casefold() in {'our space','our spaces'} else name
+
+
+def gallery_names(values):
+    names = {}
+    for value in values:
+        name = gallery_name(value)
+        if name and name.casefold() != 'all photos':
+            names.setdefault(name.casefold(), name)
+    return list(names.values())
+
+
+def gallery_snapshot(data):
+    from copy import deepcopy
+    result = deepcopy(data)
+    result['gallery_sections'] = gallery_names(data.get('gallery_sections', ['Our space','Our team','Our technology']))
+    original = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
+    for record in result['records']:
+        if record['section']=='gallery':
+            record['gallery_category'] = gallery_name(record.get('gallery_category') or original.get(record['id']) or 'Our space')
+    return result
+
+
 def safe_url(value, local=False):
     if not isinstance(value, str) or re.search(r'[\x00-\x20\\]', value):
         return False
@@ -125,15 +150,16 @@ def snapshot(published, state):
         if topic['url'] in topic_routes:
             raise ValidationError('Two FAQ topics cannot share a URL.')
         topic_routes[topic['url']] = topic['id']
-    categories = list(dict.fromkeys(base.get('gallery_sections',['Our space','Our team','Our technology']) + state.get('galleryCategories',[])))
-    categories = [name for name in categories if name not in state.get('deletedGalleryCategories',[])]
+    categories = gallery_names(base.get('gallery_sections',['Our space','Our team','Our technology']) + state.get('galleryCategories',[]))
+    deleted_categories = gallery_names(state.get('deletedGalleryCategories',[]))
+    categories = [name for name in categories if name not in deleted_categories]
     seed_categories = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     for record in result['records']:
         if record['section']=='gallery':
-            record['gallery_category'] = record.get('gallery_category') or seed_categories.get(record['id']) or 'Our space'
+            record['gallery_category'] = gallery_name(record.get('gallery_category') or seed_categories.get(record['id']) or 'Our space')
             if not isinstance(record['gallery_category'],str) or not record['gallery_category'].strip() or len(record['gallery_category'])>100 or record['gallery_category'].casefold()=='all photos':
                 raise ValidationError('Invalid gallery section.')
-            if record['gallery_category'] in state.get('deletedGalleryCategories',[]):
+            if record['gallery_category'] in deleted_categories:
                 raise ValidationError('Move photos before deleting their gallery section.')
             if record['gallery_category'] not in categories:
                 categories.append(record['gallery_category'])

@@ -42,6 +42,9 @@ def page(request, route='/'):
             return HttpResponse(managed_html(info['template'], request, route, published, route not in ROUTES))
     if info is None:
         raise Http404('Page not found')
+    if route == '/gallery/':
+        from .content import seeds
+        return HttpResponse(managed_html(info['template'], request, route, seeds()))
     return render(request, info['template'])
 
 
@@ -157,8 +160,8 @@ def staff_api(request):
 
 def workspace_response(workspace):
     from .content import seeds
-    base = workspace.published or seeds()
-    from .content import seeds
+    from .content import gallery_snapshot
+    base = gallery_snapshot(workspace.published or seeds())
     gallery = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     records = [{**r,'gallery_category':r.get('gallery_category') or gallery.get(r['id']) or 'Our space'} if r['section']=='gallery' else r for r in base['records']]
     return {'records': records, 'topics': base['topics'], 'services': base['services'], 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),

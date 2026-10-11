@@ -161,3 +161,20 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(again.status_code,200)
         self.assertNotIn('Our team',again.json()['gallery_sections'])
         self.assertNotIn('People',again.json()['gallery_sections'])
+
+    def test_public_gallery_filters_use_backend_sections_with_all_default(self):
+        snapshot=seeds()
+        snapshot['gallery_sections']=['Our team','Our technology','Our spaces','Our space','Community events']
+        WebsiteWorkspace.objects.filter(pk=1).update(published=snapshot)
+        public=self.soup('/gallery/')
+        filters=public.select('.filter-row button')
+        self.assertEqual([button.select_one('.filter-label').text for button in filters],['All photos','Our team','Our technology','Our space','Community events'])
+        self.assertEqual([button['aria-pressed'] for button in filters],['true','false','false','false','false'])
+        self.assertFalse(any(button.has_attr('hidden') for button in public.select('.gallery-grid button')))
+        backend=self.client.get('/dashboard/content/').json()
+        self.assertEqual(backend['gallery_sections'],['Our team','Our technology','Our space','Community events'])
+
+    def test_unpublished_gallery_uses_backend_initial_sections(self):
+        public=self.soup('/gallery/')
+        self.assertEqual([node.text for node in public.select('.filter-label')],['All photos','Our space','Our team','Our technology'])
+        self.assertEqual(public.select_one('.filter-row button')['aria-pressed'],'true')

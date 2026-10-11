@@ -4,7 +4,7 @@ from html import escape
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
-from .content import clean_html, safe_url
+from .content import clean_html, safe_url, gallery_snapshot
 
 
 def text(node, value):
@@ -33,6 +33,7 @@ def replace_children(container, nodes):
 
 def managed_html(template, request, route, data, is_new=False):
     soup = BeautifulSoup(render_to_string(template, request=request), 'html.parser')
+    data = gallery_snapshot(data)
     records = data['records']
     record = next((r for r in records if r['section'] in {'pages','articles','treatments'} and r['url'] == route), None)
     if record and (record.get('_edited') or is_new):
@@ -90,7 +91,7 @@ def managed_html(template, request, route, data, is_new=False):
             text(label, r['title'])
             nodes.append(card)
         replace_children(grid, nodes)
-        categories=list(dict.fromkeys(data.get('gallery_sections',['Our space','Our team','Our technology'])+[node['data-category'] for node in nodes]))
+        categories=data['gallery_sections']
         filters=soup.select_one('.filter-row')
         replace_children(filters,[fragment('<button aria-pressed="'+('true' if index==0 else 'false')+'">'+('<span class="filter-active"></span>' if index==0 else '')+'<span class="filter-label">'+escape(name)+'</span></button>').button for index,name in enumerate(['All photos']+categories)])
     clinic = soup.select_one('main .about-page--photos')
