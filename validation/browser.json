@@ -1,0 +1,411 @@
+{
+  "route_checks": [
+    {
+      "route": "/11-important-facts-you-need-to-know-about-root-canal-treatment/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/6-cosmetic-dental-treatment-to-consider-this-fall/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/9-signs-that-your-child-should-see-a-padiatric-dentist/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/about-us/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/advanced_oral_surgery/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/appointment/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/blog/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/category/children-dentistry/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/category/dental-implants/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/category/endo-dontics/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/category/general-dentistry/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/category/padiatric-dentistry/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/clear_aligner/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/contact/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/cosmetic-bonding/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/cosmetic_dentistry/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/emergency_dental_care/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/faq/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/faqs-3d-intraoral-scanner/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/faqs-dental-braces/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/faqs-dental-implant/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/faqs_teeth_whitening/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/faqsinvisalign-clear-aligner/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/fillings/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/financing-2/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/gallery/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/general_dentistry/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/google-reviews/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/gum-reshaping/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/how-to-maintain-a-beautiful-holiday-smile/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/our-doctors/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/pricing-guide-2/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/privacy-policy/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/regular-dental-checkup/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/restorative_dentistry/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/root-canal-treatment-for-children-what-parents-need-to-know/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/root-canals/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/services/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/teeth-whitening/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/veneers/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    },
+    {
+      "route": "/what-foods-can-you-eat-after-getting-dental-implant/",
+      "status": 200,
+      "overflow": false,
+      "broken": []
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "home-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 9042
+        },
+        "converted": {
+          "width": 1440,
+          "height": 9042
+        }
+      }
+    },
+    {
+      "name": "about-us-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 5016
+        },
+        "converted": {
+          "width": 1440,
+          "height": 5016
+        }
+      }
+    },
+    {
+      "name": "services-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 4608
+        },
+        "converted": {
+          "width": 1440,
+          "height": 4608
+        }
+      }
+    },
+    {
+      "name": "gallery-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 3385
+        },
+        "converted": {
+          "width": 1440,
+          "height": 3385
+        }
+      }
+    },
+    {
+      "name": "contact-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 3730
+        },
+        "converted": {
+          "width": 1440,
+          "height": 3730
+        }
+      }
+    },
+    {
+      "name": "google-reviews-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 3119
+        },
+        "converted": {
+          "width": 1440,
+          "height": 3119
+        }
+      }
+    },
+    {
+      "name": "faq-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 2713
+        },
+        "converted": {
+          "width": 1440,
+          "height": 2713
+        }
+      }
+    },
+    {
+      "name": "404-1440",
+      "sizes": {
+        "original": {
+          "width": 1440,
+          "height": 1000
+        },
+        "converted": {
+          "width": 1440,
+          "height": 1000
+        }
+      }
+    },
+    {
+      "name": "home-390",
+      "sizes": {
+        "original": {
+          "width": 390,
+          "height": 14384
+        },
+        "converted": {
+          "width": 390,
+          "height": 14384
+        }
+      }
+    },
+    {
+      "name": "gallery-390",
+      "sizes": {
+        "original": {
+          "width": 390,
+          "height": 6429
+        },
+        "converted": {
+          "width": 390,
+          "height": 6429
+        }
+      }
+    },
+    {
+      "name": "contact-390",
+      "sizes": {
+        "original": {
+          "width": 390,
+          "height": 5577
+        },
+        "converted": {
+          "width": 390,
+          "height": 5577
+        }
+      }
+    }
+  ],
+  "interactions": [
+    "Desktop dropdowns, limits, and Escape",
+    "Comparison drag/range value and keyboard",
+    "Accordion expand/collapse and ARIA",
+    "Testimonial next/previous and dot state",
+    "Gallery filters, lightbox, next, Escape, focus restoration",
+    "Contact form errors, correction, character counter",
+    "Mobile menu, desktop-only panels"
+  ],
+  "errors": []
+}

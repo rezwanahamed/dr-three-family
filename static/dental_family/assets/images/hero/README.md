@@ -1,0 +1,7 @@
+# Homepage hero
+
+`dental-studio.png` generated with the built-in imagegen tool on 2026-10-06. Illustrative dental interior, not a photograph of the clinic. Original clinic photographs remain available in the gallery.
+
+## Generation prompt
+
+Use case: photorealistic-natural. Asset: wide photographic background for an elegant family dental website hero. Generate one premium editorial architectural photograph of a serene modern dental treatment room, landscape 2:1 composition. Warm ivory plaster walls, muted plum upholstery (#493749), soft blush accents (#f0e7e9), warm natural wood cabinetry and subtle brushed metal, soft daylight through sheer curtains on the far left. A realistic modern dental chair and examination lamp positioned in the right third, small clean counter along left edge, one understated plant. The central 50 percent must be visually quiet with a softly shaded muted plum wall and low detail, reserved for a large centered white headline that will be added in HTML. Polished but believable human-scale interior, authentic materials, reassuring calm, restrained luxury, photographic realism with natural shadows, no blue clinical cast. Wide composition must also crop gracefully to a narrow centered mobile viewport. No people, no text, no logos, no signage, no watermarks, no collage, no UI mockup, no dramatic glow, no futuristic machinery. Do not bake typography or a dark overlay into the image.

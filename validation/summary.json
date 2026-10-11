@@ -1,0 +1,32 @@
+{
+  "website_routes": 42,
+  "standalone_html_pages": 44,
+  "django_page_templates": 44,
+  "original_source_modified": false,
+  "route_audit": {
+    "routes": 42,
+    "asset_references_checked": 1762,
+    "errors": []
+  },
+  "browser_routes_checked": 42,
+  "interactive_checks": [
+    "Desktop dropdowns, limits, and Escape",
+    "Comparison drag/range value and keyboard",
+    "Accordion expand/collapse and ARIA",
+    "Testimonial next/previous and dot state",
+    "Gallery filters, lightbox, next, Escape, focus restoration",
+    "Contact form errors, correction, character counter",
+    "Mobile menu, desktop-only panels",
+    "Hero spring parallax responds to pointer",
+    "Motion links lift on hover",
+    "Animated counters reach original final values",
+    "Testimonials automatically advance after six seconds",
+    "Testimonial autoplay pauses while hovered",
+    "Animated gallery grid reflow and active filter transition"
+  ],
+  "screenshot_pairs": 11,
+  "pixel_identical_pairs": 10,
+  "maximum_pixels_over_5_percent": 0.000388,
+  "standalone_and_django_home_identical": true,
+  "comparison_conditions": "Original isolated source export vs converted pages; reduced motion, loaded local fonts/images; external Google Maps blocked identically for deterministic screenshots."
+}

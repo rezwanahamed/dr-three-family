@@ -1,0 +1,53 @@
+/* Edit the shared brand palette here. */
+:root {
+  --paper: #faf8f4;
+  --ink: #382d39;
+  --muted: #716770;
+  --brand-deep: #493749;
+  --brand-dark: #302632;
+  --accent: #906d81;
+  --line: #e2d9dc;
+  --sage: #e5e9df;
+  --blush: #f0e7e9;
+  --surface: #fffcf9;
+  --surface-card: #fffdf9;
+  --surface-hover: #f6f0ec;
+  --text-inverse: #f4efe9;
+  --text-inverse-muted: #c8bac3;
+  --accent-soft: #b69aa7;
+  --border-inverse: #80717c;
+  --surface-blush: #f0e5e8;
+  --surface-dark-raised: #544650;
+  --accent-light: #dac2d1;
+  --surface-dark-deep: #302632;
+  --accent-rose: #d5b7c9;
+  --accent-pink: #e6cbd8;
+  --surface-warm: #fff8f0;
+  --brand-heading: #493749;
+  --surface-ivory: #fffaf4;
+  --accent-plum: #94778b;
+  --accent-earth: #8b6e64;
+  --surface-rose: #eee6e9;
+  --text-secondary: #766372;
+  --focus-ring: #876b80;
+  --shadow-color: #302031;
+  --plum: var(--brand-deep);
+  --shadow-soft: 0 10px 40px color-mix(in srgb, var(--brand-dark) 3.137%, transparent);
+  --shadow-raised: 0 22px 55px color-mix(in srgb, var(--brand-dark) 7.843%, transparent);
+  --shadow-dropdown: 0 18px 40px color-mix(in srgb, var(--shadow-color) 12.549%, transparent);
+  --shadow-mega-menu: 0 24px 64px color-mix(in srgb, var(--shadow-color) 14.118%, transparent), 0 2px 8px color-mix(in srgb, var(--shadow-color) 3.137%, transparent);
+}
+
+/* Website dashboard palette. Keep console contrast separate from public pages. */
+:root {
+  --dashboard-canvas: #eeedf3;
+  --dashboard-surface: #ffffff;
+  --dashboard-text: #26212e;
+  --dashboard-secondary: #575160;
+  --dashboard-border: #d7d3df;
+  --dashboard-control-border: #a59aac;
+  --dashboard-tint: #f0eaf4;
+  --dashboard-purple: var(--brand-deep);
+  --dashboard-draft-text: #75480a;
+  --dashboard-draft-bg: #fff2d8;
+}

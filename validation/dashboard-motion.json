@@ -1,0 +1,18 @@
+[
+  {
+    "motion": "no-preference",
+    "dialog_entry_animated": true,
+    "rapid_reopen": "passed",
+    "navigation": "passed",
+    "final_opacity": 1,
+    "errors": []
+  },
+  {
+    "motion": "reduce",
+    "dialog_entry_animated": false,
+    "rapid_reopen": "passed",
+    "navigation": "passed",
+    "final_opacity": 1,
+    "errors": []
+  }
+]

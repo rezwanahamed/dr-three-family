@@ -1,0 +1,35 @@
+/* Browser-only replacements for Framer Motion. Layout comes from the original compiled CSS. */
+[hidden] {
+  display: none !important;
+}
+[data-lift] {
+  transition: transform 220ms cubic-bezier(.22,1,.36,1);
+}
+@media (hover: hover) {
+  [data-lift]:hover {
+    transform: translateY(-4px);
+  }
+}
+[data-lift]:active {
+  transform: translateY(-4px) scale(.985);
+}
+.accordion-plus path:last-child {
+  transition: opacity 180ms, transform 180ms;
+}
+.contact-form--submitArea button {
+  transition: transform 220ms cubic-bezier(.22,1,.36,1);
+}
+.contact-form--submitArea button:hover {
+  transform: translateY(-2px);
+}
+.contact-form--submitArea button:active {
+  transform: scale(.99);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-lift], .accordion-plus path:last-child, .contact-form--submitArea button {
+    transition: none;
+  }
+  [data-lift]:hover, [data-lift]:active, .contact-form--submitArea button:hover, .contact-form--submitArea button:active {
+    transform: none;
+  }
+}

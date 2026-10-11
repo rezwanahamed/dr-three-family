@@ -1,0 +1,521 @@
+[
+  {
+    "id": "/11-important-facts-you-need-to-know-about-root-canal-treatment/",
+    "title": "Understanding root canal treatment",
+    "section": "articles",
+    "description": "A starting point for discussing treatment with your dentist.",
+    "url": "/11-important-facts-you-need-to-know-about-root-canal-treatment/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/6-cosmetic-dental-treatment-to-consider-this-fall/",
+    "title": "Planning your cosmetic dental consultation",
+    "section": "articles",
+    "description": "Bring your goals, your questions, and a clear idea of what matters to you.",
+    "url": "/6-cosmetic-dental-treatment-to-consider-this-fall/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/9-signs-that-your-child-should-see-a-padiatric-dentist/",
+    "title": "Your child\u2019s first dental visit",
+    "section": "articles",
+    "description": "Make an early visit feel familiar, positive, and comfortable.",
+    "url": "/9-signs-that-your-child-should-see-a-padiatric-dentist/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/about-us/",
+    "title": "Expert hands. Kind hearts.",
+    "section": "pages",
+    "description": "A dental family that takes the time to understand yours. Personal care, thoughtful conversations, and a familiar face at every visit.",
+    "url": "/about-us/",
+    "image": "/static/dental_family/assets/images/gallery-2.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/advanced_oral_surgery/",
+    "title": "Advanced oral surgery",
+    "section": "treatments",
+    "description": "Explore thoughtfully planned solutions to replace missing teeth and restore your smile.",
+    "url": "/advanced_oral_surgery/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/appointment/",
+    "title": "Your next smile starts here.",
+    "section": "pages",
+    "description": "Choose a branch and prepare for your visit. Our booking partner handles your appointment request.",
+    "url": "/appointment/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/blog/",
+    "title": "A little knowledge. A healthier smile.",
+    "section": "pages",
+    "description": "Practical reading and useful questions for your next conversation with the dentist.",
+    "url": "/blog/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/category/children-dentistry/",
+    "title": "Family dentistry",
+    "section": "articles",
+    "description": "A little reading to help you prepare for your next conversation with the dentist.",
+    "url": "/category/children-dentistry/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/category/dental-implants/",
+    "title": "Dental implants",
+    "section": "articles",
+    "description": "A little reading to help you prepare for your next conversation with the dentist.",
+    "url": "/category/dental-implants/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/category/endo-dontics/",
+    "title": "Root canal care",
+    "section": "articles",
+    "description": "A little reading to help you prepare for your next conversation with the dentist.",
+    "url": "/category/endo-dontics/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/category/general-dentistry/",
+    "title": "Everyday care",
+    "section": "articles",
+    "description": "A little reading to help you prepare for your next conversation with the dentist.",
+    "url": "/category/general-dentistry/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/category/padiatric-dentistry/",
+    "title": "Children\u2019s dentistry",
+    "section": "articles",
+    "description": "A little reading to help you prepare for your next conversation with the dentist.",
+    "url": "/category/padiatric-dentistry/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/clear_aligner/",
+    "title": "Clear aligners",
+    "section": "treatments",
+    "description": "A discreet, modern approach to a straighter smile, designed around your everyday life.",
+    "url": "/clear_aligner/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/contact/",
+    "title": "Let\u2019s start a conversation.",
+    "section": "pages",
+    "description": "Ask a question, find your nearest branch, or talk to us about planning your first visit.",
+    "url": "/contact/",
+    "image": "/static/dental_family/assets/images/theme/consultation.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/cosmetic-bonding/",
+    "title": "Cosmetic bonding",
+    "section": "treatments",
+    "description": "Explore subtle refinements to the shape and appearance of your teeth.",
+    "url": "/cosmetic-bonding/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/cosmetic_dentistry/",
+    "title": "Cosmetic dentistry",
+    "section": "treatments",
+    "description": "Small refinements. A renewed confidence. Explore the possibilities for your smile.",
+    "url": "/cosmetic_dentistry/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/emergency_dental_care/",
+    "title": "Urgent dental care",
+    "section": "treatments",
+    "description": "When something doesn\u2019t feel right, talk to our team about your next available appointment.",
+    "url": "/emergency_dental_care/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/faq/",
+    "title": "Good questions. Clear answers.",
+    "section": "pages",
+    "description": "Explore answers by treatment, or speak with our team about your own concerns.",
+    "url": "/faq/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/faqs-3d-intraoral-scanner/",
+    "title": "3D intraoral scanning: your questions.",
+    "section": "articles",
+    "description": "A closer look at digital scanning and treatment planning.",
+    "url": "/faqs-3d-intraoral-scanner/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/faqs-dental-braces/",
+    "title": "Dental braces: your questions.",
+    "section": "articles",
+    "description": "Getting started with braces and orthodontic care.",
+    "url": "/faqs-dental-braces/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/faqs-dental-implant/",
+    "title": "Dental implants: your questions.",
+    "section": "articles",
+    "description": "Planning, suitability, and caring for your implant.",
+    "url": "/faqs-dental-implant/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/faqs_teeth_whitening/",
+    "title": "Teeth whitening: your questions.",
+    "section": "articles",
+    "description": "Whitening options, sensitivity, and what to expect.",
+    "url": "/faqs_teeth_whitening/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/faqsinvisalign-clear-aligner/",
+    "title": "Clear aligners: your questions.",
+    "section": "articles",
+    "description": "Your questions about aligners and everyday wear.",
+    "url": "/faqsinvisalign-clear-aligner/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/fillings/",
+    "title": "Dental fillings",
+    "section": "treatments",
+    "description": "Carefully considered restoration for teeth affected by decay or damage.",
+    "url": "/fillings/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/financing-2/",
+    "title": "Simple ways to pay.",
+    "section": "treatments",
+    "description": "Talk to the team about treatment costs and the payment method that works for you.",
+    "url": "/financing-2/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/gallery/",
+    "title": "Come on in. Feel at home.",
+    "section": "pages",
+    "description": "A closer look at our clinic, our people, and the technology behind your care.",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/gallery-2.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/general_dentistry/",
+    "title": "Everyday dental care",
+    "section": "treatments",
+    "description": "Healthy habits start here. Keep your smile feeling its best with regular, personalized care.",
+    "url": "/general_dentistry/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/google-reviews/",
+    "title": "Kind words. Real experiences.",
+    "section": "pages",
+    "description": "Choosing a dentist is personal. Hear from the people who have trusted us with their care, in their own words.",
+    "url": "/google-reviews/",
+    "image": "",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/gum-reshaping/",
+    "title": "Gum reshaping",
+    "section": "treatments",
+    "description": "A consultation-led approach to the balance of your teeth and gum line.",
+    "url": "/gum-reshaping/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/how-to-maintain-a-beautiful-holiday-smile/",
+    "title": "Keep your dental routine while travelling",
+    "section": "articles",
+    "description": "Keep everyday care simple, even when your routine changes.",
+    "url": "/how-to-maintain-a-beautiful-holiday-smile/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/",
+    "title": "Feel good about your smile.",
+    "section": "pages",
+    "description": "A thoughtful approach to dentistry. A little more comfort. And a team that puts you first.",
+    "url": "/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/our-doctors/",
+    "title": "The people behind your smile.",
+    "section": "pages",
+    "description": "Meet the team bringing skill, patience, and a personal touch to your dental care.",
+    "url": "/our-doctors/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/pricing-guide-2/",
+    "title": "A little clarity on costs.",
+    "section": "treatments",
+    "description": "An indicative guide to selected treatments. Your dentist will explain your personal plan and estimate before treatment.",
+    "url": "/pricing-guide-2/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/privacy-policy/",
+    "title": "Your privacy matters.",
+    "section": "pages",
+    "description": "The clinic\u2019s published policy on personal information and communication.",
+    "url": "/privacy-policy/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/regular-dental-checkup/",
+    "title": "Regular dental checkups",
+    "section": "treatments",
+    "description": "A thoughtful check-in for your teeth, gums, and everyday oral health.",
+    "url": "/regular-dental-checkup/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/restorative_dentistry/",
+    "title": "Restorative dentistry",
+    "section": "treatments",
+    "description": "Personalized treatment to restore function, comfort, and confidence.",
+    "url": "/restorative_dentistry/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/root-canal-treatment-for-children-what-parents-need-to-know/",
+    "title": "Questions about your child\u2019s dental treatment",
+    "section": "articles",
+    "description": "Prepare for a clear, reassuring conversation about your child\u2019s care.",
+    "url": "/root-canal-treatment-for-children-what-parents-need-to-know/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/root-canals/",
+    "title": "Root canal treatment",
+    "section": "treatments",
+    "description": "Focused care for a tooth that needs extra attention, with your comfort at the heart of it.",
+    "url": "/root-canals/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/services/",
+    "title": "Care for every kind of smile.",
+    "section": "pages",
+    "description": "From everyday prevention to a complete treatment plan, explore dental care designed around you.",
+    "url": "/services/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/teeth-whitening/",
+    "title": "Teeth whitening",
+    "section": "treatments",
+    "description": "Explore professional whitening options with a dentist who understands your smile.",
+    "url": "/teeth-whitening/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/veneers/",
+    "title": "Dental veneers",
+    "section": "treatments",
+    "description": "Discover whether veneers are the right choice for your smile goals.",
+    "url": "/veneers/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "/what-foods-can-you-eat-after-getting-dental-implant/",
+    "title": "Planning meals after an implant appointment",
+    "section": "articles",
+    "description": "Useful questions to ask your treating clinician before going home.",
+    "url": "/what-foods-can-you-eat-after-getting-dental-implant/",
+    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-0",
+    "title": "Dr. Junaed Ahammed Emon",
+    "section": "gallery",
+    "description": "Dr. Junaed Ahammed Emon",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/doctors/emon-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-1",
+    "title": "Dr. Maimuna Mahzabeen",
+    "section": "gallery",
+    "description": "Dr. Maimuna Mahzabeen",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/doctors/maimuna-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-2",
+    "title": "Dr. Md. Iftekarul Islam",
+    "section": "gallery",
+    "description": "Dr. Md. Iftekarul Islam",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/doctors/iftekar-studio.png",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-3",
+    "title": "Entrance and corridor at Dr. Teeth Family Dental",
+    "section": "gallery",
+    "description": "Entrance and corridor at Dr. Teeth Family Dental",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/clinic.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-4",
+    "title": "Digital dental scanning equipment in a treatment room",
+    "section": "gallery",
+    "description": "Digital dental scanning equipment in a treatment room",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/care.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-5",
+    "title": "Dental chair and treatment equipment",
+    "section": "gallery",
+    "description": "Dental chair and treatment equipment",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/detail.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-6",
+    "title": "Interior of the dental clinic",
+    "section": "gallery",
+    "description": "Interior of the dental clinic",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/gallery-1.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-7",
+    "title": "Dental treatment room with a chair and consultation area",
+    "section": "gallery",
+    "description": "Dental treatment room with a chair and consultation area",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/gallery-2.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "photo-8",
+    "title": "Dental technology and equipment at the clinic",
+    "section": "gallery",
+    "description": "Dental technology and equipment at the clinic",
+    "url": "/gallery/",
+    "image": "/static/dental_family/assets/images/gallery-3.jpg",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "doctor-0",
+    "title": "Dr. Junaed Ahammed Emon",
+    "section": "doctors",
+    "description": "",
+    "url": "/our-doctors/",
+    "image": "/static/dental_family/assets/images/doctors/emon-studio.png",
+    "status": "Website snapshot",
+    "specialty": "Cosmetic dentistry",
+    "qualifications": "BDS (CIDC)\nPGT in Pediatric Dentistry, Chattogram Medical College",
+    "training": "Advanced training in cosmetic dentistry (Bio-Clear method)\nAdvanced training in root canal treatment",
+    "position": "",
+    "registration": "8625",
+    "appointment_url": "/appointment/"
+  },
+  {
+    "id": "doctor-1",
+    "title": "Dr. Maimuna Mahzabeen",
+    "section": "doctors",
+    "description": "",
+    "url": "/our-doctors/",
+    "image": "/static/dental_family/assets/images/doctors/maimuna-studio.png",
+    "status": "Website snapshot",
+    "specialty": "Preventive dentistry",
+    "qualifications": "BDS (CIDC)\nPGT in Maxillofacial Surgery, Chattogram Medical College",
+    "training": "Advanced training in root canal treatment\nAdvanced training in prosthetic treatment",
+    "position": "",
+    "registration": "8624",
+    "appointment_url": "/appointment/"
+  },
+  {
+    "id": "doctor-2",
+    "title": "Dr. Md. Iftekarul Islam",
+    "section": "doctors",
+    "description": "",
+    "url": "/our-doctors/",
+    "image": "/static/dental_family/assets/images/doctors/iftekar-studio.png",
+    "status": "Website snapshot",
+    "specialty": "Orthodontics",
+    "qualifications": "BDS, Chittagong Medical College",
+    "training": "",
+    "position": "Senior Lecturer, Orthodontic Department, CIDC",
+    "registration": "5116",
+    "appointment_url": "/appointment/"
+  },
+  {
+    "id": "doctor-3",
+    "title": "Dr. Asif Sobahan",
+    "section": "doctors",
+    "description": "",
+    "url": "/our-doctors/",
+    "image": "",
+    "status": "Website snapshot",
+    "specialty": "Implantology",
+    "qualifications": "BDS, Chittagong Medical College",
+    "training": "Advanced training in implant surgery",
+    "position": "",
+    "registration": "",
+    "appointment_url": "/appointment/"
+  }
+]
