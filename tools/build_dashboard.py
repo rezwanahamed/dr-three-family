@@ -19,7 +19,7 @@ for route, info in routes.items():
     records.append(dict(id=route, title=title, section=kind, description=description.get_text(' ',strip=True) if description else '', url=route, image=image.get('src','') if image else '', status='Website snapshot'))
 soup=BeautifulSoup((ROOT/'pages/gallery/index.html').read_text(),'html.parser')
 for i,img in enumerate(soup.select('.gallery-grid button img')):
-    records.append(dict(id=f'photo-{i}',title=img.get('alt','Clinic photo'),section='gallery',description=img.get('alt',''),url='/gallery/',image=img['src'],status='Website snapshot'))
+    records.append(dict(id=f'photo-{i}',title=img.get('alt','Clinic photo'),section='gallery',description=img.get('alt',''),url='/gallery/',image=img['src'],alt=img.get('alt',''),order=i+1,status='Website snapshot'))
 soup=BeautifulSoup((ROOT/'pages/our-doctors/index.html').read_text(),'html.parser')
 for i,card in enumerate(soup.select('main article')):
     heading=card.select_one('h2,h3')

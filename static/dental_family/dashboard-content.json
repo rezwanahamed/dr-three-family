@@ -384,7 +384,9 @@
     "description": "Dr. Junaed Ahammed Emon",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/doctors/emon-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 1,
+    "alt": "Dr. Junaed Ahammed Emon"
   },
   {
     "id": "photo-1",
@@ -393,7 +395,9 @@
     "description": "Dr. Maimuna Mahzabeen",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/doctors/maimuna-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 2,
+    "alt": "Dr. Maimuna Mahzabeen"
   },
   {
     "id": "photo-2",
@@ -402,7 +406,9 @@
     "description": "Dr. Md. Iftekarul Islam",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/doctors/iftekar-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 3,
+    "alt": "Dr. Md. Iftekarul Islam"
   },
   {
     "id": "photo-3",
@@ -411,7 +417,9 @@
     "description": "Entrance and corridor at Dr. Teeth Family Dental",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/clinic.jpg",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 4,
+    "alt": "Entrance and corridor at Dr. Teeth Family Dental"
   },
   {
     "id": "photo-4",
@@ -420,7 +428,9 @@
     "description": "Digital dental scanning equipment in a treatment room",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/care.jpg",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 5,
+    "alt": "Digital dental scanning equipment in a treatment room"
   },
   {
     "id": "photo-5",
@@ -429,7 +439,9 @@
     "description": "Dental chair and treatment equipment",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/detail.jpg",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 6,
+    "alt": "Dental chair and treatment equipment"
   },
   {
     "id": "photo-6",
@@ -438,7 +450,9 @@
     "description": "Interior of the dental clinic",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/gallery-1.jpg",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 7,
+    "alt": "Interior of the dental clinic"
   },
   {
     "id": "photo-7",
@@ -447,7 +461,9 @@
     "description": "Dental treatment room with a chair and consultation area",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/gallery-2.jpg",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 8,
+    "alt": "Dental treatment room with a chair and consultation area"
   },
   {
     "id": "photo-8",
@@ -456,7 +472,9 @@
     "description": "Dental technology and equipment at the clinic",
     "url": "/gallery/",
     "image": "/static/dental_family/assets/images/gallery-3.jpg",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "order": 9,
+    "alt": "Dental technology and equipment at the clinic"
   },
   {
     "id": "doctor-0",

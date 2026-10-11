@@ -1,5 +1,21 @@
 /* Website console design system. Brand colours are shared through theme.css. */
+@font-face {
+  font-family: "Dashboard Inter";
+  src: url("../assets/fonts/Inter-Variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Dashboard Recife";
+  src: url("../assets/fonts/RecifeText-Book.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 :root {
+  --dash-font-body: "Dashboard Inter", Arial, sans-serif;
+  --dash-font-heading: "Dashboard Recife", Georgia, serif;
   --dash-bg: var(--dashboard-canvas);
   --dash-surface: var(--dashboard-surface, #fff);
   --dash-text: var(--dashboard-text);
@@ -17,7 +33,7 @@
   --panel-shadow: 0 4px 24px #30203104;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--dash-bg); color: var(--dash-text); font: 14px/1.6 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; letter-spacing: -.15px; }
+body { margin: 0; background: var(--dash-bg); color: var(--dash-text); font: 14px/1.6 var(--dash-font-body); letter-spacing: -.15px; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
 button { cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 9px 15px; border: 1px solid #bcb0c8; border-radius: var(--control-radius); background: var(--dash-surface); color: var(--dash-accent); font-size: 12px; font-weight: 550; }
@@ -361,3 +377,48 @@ select:disabled { cursor: not-allowed; opacity: .6; }
 .toolbar select { padding-right: 44px; }
 @media(forced-colors:active) { select { appearance: auto; background-image: none; } }
 @media(max-width:650px) { .command-footer>span { display: none; } }
+
+/* Uniform clinic photo rows, with pointer and keyboard reordering. */
+.clinic-order-help { display:flex; align-items:center; gap:9px; padding:13px 25px; background:#faf8fc; color:var(--dash-muted); border-bottom:1px solid var(--dash-border); font-size:11px; }
+.clinic-order-help svg { width:16px; height:16px; }
+.clinic-table { table-layout:fixed; min-width:650px; }
+.clinic-table th:first-child { width:54px; }
+.clinic-table th:nth-child(2) { width:70px; }
+.clinic-table th:nth-child(4) { width:150px; }
+.clinic-table th:last-child { width:125px; }
+.clinic-table td { height:90px; padding:14px 20px; }
+.clinic-table td:first-child,.clinic-table th:first-child { padding-left:20px; padding-right:0; }
+.clinic-table td:nth-child(2) { padding-right:0; color:var(--dash-muted); }
+.clinic-table .table-content { min-width:0; gap:15px; }
+.clinic-thumbnail { width:68px; height:50px; border-radius:8px; object-fit:cover; flex-shrink:0; display:block; }
+.clinic-thumbnail.placeholder { display:grid; place-items:center; background:var(--dash-soft); color:var(--dash-accent); }
+.clinic-row-copy { min-width:0; }
+.clinic-row-copy .title-button,.clinic-row-copy small { white-space:nowrap; text-overflow:ellipsis; overflow:hidden; max-width:100%; }
+.drag-handle { width:28px; min-height:34px; padding:4px; border:0; background:transparent; color:var(--dash-muted); cursor:grab; touch-action:none; user-select:none; }
+.drag-handle:active { cursor:grabbing; transform:none!important; }
+.drag-handle:disabled { opacity:.35; cursor:not-allowed; }
+.clinic-table tr.dragging { background:var(--dash-soft); box-shadow:inset 3px 0 var(--dash-accent); }
+.clinic-reordering,.clinic-reordering * { cursor:grabbing!important; user-select:none!important; }
+@media(max-width:650px) {
+  .clinic-order-help { padding:12px 18px; align-items:flex-start; font-size:10px; }
+  .clinic-table thead { display:table-header-group; }
+  .clinic-table tbody { display:table-row-group; padding:0; }
+  .clinic-table tr { display:table-row; padding:0; border:0; }
+  .clinic-table td { padding:14px 20px; height:90px; border-bottom:1px solid #eee9f2; }
+  .clinic-table th:first-child { width:54px; }
+  .clinic-table td:first-child { padding-left:20px; padding-right:0; }
+}
+
+/* Recife Book adds the website’s editorial voice to dashboard headings. */
+h1, h2, h3 { font-family: var(--dash-font-heading); font-weight: 400; }
+h1 { font-size: 40px; letter-spacing: -.8px; }
+h2 { font-size: 19px; letter-spacing: -.25px; }
+.clinic-details h3 { font-size: 19px; font-weight: 400; }
+.doctor-card .title-button { font-family: var(--dash-font-heading); font-size: 19px; font-weight: 400; }
+.empty h3 { font-size: 19px; font-weight: 400; }
+#editor h2 { font-size: 29px; }
+@media(max-width:650px) {
+  h1 { font-size: 35px; }
+  h2 { font-size: 18px; }
+  .doctor-card .title-button { font-size: 18px; }
+}
