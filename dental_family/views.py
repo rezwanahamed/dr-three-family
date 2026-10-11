@@ -64,6 +64,8 @@ def upload_image(request):
     user = getattr(request, 'user', None)
     if not settings.DEBUG and not (user and user.is_authenticated and user.is_staff):
         return JsonResponse({'error': 'Staff access is required.'}, status=403)
+    if len(request.FILES.getlist('image')) > 1:
+        return JsonResponse({'error': 'Choose only one image.'}, status=400)
     upload = request.FILES.get('image')
     if not upload:
         return JsonResponse({'error': 'Choose an image to upload.'}, status=400)

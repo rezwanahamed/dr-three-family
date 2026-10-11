@@ -141,8 +141,9 @@
   function resetUpload(){uploadController?.abort();uploadController=null;setUploading(false);}
   $('#editor').addEventListener('close',resetUpload);
   $('#image-file').addEventListener('change',async event=>{
-    const file=event.target.files[0];if(!file)return;
     const status=$('#upload-status');
+    if(event.target.files.length>1){status.textContent='Choose only one image.';event.target.value='';return;}
+    const file=event.target.files[0];if(!file)return;
     if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024){status.textContent='Choose a JPEG, PNG, or WebP image up to 10 MB.';event.target.value='';return;}
     const controller=new AbortController();uploadController=controller;setUploading(true);
     status.textContent='Uploading and optimizing image…';
@@ -159,7 +160,11 @@
     finally{if(uploadController===controller){uploadController=null;setUploading(false);event.target.value='';}}
   });
   function updateEditorFields(){
-    const form=$('#editor-form'),isDoctor=form.elements.section.value==='doctors',isClinic=['clinic','gallery'].includes(form.elements.section.value);
+    const form=$('#editor-form'),isDoctor=form.elements.section.value==='doctors',isClinic=['clinic','gallery'].includes(form.elements.section.value),isTreatment=form.elements.section.value==='treatments';
+    $('#image-file').multiple=false;
+    $('#image-field-label').textContent=isTreatment?'Treatment thumbnail':'Image';
+    $('#image-field-help').textContent=isTreatment?'Upload one thumbnail (JPEG, PNG, or WebP, up to 10 MB). A new upload replaces the current thumbnail.':'Choose a JPEG, PNG, or WebP up to 10 MB. Uploads are stored in the gallery.';
+    $('#image-picker-label').textContent=isTreatment?'Choose thumbnail':'Choose an image';
     $('#clinic-fields legend').textContent=form.elements.section.value==='gallery'?'Gallery photo details':'Clinic photo details';
     $('#clinic-fields').hidden=!isClinic;$('#clinic-fields').disabled=!isClinic;
     form.elements.url.closest('label').hidden=isClinic;form.elements.url.disabled=isClinic;
@@ -169,8 +174,8 @@
     $('#editor-name-label').textContent=isDoctor?'Doctor name':'Title';
     for(const name of ['description','url']){
       const field=form.elements.namedItem(name);
-      field.closest('label').hidden=isDoctor||(isClinic&&name==='url');
-      field.disabled=isDoctor||(isClinic&&name==='url');
+      field.closest('label').hidden=isDoctor||((isClinic||isTreatment)&&name==='url');
+      field.disabled=isDoctor||((isClinic||isTreatment)&&name==='url');
     }
     $('#editor-title').textContent=isDoctor?(editing?'Edit doctor':'Add doctor'):(isClinic?(editing?'Edit photo':'Add photo'):(editing?'Edit content':'Add content'));
     if(isClinic)form.elements.url.value=form.elements.section.value==='gallery'?'/gallery/':'/about-us/';
@@ -189,7 +194,7 @@
   }
   $('#add').onclick=()=>openEditor();function closeEditor(){if(JSON.stringify(Object.fromEntries(new FormData($('#editor-form'))))!==editorInitial){$('#discard-notice').hidden=false;motion($('#discard-notice'),[{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}]);$('#keep-editing').focus();}else closeDialog($('#editor'));}
   $('#close-editor').onclick=$('#cancel-editor').onclick=closeEditor;$('#editor').addEventListener('cancel',e=>{e.preventDefault();closeEditor();});$('#keep-editing').onclick=()=>{$('#discard-notice').hidden=true;$('#editor-form input[name="title"]').focus();};$('#discard-editing').onclick=()=>closeDialog($('#editor'));
-  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['clinic','gallery'].includes(data.section)){data.url=data.section==='gallery'?'/gallery/':'/about-us/';data.order=Number(data.order);if(!data.alt||!data.image||!Number.isInteger(data.order)||data.order<1){toast('Enter an image, alt text, and a display order of 1 or more.');return;}}if(data.section==='doctors'){const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:data.image||previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast('Draft saved in this browser');}};
+  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['clinic','gallery'].includes(data.section)){data.url=data.section==='gallery'?'/gallery/':'/about-us/';data.order=Number(data.order);if(!data.alt||!data.image||!Number.isInteger(data.order)||data.order<1){toast('Enter an image, alt text, and a display order of 1 or more.');return;}}if(data.section==='treatments')data.url=all().find(r=>r.id===editing)?.url||'/services/';if(data.section==='doctors'){const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:data.image||previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast('Draft saved in this browser');}};
   $('#export').onclick=()=>{const blob=new Blob([JSON.stringify({drafts:store.drafts.map(withRecordDetails),settings:store.settings},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='dr-teeth-website-drafts.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Drafts exported');};
   $('#menu').onclick=()=>setNavigation(!$('#sidebar').classList.contains('open'));$('#nav-backdrop').onclick=()=>setNavigation(false);
   $('#account').onclick=()=>openDialog($('#account-dialog'));$('#close-account').onclick=()=>closeDialog($('#account-dialog'));

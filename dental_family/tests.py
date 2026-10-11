@@ -58,3 +58,12 @@ class ImageUploadTests(SimpleTestCase):
         with override_settings(DEBUG=False):
             self.assertEqual(self.upload(b'image').status_code, 403)
         self.assertEqual(self.client.get('/dashboard/upload-image/').status_code, 405)
+
+    def test_multiple_images_rejected_without_saving(self):
+        response = self.client.post('/dashboard/upload-image/', {'image': [
+            SimpleUploadedFile('one.png', b'one'),
+            SimpleUploadedFile('two.png', b'two'),
+        ]}, HTTP_X_CSRFTOKEN=self.token)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['error'], 'Choose only one image.')
+        self.assertEqual(list(Path(self.directory.name).rglob('*.webp')), [])
