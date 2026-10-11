@@ -37,7 +37,7 @@
     else if(!backdrop.hidden){const animation=motion(backdrop,[{opacity:1},{opacity:0}],{duration:180});if(animation)animation.finished.then(()=>{if(!$('#sidebar').classList.contains('open'))backdrop.hidden=true;},()=>{});else backdrop.hidden=true;}
   }
   reducedMotion.addEventListener('change',()=>{if(reducedMotion.matches)document.getAnimations().forEach(animation=>animation.finish());});
-  const iconNames={overview:'squares-four',pages:'file-text',treatments:'first-aid',doctors:'users',gallery:'images',clinic:'buildings',articles:'article',activity:'pulse',settings:'gear-six',download:'download-simple',plus:'plus',info:'info',search:'magnifying-glass',caretDown:'caret-down',caretRight:'caret-right',arrowUpRight:'arrow-up-right',arrowRight:'arrow-right',close:'x',menu:'list',enter:'arrow-elbow-down-left',up:'arrow-up',down:'arrow-down',drag:'dots-six-vertical'};
+  const iconNames={overview:'squares-four',pages:'file-text',treatments:'first-aid',doctors:'users',gallery:'images',clinic:'buildings',articles:'article',activity:'pulse',settings:'gear-six',download:'download-simple',upload:'arrow-up',plus:'plus',info:'info',search:'magnifying-glass',caretDown:'caret-down',caretRight:'caret-right',arrowUpRight:'arrow-up-right',arrowRight:'arrow-right',close:'x',menu:'list',enter:'arrow-elbow-down-left',up:'arrow-up',down:'arrow-down',drag:'dots-six-vertical'};
   const icon=name=>`<svg class="phosphor-icon" data-phosphor="${iconNames[name]||iconNames.pages}" aria-hidden="true" focusable="false" viewBox="0 0 256 256" fill="currentColor">${window.DashboardPhosphor[iconNames[name]||iconNames.pages]}</svg>`;
   $$('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
   const labels={overview:'Overview',pages:'Pages',treatments:'Treatments',doctors:'Doctors',gallery:'Gallery',clinic:'Our clinic',articles:'Articles & resources',activity:'Activity',settings:'Settings',drafts:'Local drafts'};
@@ -126,16 +126,48 @@
     if($('#settings-form'))$('#settings-form').onsubmit=e=>{e.preventDefault();const data=new FormData(e.target);store.settings={name:data.get('name').trim(),email:data.get('email').trim()};if(save()){updateWorkspace();toast('Workspace preferences saved');}};
   }
   function updateWorkspace(){$('.workspace strong').textContent=store.settings.name;}
+  let uploadController=null,uploading=false;
+  function showImagePreview(){
+    const url=$('#editor-form').elements.image.value;
+    $('#upload-preview').hidden=!url;
+    if(url)$('#image-preview').src=safeURL(url);else $('#image-preview').removeAttribute('src');
+  }
+  function setUploading(value){
+    uploading=value;
+    $('#image-file').disabled=value;
+    $('#editor-form button[type="submit"]').disabled=value;
+    $('.image-upload').setAttribute('aria-busy',String(value));
+  }
+  function resetUpload(){uploadController?.abort();uploadController=null;setUploading(false);}
+  $('#editor').addEventListener('close',resetUpload);
+  $('#image-file').addEventListener('change',async event=>{
+    const file=event.target.files[0];if(!file)return;
+    const status=$('#upload-status');
+    if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024){status.textContent='Choose a JPEG, PNG, or WebP image up to 10 MB.';event.target.value='';return;}
+    const controller=new AbortController();uploadController=controller;setUploading(true);
+    status.textContent='Uploading and optimizing image…';
+    try{
+      const payload=new FormData();payload.append('image',file);
+      const token=document.cookie.split('; ').find(part=>part.startsWith('csrftoken='))?.slice(10)||'';
+      const response=await fetch(document.body.dataset.uploadUrl,{method:'POST',body:payload,credentials:'same-origin',headers:{'X-CSRFToken':decodeURIComponent(token)},signal:controller.signal});
+      const result=await response.json().catch(()=>({error:'Image uploads require the Django server. Please open the dashboard through Django.'}));
+      if(!response.ok)throw Error(result.error||'Upload failed. Please try again.');
+      if(uploadController!==controller)return;
+      $('#editor-form').elements.image.value=result.url;showImagePreview();
+      status.textContent=`Uploaded · ${result.width} × ${result.height} · Save draft to use this image.`;
+    }catch(error){if(error.name!=='AbortError'&&uploadController===controller)status.textContent=error.message;}
+    finally{if(uploadController===controller){uploadController=null;setUploading(false);event.target.value='';}}
+  });
   function updateEditorFields(){
     const form=$('#editor-form'),isDoctor=form.elements.section.value==='doctors',isClinic=['clinic','gallery'].includes(form.elements.section.value);
     $('#clinic-fields legend').textContent=form.elements.section.value==='gallery'?'Gallery photo details':'Clinic photo details';
     $('#clinic-fields').hidden=!isClinic;$('#clinic-fields').disabled=!isClinic;
-    form.elements.image.required=isClinic;form.elements.url.closest('label').hidden=isClinic;form.elements.url.disabled=isClinic;
+    form.elements.url.closest('label').hidden=isClinic;form.elements.url.disabled=isClinic;
     $('#doctor-fields').hidden=!isDoctor;
     $('#doctor-fields').disabled=!isDoctor;
     form.elements.description.required=!isDoctor;
     $('#editor-name-label').textContent=isDoctor?'Doctor name':'Title';
-    for(const name of ['description','url','image']){
+    for(const name of ['description','url']){
       const field=form.elements.namedItem(name);
       field.closest('label').hidden=isDoctor||(isClinic&&name==='url');
       field.disabled=isDoctor||(isClinic&&name==='url');
@@ -148,16 +180,16 @@
   }
   function openEditor(record){
     editing=record?.id||null;
-    const form=$('#editor-form');form.reset();
+    resetUpload();const form=$('#editor-form');form.reset();
     for(const name of ['title','section','description','url','image','alt','order',...doctorFields.filter(name=>name!=='appointment_url')])form.elements.namedItem(name).value=record?.[name]||(name==='section'?(Object.keys(descriptions).includes(section)&&!['activity','settings','drafts'].includes(section)?section:'pages'):'');
     if(['clinic','gallery'].includes(form.elements.section.value)&&!record)form.elements.order.value=Math.max(0,...all().filter(r=>r.section===form.elements.section.value).map(r=>Number(r.order)||0))+1;
-    updateEditorFields();$('#discard-notice').hidden=true;
+    updateEditorFields();showImagePreview();$('#upload-status').textContent=form.elements.image.value?'Current image · Choose a file to replace it.':'No image selected.';$('#discard-notice').hidden=true;
     editorInitial=JSON.stringify(Object.fromEntries(new FormData(form)));
     openDialog($('#editor'));$('.editor-body').scrollTop=0;
   }
   $('#add').onclick=()=>openEditor();function closeEditor(){if(JSON.stringify(Object.fromEntries(new FormData($('#editor-form'))))!==editorInitial){$('#discard-notice').hidden=false;motion($('#discard-notice'),[{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}]);$('#keep-editing').focus();}else closeDialog($('#editor'));}
   $('#close-editor').onclick=$('#cancel-editor').onclick=closeEditor;$('#editor').addEventListener('cancel',e=>{e.preventDefault();closeEditor();});$('#keep-editing').onclick=()=>{$('#discard-notice').hidden=true;$('#editor-form input[name="title"]').focus();};$('#discard-editing').onclick=()=>closeDialog($('#editor'));
-  $('#editor-form').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['clinic','gallery'].includes(data.section)){data.url=data.section==='gallery'?'/gallery/':'/about-us/';data.order=Number(data.order);if(!data.alt||!data.image||!Number.isInteger(data.order)||data.order<1){toast('Enter an image, alt text, and a display order of 1 or more.');return;}}if(data.section==='doctors'){const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast('Draft saved in this browser');}};
+  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['clinic','gallery'].includes(data.section)){data.url=data.section==='gallery'?'/gallery/':'/about-us/';data.order=Number(data.order);if(!data.alt||!data.image||!Number.isInteger(data.order)||data.order<1){toast('Enter an image, alt text, and a display order of 1 or more.');return;}}if(data.section==='doctors'){const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:data.image||previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast('Draft saved in this browser');}};
   $('#export').onclick=()=>{const blob=new Blob([JSON.stringify({drafts:store.drafts.map(withRecordDetails),settings:store.settings},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='dr-teeth-website-drafts.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Drafts exported');};
   $('#menu').onclick=()=>setNavigation(!$('#sidebar').classList.contains('open'));$('#nav-backdrop').onclick=()=>setNavigation(false);
   $('#account').onclick=()=>openDialog($('#account-dialog'));$('#close-account').onclick=()=>closeDialog($('#account-dialog'));

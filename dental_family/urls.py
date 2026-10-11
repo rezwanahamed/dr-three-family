@@ -3,6 +3,7 @@ from . import views
 
 app_name = 'dental_family'
 urlpatterns = [
+    path('dashboard/upload-image/', views.upload_image, name='upload-image'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard', views.legacy_redirect, {'destination': '/dashboard/'}),
 ] + [

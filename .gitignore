@@ -3,3 +3,4 @@ __pycache__/
 *.pyc
 collected-static/
 db.sqlite3
+media/
