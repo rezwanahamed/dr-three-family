@@ -243,7 +243,7 @@ dialog::backdrop { background: #20182765; backdrop-filter: blur(4px); }
 #close-editor { padding: 0; width: 33px; min-height: 33px; border-color: var(--dash-border); }
 .editor-note { display: flex; align-items: center; gap: 8px; background: var(--dash-soft); border-radius: 9px; padding: 13px; font-size: 10px; line-height: 1.8; }
 .editor-actions { display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; border-top: 1px solid var(--dash-border); background: white; padding: 20px 29px; }
-#doctor-fields, #clinic-fields, #treatment-fields { border: 0; padding: 0; margin: 24px 0 0; min-width: 0; }
+#doctor-fields, #clinic-fields, #treatment-fields, #location-fields { border: 0; padding: 0; margin: 24px 0 0; min-width: 0; }
 fieldset legend { font-size: 13px; color: var(--dash-accent); font-weight: 600; }
 #discard-notice { background: #fff5e2; border: 1px solid #ead29e; padding: 15px; margin: 17px 0; border-radius: 9px; }
 #discard-notice p { font-size: 11px; margin: 0 0 10px; color: #75480a; }
@@ -472,3 +472,20 @@ h2 { font-size: 19px; letter-spacing: -.25px; }
 #treatment-details hr { border: 0; border-top: 1px solid var(--dash-border); margin: 20px 0; }
 #treatment-details a { color: var(--dash-accent); text-decoration: underline; }
 #treatment-details ul, #treatment-details ol { padding-left: 24px; }
+.location-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 24px; }
+.location-card { min-width: 0; display: flex; flex-direction: column; padding: 24px; border: 1px solid var(--dash-border); border-radius: 18px; background: var(--dash-surface); }
+.location-card > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.location-number { font: 28px/1 var(--dash-font-heading); color: var(--dash-accent); }
+.location-card h2 { margin: 10px 0 14px; font-size: 28px; line-height: 1.25; }
+.location-address { margin: 0 0 18px; color: var(--dash-muted); font-size: 12px; min-height: 60px; overflow-wrap: anywhere; }
+.location-contact { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 6px 14px; font-size: 11px; margin-bottom: 20px; }
+.location-contact > span { color: var(--dash-muted); }
+.location-contact strong { font-weight: 500; overflow-wrap: anywhere; }
+.location-card iframe, .location-map-preview iframe { display: block; width: 100%; height: 230px; border: 1px solid var(--dash-border); border-radius: 12px; background: var(--dash-soft); }
+.location-card > iframe { margin-top: auto; }
+.location-card > footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+#preview-location-map { margin-top: 12px; }
+.location-map-preview { margin-top: 16px; }
+.location-map-preview > a { display: inline-flex; margin-top: 10px; }
+@media (max-width: 1000px) { .location-grid { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .location-grid { padding: 14px; gap: 14px; } .location-card { padding: 18px; } .location-card h2 { font-size: 24px; } .location-contact { grid-template-columns: 1fr; } }
