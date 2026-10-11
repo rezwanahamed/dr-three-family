@@ -40,13 +40,13 @@
 
 /* Website dashboard palette. Keep console contrast separate from public pages. */
 :root {
-  --dashboard-canvas: #eeedf3;
+  --dashboard-canvas: #f4f2f7;
   --dashboard-surface: #ffffff;
-  --dashboard-text: #26212e;
-  --dashboard-secondary: #575160;
-  --dashboard-border: #d7d3df;
+  --dashboard-text: #28222f;
+  --dashboard-secondary: #62596d;
+  --dashboard-border: #e1dbe8;
   --dashboard-control-border: #a59aac;
-  --dashboard-tint: #f0eaf4;
+  --dashboard-tint: #f0eaf5;
   --dashboard-purple: var(--brand-deep);
   --dashboard-draft-text: #75480a;
   --dashboard-draft-bg: #fff2d8;
