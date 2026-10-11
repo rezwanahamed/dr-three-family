@@ -168,3 +168,6 @@ Locations are managed at `/dashboard/#locations`. The page starts with the Chand
 
 
 New treatment drafts generate `slug` and `url` from their title automatically. Names are normalized to lowercase words separated by hyphens, with numeric suffixes (`-2`, `-3`, etc.) when a slug conflicts with an exported page, local draft or reserved dashboard/media/static path. A read-only slug preview appears below the title. Existing treatment URLs remain stable during editing; older drafts using `/services/` receive a generated slug when saved. Slugs are included in JSON exports. Uniqueness is checked against this local workspace; a production CMS should also enforce a database uniqueness constraint when importing/publishing drafts. Generating a draft slug does not create a public Django route automatically.
+
+
+Treatment rows have a Delete action with a confirmation dialog. Confirmed deletions remove the item and any matching local draft from the workspace, persist across reloads, and appear in Activity and the exported `deletions` list. Source snapshot files, public routes, uploaded media and public website content are not deleted by this local dashboard action. Removed slugs remain reserved to avoid accidental reuse before publication.

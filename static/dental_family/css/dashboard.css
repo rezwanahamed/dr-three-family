@@ -489,3 +489,10 @@ h2 { font-size: 19px; letter-spacing: -.25px; }
 .location-map-preview > a { display: inline-flex; margin-top: 10px; }
 @media (max-width: 1000px) { .location-grid { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .location-grid { padding: 14px; gap: 14px; } .location-card { padding: 18px; } .location-card h2 { font-size: 24px; } .location-contact { grid-template-columns: 1fr; } }
+.delete-treatment { color: var(--dashboard-danger, #a32943); border-color: transparent; background: transparent; }
+.delete-treatment:hover { color: var(--dashboard-danger, #a32943); border-color: #edc4cd; background: #fff2f5; }
+.delete-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+button.danger { background: var(--dashboard-danger, #a32943); color: white; border-color: var(--dashboard-danger, #a32943); }
+button.danger:hover { background: #852036; color: white; }
+#delete-treatment-dialog h2 { margin: 0 0 14px; font-size: 28px; }
+#delete-treatment-message { overflow-wrap: anywhere; }
