@@ -6,7 +6,7 @@ from pathlib import Path
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
-from django.http import FileResponse, Http404, JsonResponse
+from django.http import FileResponse, Http404, JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from django.views.decorators.http import require_POST
@@ -21,7 +21,25 @@ ROUTES = json.loads((ROOT / 'routes.json').read_text(encoding='utf-8'))
 
 
 def page(request, route='/'):
+    from .models import WebsiteWorkspace
+    from .public_content import managed_html
+    workspace = WebsiteWorkspace.objects.filter(pk=1).first()
+    published = workspace.published if workspace else {}
     info = ROUTES.get(route)
+    if published:
+        record = next((r for r in published['records'] if r['url']==route and r['section'] in {'pages','treatments','articles'}), None)
+        topic = next((topic for topic in published['topics'] if topic['url']==route), None)
+        if info and route.startswith('/faqs') and not topic:
+            return not_found(request)
+        if not info and topic:
+            info = {'template': ROUTES['/faqs-dental-braces/']['template']}
+        elif not info and record:
+            example = '/clear_aligner/' if record['section']=='treatments' else '/9-signs-that-your-child-should-see-a-padiatric-dentist/' if record['section']=='articles' else '/privacy-policy/'
+            info = {'template': ROUTES[example]['template']}
+        if info and not record and not topic:
+            return not_found(request)
+        if info:
+            return HttpResponse(managed_html(info['template'], request, route, published, route not in ROUTES))
     if info is None:
         raise Http404('Page not found')
     return render(request, info['template'])
@@ -36,6 +54,16 @@ def metadata_file(request, filename):
              'icon.svg': 'image/svg+xml', 'favicon.ico': 'image/x-icon'}
     if filename not in types:
         raise Http404
+    if filename == 'sitemap.xml':
+        from .models import WebsiteWorkspace
+        from xml.etree.ElementTree import Element, SubElement, tostring
+        workspace = WebsiteWorkspace.objects.filter(pk=1).first()
+        if workspace and workspace.published:
+            root = Element('urlset', xmlns='http://www.sitemaps.org/schemas/sitemap/0.9')
+            routes = {r['url'] for r in workspace.published['records'] if r['section'] in {'pages','treatments','articles'} and not r.get('robots','').startswith('noindex')} | {t['url'] for t in workspace.published['topics']}
+            for route in sorted(routes):
+                SubElement(SubElement(root,'url'),'loc').text = request.build_absolute_uri(route)
+            return HttpResponse(tostring(root, encoding='utf-8', xml_declaration=True), content_type=types[filename])
     return FileResponse((ROOT / 'static/dental_family' / filename).open('rb'), content_type=types[filename])
 
 
@@ -48,6 +76,14 @@ def missing_page(request, unmatched_path=''):
     canonical = '/' + unmatched_path.rstrip('/') + '/'
     if not request.path.endswith('/') and canonical in ROUTES:
         return redirect(canonical, permanent=True)
+    from .models import WebsiteWorkspace
+    workspace = WebsiteWorkspace.objects.filter(pk=1).first()
+    if workspace and workspace.published:
+        route = '/' + unmatched_path.strip('/') + '/'
+        if any(record['url']==route and record['section'] in {'pages','treatments','articles'} for record in workspace.published['records']) or any(topic['url']==route for topic in workspace.published['topics']):
+            if request.path != route:
+                return redirect(route, permanent=True)
+            return page(request, route)
     return not_found(request)
 
 
@@ -69,7 +105,7 @@ class DashboardLoginView(LoginView):
 @ensure_csrf_cookie
 @user_passes_test(lambda user: user.is_active and user.is_staff)
 def dashboard(request):
-    """Staff dashboard; content drafts remain browser-local."""
+    """Staff dashboard with shared database drafts and explicit publication."""
     return render(request, 'dental_family/dashboard/index.html')
 
 
@@ -112,3 +148,73 @@ def upload_image(request):
     filename = default_storage.save(f'gallery/{uuid4().hex}.webp', ContentFile(output.getvalue()))
     return JsonResponse({'url': default_storage.url(filename), 'filename': filename,
                          'width': width, 'height': height}, status=201)
+
+
+def staff_api(request):
+    user = getattr(request, 'user', None)
+    return bool(user and user.is_authenticated and user.is_active and user.is_staff)
+
+
+def workspace_response(workspace):
+    from .content import seeds
+    base = workspace.published or seeds()
+    from .content import seeds
+    gallery = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
+    records = [{**r,'gallery_category':r.get('gallery_category') or gallery.get(r['id']) or 'Our space'} if r['section']=='gallery' else r for r in base['records']]
+    return {'records': records, 'topics': base['topics'], 'services': base['services'], 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
+            'state': workspace.draft, 'revision': workspace.revision,
+            'published': bool(workspace.published)}
+
+
+@never_cache
+@csrf_protect
+def dashboard_content(request):
+    from django.db import transaction
+    from django.core.exceptions import ValidationError
+    from .models import WebsiteWorkspace
+    from .content import validate_state
+    if not staff_api(request):
+        return JsonResponse({'error': 'Staff access is required.'}, status=403)
+    if request.method not in {'GET','PUT'}:
+        return JsonResponse({'error': 'Method not allowed.'}, status=405)
+    with transaction.atomic():
+        workspace, _ = WebsiteWorkspace.objects.get_or_create(pk=1)
+        workspace = WebsiteWorkspace.objects.select_for_update().get(pk=1)
+        if request.method == 'GET':
+            return JsonResponse(workspace_response(workspace))
+        try:
+            payload = json.loads(request.body)
+            if payload.get('revision') != workspace.revision:
+                return JsonResponse({'error': 'Another session changed this workspace. Reload before saving.', 'conflict': True}, status=409)
+            workspace.draft = validate_state(payload.get('state'))
+        except (ValueError, TypeError, AttributeError, ValidationError) as error:
+            return JsonResponse({'error': str(error)}, status=400)
+        workspace.revision += 1
+        workspace.save()
+        return JsonResponse({'revision': workspace.revision})
+
+
+@require_POST
+@csrf_protect
+def publish_content(request):
+    from django.db import transaction
+    from django.core.exceptions import ValidationError
+    from .models import WebsiteWorkspace
+    from .content import validate_state, snapshot
+    if not staff_api(request):
+        return JsonResponse({'error':'Staff access is required.'}, status=403)
+    with transaction.atomic():
+        workspace, _ = WebsiteWorkspace.objects.get_or_create(pk=1)
+        workspace = WebsiteWorkspace.objects.select_for_update().get(pk=1)
+        try:
+            payload = json.loads(request.body)
+            if payload.get('revision') != workspace.revision:
+                return JsonResponse({'error':'Another session changed this workspace. Reload before publishing.','conflict':True}, status=409)
+            state = validate_state(payload.get('state'))
+            workspace.published = snapshot(workspace.published, state)
+        except (ValueError, TypeError, KeyError, AttributeError, ValidationError) as error:
+            return JsonResponse({'error':str(error)}, status=400)
+        workspace.draft = {'drafts': [], 'deletions': [], 'activity': state.get('activity', []), 'settings': state.get('settings', {})}
+        workspace.revision += 1
+        workspace.save()
+        return JsonResponse(workspace_response(workspace))

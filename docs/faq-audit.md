@@ -28,3 +28,7 @@ Refresh the FAQ snapshot with `python3 tools/build_faq.py`. The existing `tools/
 Use the **Manage topics** section above the FAQ library on the FAQs dashboard to manage topics. Add topic opens a dialog; Edit opens the same dialog to rename a topic. Remove opens a confirmation dialog that also offers question reassignment. Names are checked case-insensitively for duplicates. Renaming preserves the topic identifier, existing route, and question associations. Removing a populated topic requires moving its questions to another topic; moved questions are appended in their original order. The last populated topic cannot be removed without first adding a destination or removing its questions. Drag handles reorder topics with pointer/touch input or up/down arrow keys. The saved order is used by the topic list, FAQ filters, and FAQ editor topic dropdown. Topic changes and removal records persist in local storage and export as `faq_topics` and `deleted_faq_topics`, alongside the question drafts.
 
 The export includes `faq_topic_order` and a one-based `order` on each exported topic. Removal requires confirmation; Cancel or Escape leaves the topic and its questions unchanged.
+
+## Django integration
+
+The Django-hosted dashboard now saves shared server drafts and publishes through **Publish changes**. The earlier local-only workflow described above applies to the standalone HTML preview. See [dashboard-integration.md](dashboard-integration.md) for the current Django workflow.

@@ -575,3 +575,22 @@ button.danger:hover { background: #852036; color: white; }
 #catalog-editor-error,#catalog-remove-error { color:var(--dashboard-danger); }
 @media(max-width:1100px) { .catalog-manager-grid { grid-template-columns:1fr; } }
 @media(max-width:650px) { .catalog-manager { padding:20px; } .catalog-manager > .faq-topics-header { flex-wrap:wrap; align-items:flex-start; } #catalog-editor,#catalog-remove-dialog { padding:20px; } }
+#server-save-status { margin:0 0 16px; }
+#server-save-status:empty { display:none; }
+.save-error { color:var(--dashboard-danger); }
+#gallery-section-fields { border:0; padding:0; margin:24px 0; min-width:0; }
+#gallery-section-fields legend { font-size:14px; font-weight:600; color:var(--dash-text); }
+#gallery-section-error { color:var(--dashboard-danger); }
+.gallery-section-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-top:24px; }
+.gallery-section-item { padding:18px 20px; border:1px solid var(--dash-border); border-radius:var(--control-radius); background:var(--dash-soft); }
+.gallery-section-item strong,.gallery-section-item small { display:block; overflow-wrap:anywhere; }
+.gallery-section-item small { margin-top:4px; color:var(--dash-muted); }
+#gallery-section-dialog { width:min(500px,calc(100vw - 32px)); padding:28px; max-height:85vh; overflow-y:auto; }
+#gallery-section-dialog h2 { margin:4px 0; }
+#gallery-section-dialog .faq-topic-actions { justify-content:flex-end; margin-top:24px; }
+@media(max-width:650px) { #gallery-section-dialog { padding:20px; } }
+.gallery-section-actions { display:flex; gap:8px; margin-top:16px; }
+#delete-gallery-section-dialog { width:min(500px,calc(100vw - 32px)); padding:28px; max-height:85vh; overflow-y:auto; }
+#delete-gallery-section-dialog .faq-topic-actions { justify-content:flex-end; margin-top:24px; }
+#delete-gallery-section-error { color:var(--dashboard-danger); }
+@media(max-width:650px) { #delete-gallery-section-dialog { padding:20px; } }

@@ -21,7 +21,7 @@ for route, info in routes.items():
     records.append(dict(id=route, title=title, section=kind, description=description.get_text(' ',strip=True) if description else '', url=route, image=image.get('src','') if image else '', status='Website snapshot'))
 soup=BeautifulSoup((ROOT/'pages/gallery/index.html').read_text(),'html.parser')
 for i,img in enumerate(soup.select('.gallery-grid button img')):
-    records.append(dict(id=f'photo-{i}',title=img.get('alt','Clinic photo'),section='gallery',description=img.get('alt',''),url='/gallery/',image=img['src'],alt=img.get('alt',''),order=i+1,status='Website snapshot'))
+    records.append(dict(id=f'photo-{i}',title=img.get('alt','Clinic photo'),section='gallery',description=img.get('alt',''),url='/gallery/',image=img['src'],gallery_category=('Our space' if img.find_parent('button').get('data-category')=='Our spaces' else img.find_parent('button').get('data-category','Our space')),alt=img.get('alt',''),order=i+1,status='Website snapshot'))
 soup=BeautifulSoup((ROOT/'pages/our-doctors/index.html').read_text(),'html.parser')
 for i,card in enumerate(soup.select('main article')):
     heading=card.select_one('h2,h3')
@@ -49,7 +49,7 @@ for card in soup.select('main figure'):
         order=sum(r['section']=='clinic' for r in records)+1
         records.append(dict(id=f'clinic-photo-{order}', section='clinic', title=heading.get_text(' ',strip=True), description=description.get_text(' ',strip=True) if description else '', image=image['src'], alt=image.get('alt',''), order=order, url='/about-us/', status='Website snapshot'))
 (ROOT/'static/dental_family/dashboard-content.json').write_text(json.dumps(records,indent=2)+'\n')
-source=(ROOT/'pages/dashboard/index.html').read_text()
+source=(ROOT/'pages/dashboard/index.html').read_text().replace('<body ', '<body data-server-url="/dashboard/content/" data-publish-url="/dashboard/publish/" ', 1)
 import re
 source=re.sub(r'(["\'])/static/dental_family/([^"\']+)(["\'])',lambda m:m[1]+"{% static 'dental_family/"+m[2]+"' %}"+m[3],source)
 (ROOT/'templates/dental_family/dashboard/index.html').write_text('{% load static %}\n'+source)

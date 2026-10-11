@@ -7,6 +7,8 @@ urlpatterns = [
     path('dashboard/login/', views.DashboardLoginView.as_view(), name='login'),
     path('dashboard/logout/', LogoutView.as_view(), name='logout'),
     path('dashboard/upload-image/', views.upload_image, name='upload-image'),
+    path('dashboard/content/', views.dashboard_content, name='dashboard-content'),
+    path('dashboard/publish/', views.publish_content, name='publish-content'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard', views.legacy_redirect, {'destination': '/dashboard/'}),
 ] + [
