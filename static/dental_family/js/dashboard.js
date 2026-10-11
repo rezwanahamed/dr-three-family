@@ -59,7 +59,7 @@
     return {...Object.fromEntries(doctorFields.map(name=>[name,source?.[name]||''])),...record};
   }
   const all=()=>[...records.filter(r=>!store.drafts.some(d=>d.id===r.id)),...store.drafts.map(withRecordDetails)];
-  const searchable=r=>[r.title,r.description,...doctorFields.map(name=>r[name])].join(' ').toLowerCase();
+  const searchable=r=>[r.title,r.description,r.short_details,r.service,r.treatment,...doctorFields.map(name=>r[name])].join(' ').toLowerCase();
 
 
   const count=s=>all().filter(r=>r.section===s).length;
@@ -112,7 +112,7 @@
   function clinicIntro(){const page=all().find(r=>r.id==='/about-us/');return `<section class="panel clinic-intro"><span class="content-icon">${icon('clinic')}</span><div><span class="eyebrow">OUR CLINIC PAGE</span><h2>${escape(page?.title||'Our clinic')}</h2><p>Update the page introduction, then shape the photo collection below.</p></div><div class="heading-actions"><button data-edit="/about-us/">Edit introduction</button><a class="text-link" href="/about-us/" target="_blank" rel="noopener">View page ${icon('arrowUpRight')}</a></div></section>`;}
   function collection(){return `${section==='clinic'?clinicIntro():''}<section class="panel collection-panel"><div class="collection-heading"><div><h2>${section==='drafts'?'Your draft library':labels[section]+' library'}</h2><p>Find an item, review its details, and make your next update.</p></div><span class="library-icon">${icon(section)}</span></div><div class="toolbar"><label class="search" style="margin:0">${icon('search')}<input id="content-search" aria-label="Search content" placeholder="Search ${labels[section].toLowerCase()}…" value="${escape(search)}"></label><select id="status-filter" aria-label="Filter by status"><option value="all">All content</option><option value="Draft" ${filter==='Draft'?'selected':''}>Local drafts</option><option value="Website snapshot" ${filter==='Website snapshot'?'selected':''}>Website snapshot</option></select><select id="sort-content" aria-label="Sort content"><option value="default">Default order</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select><span id="result-count" class="result-count"></span></div><div id="results"></div></section>`;}
   function results(animateResults=true){const items=all().filter(r=>(section==='drafts'?r.status==='Draft':r.section===section)&&(filter==='all'||r.status===filter)&&searchable(r).includes(search.toLowerCase()));if(['clinic','gallery','doctors'].includes(section)&&sort==='default')items.sort((a,b)=>(Number(a.order)||1)-(Number(b.order)||1));if(sort!=='default')items.sort((a,b)=>a.title.localeCompare(b.title)*(sort==='za'?-1:1));$('#result-count').textContent=`${items.length} ${items.length===1?'item':'items'}`;
-    $('#results').innerHTML=!items.length?`<div class="empty">${icon('search')}<h3>${section==='drafts'&&!search?'No drafts yet':'No matching content'}</h3><p>${section==='drafts'&&!search?'Open any website item to save your first draft.':'Try another search or clear your filters.'}</p><button id="clear-search">${section==='drafts'&&!search?'Browse pages':'Clear filters'}</button></div>`:['clinic','gallery','doctors'].includes(section)?photoTable(items):`<div class="table-wrap"><table><thead><tr><th>Content</th><th>Status</th><th>Actions</th></tr></thead><tbody>${items.map(r=>`<tr><td><div class="table-content">${['doctors','gallery'].includes(r.section)&&safeURL(r.image)?`<img class="row-thumbnail" src="${safeURL(r.image)}" alt="" loading="lazy">`:`<span class="row-thumbnail placeholder">${icon(r.section)}</span>`}<div><button class="title-button" data-edit="${escape(r.id)}">${escape(r.title)}</button><small>${escape(r.url)}</small></div></div></td><td>${badge(r)}</td><td><button class="edit" data-edit="${escape(r.id)}" aria-label="Edit ${escape(r.title)}">Edit</button> <a class="text-link" href="${safeURL(r.url)}" target="_blank" rel="noopener" aria-label="Preview ${escape(r.title)}"><span class="preview-text">Preview</span> ${icon('arrowUpRight')}</a></td></tr>`).join('')}</tbody></table></div>`;
+    $('#results').innerHTML=!items.length?`<div class="empty">${icon('search')}<h3>${section==='drafts'&&!search?'No drafts yet':'No matching content'}</h3><p>${section==='drafts'&&!search?'Open any website item to save your first draft.':'Try another search or clear your filters.'}</p><button id="clear-search">${section==='drafts'&&!search?'Browse pages':'Clear filters'}</button></div>`:['clinic','gallery','doctors'].includes(section)?photoTable(items):`<div class="table-wrap"><table><thead><tr><th>Content</th><th>Status</th><th>Actions</th></tr></thead><tbody>${items.map(r=>`<tr><td><div class="table-content">${['doctors','gallery','treatments'].includes(r.section)&&safeURL(r.image)?`<img class="row-thumbnail" src="${safeURL(r.image)}" alt="" loading="lazy">`:`<span class="row-thumbnail placeholder">${icon(r.section)}</span>`}<div><button class="title-button" data-edit="${escape(r.id)}">${escape(r.title)}</button><small>${escape(r.section==='treatments'?(serviceCatalog().find(service=>service.id===r.service)?.name||'Service not selected')+(r.treatment?' · '+r.treatment:''):r.url)}</small>${r.section==='treatments'&&r.short_details?`<small>${escape(r.short_details.slice(0,100))}</small>`:''}</div></div></td><td>${badge(r)}</td><td><button class="edit" data-edit="${escape(r.id)}" aria-label="Edit ${escape(r.title)}">Edit</button> <a class="text-link" href="${safeURL(r.url)}" target="_blank" rel="noopener" aria-label="Preview ${escape(r.title)}"><span class="preview-text">Preview</span> ${icon('arrowUpRight')}</a></td></tr>`).join('')}</tbody></table></div>`;
     if(animateResults)reveal($$('#results tbody tr, #results .media-card, #results .doctor-card, #results .empty'),16);
     bindEditors();bindPhotoReordering();if($('#clear-search'))$('#clear-search').onclick=()=>{if(section==='drafts'&&!search){location.hash='pages';return;}search='';filter='all';$('#content-search').value='';$('#status-filter').value='all';results();};
   }
@@ -126,6 +126,72 @@
     if($('#settings-form'))$('#settings-form').onsubmit=e=>{e.preventDefault();const data=new FormData(e.target);store.settings={name:data.get('name').trim(),email:data.get('email').trim()};if(save()){updateWorkspace();toast('Workspace preferences saved');}};
   }
   function updateWorkspace(){$('.workspace strong').textContent=store.settings.name;}
+  const serviceCatalog=()=>[...(window.DashboardServices||[]),...(store.services||[])].map(service=>({...service,treatments:[...new Set([...service.treatments,...(store.treatmentOptions?.[service.id]||[])])]}));
+  function fillServices(selected=''){
+    $('#treatment-service').innerHTML='<option value="">Select a service</option>'+serviceCatalog().map(service=>`<option value="${escape(service.id)}">${escape(service.name)}</option>`).join('');
+    $('#treatment-service').value=selected;fillTreatments();
+  }
+  function fillTreatments(selected=''){
+    const service=serviceCatalog().find(item=>item.id===$('#treatment-service').value);
+    $('#treatment-option').innerHTML='<option value="">No specific treatment</option>'+(service?.treatments||[]).map(name=>`<option value="${escape(name)}">${escape(name)}</option>`).join('');
+    $('#treatment-option').value=selected;$('#treatment-option').disabled=!service;$('#add-treatment-option').disabled=!service;
+    $('#new-treatment').hidden=true;
+  }
+  $('#treatment-service').onchange=()=>{fillTreatments();$('#catalog-status').textContent='';};
+  $('#add-service').onclick=()=>{$('#new-service').hidden=false;$('#new-service-name').focus();};
+  $('#add-treatment-option').onclick=()=>{$('#new-treatment').hidden=false;$('#new-treatment-name').focus();};
+  $$('[data-cancel-catalog]').forEach(button=>button.onclick=()=>{$('#'+button.dataset.cancelCatalog).hidden=true;});
+  $('#create-service').onclick=()=>{
+    const name=$('#new-service-name').value.trim();if(!name){$('#catalog-status').textContent='Enter a service name.';return;}
+    const existing=serviceCatalog().find(service=>service.name.toLowerCase()===name.toLowerCase());
+    const id=existing?.id||'service-'+crypto.randomUUID();
+    if(!existing){store.services=store.services||[];store.services.push({id,name,treatments:[]});if(!save()){store.services.pop();return;}}
+    fillServices(id);$('#new-service').hidden=true;$('#new-service-name').value='';$('#catalog-status').textContent=existing?'Existing service selected.':'Service added to this workspace.';
+  };
+  $('#create-treatment-option').onclick=()=>{
+    const id=$('#treatment-service').value,name=$('#new-treatment-name').value.trim();if(!id||!name){$('#catalog-status').textContent='Select a service and enter a treatment name.';return;}
+    const service=serviceCatalog().find(service=>service.id===id),existing=service.treatments.find(value=>value.toLowerCase()===name.toLowerCase());
+    if(!existing){store.treatmentOptions=store.treatmentOptions||{};store.treatmentOptions[id]=store.treatmentOptions[id]||[];store.treatmentOptions[id].push(name);if(!save()){store.treatmentOptions[id].pop();return;}}
+    fillTreatments(existing||name);$('#new-treatment-name').value='';$('#catalog-status').textContent=existing?'Existing treatment selected.':'Treatment added to this service.';
+  };
+  const validRichLink=value=>/^(https?:\/\/|mailto:|tel:|\/(?!\/)|#)/i.test(value)&&!/[\u0000-\u0020]/.test(value);
+  function cleanDetails(html){
+    const template=document.createElement('template');template.innerHTML=html;
+    const allowed=new Set(['P','BR','B','STRONG','I','EM','U','S','STRIKE','H1','H2','H3','H4','H5','H6','UL','OL','LI','BLOCKQUOTE','DIV','PRE','CODE','HR','A']);
+    function clean(node){for(const child of [...node.childNodes]){if(child.nodeType===1){
+      if(['SCRIPT','STYLE','IFRAME','OBJECT'].includes(child.tagName)){child.remove();continue;}
+      clean(child);
+      if(!allowed.has(child.tagName)){child.replaceWith(...child.childNodes);continue;}
+      const href=child.tagName==='A'?child.getAttribute('href'):null;
+      const align=child.style.textAlign||child.getAttribute('align');
+      for(const attr of [...child.attributes])child.removeAttribute(attr.name);
+      if(href&&validRichLink(href))child.setAttribute('href',href);
+      if(['P','DIV','H1','H2','H3','H4','H5','H6','BLOCKQUOTE','PRE','LI'].includes(child.tagName)&&['left','center','right','justify'].includes(align))child.style.textAlign=align;
+    }else if(child.nodeType!==3)child.remove();}}
+    clean(template.content);return template.innerHTML;
+  }
+  function syncDetails(){if($('#editor-form').elements.section.value==='treatments')$('#editor-form').elements.details.value=cleanDetails($('#treatment-details').innerHTML);}
+  $('#treatment-details').addEventListener('input',syncDetails);
+  $('#treatment-details').addEventListener('paste',event=>{event.preventDefault();document.execCommand('insertText',false,event.clipboardData.getData('text/plain'));syncDetails();});
+  $$('[data-rich]').forEach(button=>{button.onmousedown=event=>event.preventDefault();button.onclick=()=>{$('#treatment-details').focus();document.execCommand(button.dataset.rich,false,button.dataset.richValue||null);syncDetails();};});
+  let richLinkRange=null;
+  $('#rich-link').onmousedown=event=>event.preventDefault();
+  $('#rich-link').onclick=()=>{
+    const selection=window.getSelection();
+    richLinkRange=selection.rangeCount&&$('#treatment-details').contains(selection.anchorNode)?selection.getRangeAt(0).cloneRange():null;
+    $('#rich-link-panel').hidden=false;$('#rich-link-url').value='';$('#rich-link-error').textContent='';$('#rich-link-url').focus();
+  };
+  $('#rich-link-apply').onclick=()=>{
+    const url=$('#rich-link-url').value.trim();
+    if(!validRichLink(url)){$('#rich-link-error').textContent='Enter an HTTPS, email, phone, or local page address.';return;}
+    const editor=$('#treatment-details');editor.focus();
+    if(richLinkRange){const selection=window.getSelection();selection.removeAllRanges();selection.addRange(richLinkRange);}
+    else{const range=document.createRange();range.selectNodeContents(editor);range.collapse(false);const selection=window.getSelection();selection.removeAllRanges();selection.addRange(range);}
+    if(window.getSelection().isCollapsed){const link=document.createElement('a');link.href=url;link.textContent=url;document.execCommand('insertHTML',false,link.outerHTML);}
+    else document.execCommand('createLink',false,url);
+    syncDetails();$('#rich-link-panel').hidden=true;richLinkRange=null;
+  };
+  $('#rich-link-cancel').onclick=()=>{$('#rich-link-panel').hidden=true;richLinkRange=null;$('#treatment-details').focus();};
   let uploadController=null,uploading=false;
   function showImagePreview(){
     const url=$('#editor-form').elements.image.value;
@@ -161,6 +227,8 @@
   });
   function updateEditorFields(){
     const form=$('#editor-form'),isDoctor=form.elements.section.value==='doctors',isClinic=['clinic','gallery'].includes(form.elements.section.value),isTreatment=form.elements.section.value==='treatments';
+    $('#treatment-fields').hidden=!isTreatment;$('#treatment-fields').disabled=!isTreatment;
+    $('#treatment-details').contentEditable=String(isTreatment);
     $('#image-file').multiple=false;
     $('#image-field-label').textContent=isTreatment?'Treatment thumbnail':'Image';
     $('#image-field-help').textContent=isTreatment?'Upload one thumbnail (JPEG, PNG, or WebP, up to 10 MB). A new upload replaces the current thumbnail.':'Choose a JPEG, PNG, or WebP up to 10 MB. Uploads are stored in the gallery.';
@@ -170,12 +238,12 @@
     form.elements.url.closest('label').hidden=isClinic;form.elements.url.disabled=isClinic;
     $('#doctor-fields').hidden=!isDoctor;
     $('#doctor-fields').disabled=!isDoctor;
-    form.elements.description.required=!isDoctor;
+    form.elements.description.required=!isDoctor&&!isTreatment;
     $('#editor-name-label').textContent=isDoctor?'Doctor name':'Title';
     for(const name of ['description','url']){
       const field=form.elements.namedItem(name);
-      field.closest('label').hidden=isDoctor||((isClinic||isTreatment)&&name==='url');
-      field.disabled=isDoctor||((isClinic||isTreatment)&&name==='url');
+      field.closest('label').hidden=isDoctor||(isTreatment&&name==='description')||((isClinic||isTreatment)&&name==='url');
+      field.disabled=isDoctor||(isTreatment&&name==='description')||((isClinic||isTreatment)&&name==='url');
     }
     $('#editor-title').textContent=isDoctor?(editing?'Edit doctor':'Add doctor'):(isClinic?(editing?'Edit photo':'Add photo'):(editing?'Edit content':'Add content'));
     if(isClinic)form.elements.url.value=form.elements.section.value==='gallery'?'/gallery/':'/about-us/';
@@ -188,14 +256,22 @@
     resetUpload();const form=$('#editor-form');form.reset();
     for(const name of ['title','section','description','url','image','alt','order',...doctorFields.filter(name=>name!=='appointment_url')])form.elements.namedItem(name).value=record?.[name]||(name==='section'?(Object.keys(descriptions).includes(section)&&!['activity','settings','drafts'].includes(section)?section:'pages'):'');
     if(['clinic','gallery'].includes(form.elements.section.value)&&!record)form.elements.order.value=Math.max(0,...all().filter(r=>r.section===form.elements.section.value).map(r=>Number(r.order)||0))+1;
-    updateEditorFields();showImagePreview();$('#upload-status').textContent=form.elements.image.value?'Current image · Choose a file to replace it.':'No image selected.';$('#discard-notice').hidden=true;
+    updateEditorFields();
+    if(form.elements.section.value==='treatments'){
+      form.elements.short_details.value=record?.short_details??record?.description??'';
+      $('#treatment-details').innerHTML=cleanDetails(record?.details||`<p>${escape(record?.description||'')}</p>`);
+      const service=record?.service||serviceCatalog().find(item=>record?.url===`/${item.id}/`)?.id||'';
+      fillServices(service);fillTreatments(record?.treatment||'');syncDetails();
+    }
+    $('#rich-link-panel').hidden=true;richLinkRange=null;$('#new-service').hidden=true;$('#new-treatment').hidden=true;$('#catalog-status').textContent='';
+    showImagePreview();$('#upload-status').textContent=form.elements.image.value?'Current image · Choose a file to replace it.':'No image selected.';$('#discard-notice').hidden=true;
     editorInitial=JSON.stringify(Object.fromEntries(new FormData(form)));
     openDialog($('#editor'));$('.editor-body').scrollTop=0;
   }
-  $('#add').onclick=()=>openEditor();function closeEditor(){if(JSON.stringify(Object.fromEntries(new FormData($('#editor-form'))))!==editorInitial){$('#discard-notice').hidden=false;motion($('#discard-notice'),[{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}]);$('#keep-editing').focus();}else closeDialog($('#editor'));}
+  $('#add').onclick=()=>openEditor();function closeEditor(){syncDetails();if(JSON.stringify(Object.fromEntries(new FormData($('#editor-form'))))!==editorInitial){$('#discard-notice').hidden=false;motion($('#discard-notice'),[{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}]);$('#keep-editing').focus();}else closeDialog($('#editor'));}
   $('#close-editor').onclick=$('#cancel-editor').onclick=closeEditor;$('#editor').addEventListener('cancel',e=>{e.preventDefault();closeEditor();});$('#keep-editing').onclick=()=>{$('#discard-notice').hidden=true;$('#editor-form input[name="title"]').focus();};$('#discard-editing').onclick=()=>closeDialog($('#editor'));
-  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['clinic','gallery'].includes(data.section)){data.url=data.section==='gallery'?'/gallery/':'/about-us/';data.order=Number(data.order);if(!data.alt||!data.image||!Number.isInteger(data.order)||data.order<1){toast('Enter an image, alt text, and a display order of 1 or more.');return;}}if(data.section==='treatments')data.url=all().find(r=>r.id===editing)?.url||'/services/';if(data.section==='doctors'){const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:data.image||previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast('Draft saved in this browser');}};
-  $('#export').onclick=()=>{const blob=new Blob([JSON.stringify({drafts:store.drafts.map(withRecordDetails),settings:store.settings},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='dr-teeth-website-drafts.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Drafts exported');};
+  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}syncDetails();const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(['clinic','gallery'].includes(data.section)){data.url=data.section==='gallery'?'/gallery/':'/about-us/';data.order=Number(data.order);if(!data.alt||!data.image||!Number.isInteger(data.order)||data.order<1){toast('Enter an image, alt text, and a display order of 1 or more.');return;}}if(data.section==='treatments'){data.url=all().find(r=>r.id===editing)?.url||'/services/';data.details=cleanDetails(data.details);const text=document.createElement('div');text.innerHTML=data.details;data.description=text.textContent.trim();if(!serviceCatalog().some(service=>service.id===data.service)||!data.short_details||!data.description){toast('Select a service and enter short details and details.');return;}if(data.treatment&&!serviceCatalog().find(service=>service.id===data.service).treatments.includes(data.treatment)){toast('Choose a treatment belonging to the selected service.');return;}}if(data.section==='doctors'){const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:data.image||previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast('Draft saved in this browser');}};
+  $('#export').onclick=()=>{const blob=new Blob([JSON.stringify({drafts:store.drafts.map(withRecordDetails),services:serviceCatalog(),settings:store.settings},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='dr-teeth-website-drafts.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Drafts exported');};
   $('#menu').onclick=()=>setNavigation(!$('#sidebar').classList.contains('open'));$('#nav-backdrop').onclick=()=>setNavigation(false);
   $('#account').onclick=()=>openDialog($('#account-dialog'));$('#close-account').onclick=()=>closeDialog($('#account-dialog'));
   function globalResults(){const query=$('#global-query').value.toLowerCase().trim();const items=all().filter(r=>!query||`${searchable(r)} ${labels[r.section]}`.toLowerCase().includes(query)).slice(0,8);queryIndex=0;$('#global-results').innerHTML=items.length?items.map((r,i)=>`<button class="command-result ${i===0?'selected':''}" data-record="${escape(r.id)}"><span class="content-icon">${icon(r.section)}</span><span><strong>${escape(r.title)}</strong><small>${labels[r.section]} · ${r.status}</small></span><span>${icon('enter')}</span></button>`).join(''):'<div class="empty"><h3>No results found</h3><p>Try a different title or content type.</p></div>';$$('.command-result').forEach(b=>b.onclick=async()=>{await closeDialog($('#search-dialog'));openEditor(all().find(r=>r.id===b.dataset.record));});}

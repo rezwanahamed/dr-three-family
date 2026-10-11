@@ -243,7 +243,7 @@ dialog::backdrop { background: #20182765; backdrop-filter: blur(4px); }
 #close-editor { padding: 0; width: 33px; min-height: 33px; border-color: var(--dash-border); }
 .editor-note { display: flex; align-items: center; gap: 8px; background: var(--dash-soft); border-radius: 9px; padding: 13px; font-size: 10px; line-height: 1.8; }
 .editor-actions { display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; border-top: 1px solid var(--dash-border); background: white; padding: 20px 29px; }
-#doctor-fields, #clinic-fields { border: 0; padding: 0; margin: 24px 0 0; min-width: 0; }
+#doctor-fields, #clinic-fields, #treatment-fields { border: 0; padding: 0; margin: 24px 0 0; min-width: 0; }
 fieldset legend { font-size: 13px; color: var(--dash-accent); font-weight: 600; }
 #discard-notice { background: #fff5e2; border: 1px solid #ead29e; padding: 15px; margin: 17px 0; border-radius: 9px; }
 #discard-notice p { font-size: 11px; margin: 0 0 10px; color: #75480a; }
@@ -440,3 +440,35 @@ h2 { font-size: 19px; letter-spacing: -.25px; }
 .upload-picker:focus-within { outline: 3px solid var(--dash-accent); outline-offset: 3px; }
 .image-upload[aria-busy="true"] .upload-picker { opacity: .65; cursor: wait; }
 .image-upload #upload-status { margin: 10px 0 0; }
+.catalog-create { padding: 20px; margin: 16px 0 24px; border: 1px solid var(--dash-border); border-radius: 12px; background: var(--dash-soft); }
+.catalog-create > label { margin: 0; gap: 10px; }
+.catalog-create > div { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.catalog-create > div button { min-height: 38px; padding: 8px 14px; }
+#treatment-fields > .text-link { margin: 10px 0 4px; min-height: 34px; padding: 6px 12px; font-size: 11px; }
+#editor .field-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; font-weight: inherit; }
+#editor .field-requirement { color: var(--dash-muted); font-size: 11px; font-weight: 400; white-space: nowrap; }
+#treatment-fields > label { margin-top: 24px; gap: 9px; }
+#treatment-fields > label:first-of-type { margin-top: 16px; }
+#catalog-status:empty { display: none; }
+#details-label { margin-bottom: 9px; }
+.rich-editor { border: 1px solid #bcb0c8; border-radius: 12px; overflow: hidden; background: var(--dash-surface); margin-bottom: 22px; }
+.rich-editor:focus-within { outline: 2px solid var(--dash-accent); outline-offset: 2px; }
+.rich-toolbar { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; background: var(--dash-soft); border-bottom: 1px solid var(--dash-border); }
+.rich-tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.rich-tool-group + .rich-tool-group { padding-left: 8px; border-left: 1px solid var(--dash-border); }
+.rich-toolbar button { min-width: 34px; min-height: 34px; padding: 5px 9px; background: var(--dash-surface); font-size: 12px; }
+.rich-toolbar button:hover { background: white; border-color: var(--dash-accent); }
+.rich-link-panel { padding: 14px; border-bottom: 1px solid var(--dash-border); background: var(--dash-soft); }
+.rich-link-panel label { margin: 0 0 10px; }
+.rich-link-panel > div { display: flex; flex-wrap: wrap; gap: 8px; }
+#treatment-details { min-height: 230px; padding: 18px; outline: none; overflow-wrap: anywhere; }
+#treatment-details:empty::before { content: attr(data-placeholder); color: var(--dash-muted); pointer-events: none; }
+#treatment-details p { margin: 0 0 12px; }
+#treatment-details h2 { font-size: 25px; margin: 16px 0 10px; }
+#treatment-details h1 { font-size: 30px; line-height: 1.25; margin: 18px 0 12px; }
+#treatment-details h3 { font-size: 21px; margin: 14px 0 10px; }
+#treatment-details blockquote { margin: 16px 0; padding: 8px 16px; border-left: 3px solid var(--dash-accent); background: var(--dash-soft); }
+#treatment-details pre { padding: 12px; border-radius: 8px; background: var(--dash-soft); font: 12px/1.7 monospace; white-space: pre-wrap; }
+#treatment-details hr { border: 0; border-top: 1px solid var(--dash-border); margin: 20px 0; }
+#treatment-details a { color: var(--dash-accent); text-decoration: underline; }
+#treatment-details ul, #treatment-details ol { padding-left: 24px; }
