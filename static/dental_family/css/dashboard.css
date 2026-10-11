@@ -594,3 +594,13 @@ button.danger:hover { background: #852036; color: white; }
 #delete-gallery-section-dialog .faq-topic-actions { justify-content:flex-end; margin-top:24px; }
 #delete-gallery-section-error { color:var(--dashboard-danger); }
 @media(max-width:650px) { #delete-gallery-section-dialog { padding:20px; } }
+
+/* Reserve space for both gallery actions inside the table's final column. */
+.gallery-table { min-width:820px; }
+.gallery-table th:nth-child(4) { width:180px; }
+.gallery-table th:last-child { width:210px; }
+.photo-row-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+.photo-row-actions .edit { margin-right:0; }
+.photo-row-actions button { flex-shrink:0; }
+.gallery-table td:last-child { overflow:hidden; }
+.gallery-table .clinic-row-copy { flex:1; }
