@@ -8,6 +8,34 @@
     if (!reduced.matches && element?.animate) return element.animate(frames, options);
   };
 
+
+  // Reveal treatment cards in batches of six on the treatment listing page.
+  $$('[data-treatment-library]').forEach(grid => {
+    const cards = $$('.treatment-card--card', grid), batch = 6;
+    let visible = Math.min(batch, cards.length);
+    if (cards.length <= batch) return;
+    const controls = document.createElement('div');
+    controls.className = 'treatment-load-more';
+    const button = document.createElement('button');
+    button.type = 'button';button.className = 'button';button.textContent = 'See more';
+    button.setAttribute('aria-controls', grid.id);
+    const status = document.createElement('p');
+    status.setAttribute('role', 'status');status.setAttribute('aria-live', 'polite');
+    controls.append(button, status);grid.after(controls);
+    function update() {
+      cards.forEach((card, index) => { card.hidden = index >= visible; });
+      status.textContent = `${visible} of ${cards.length} treatments`;
+      button.hidden = visible >= cards.length;
+    }
+    button.addEventListener('click', () => {
+      const firstNew = visible;
+      visible = Math.min(visible + batch, cards.length);update();
+      cards.slice(firstNew, visible).forEach(card => animate(card,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:300,easing:'cubic-bezier(.22,1,.36,1)'}));
+      cards[firstNew]?.focus({preventScroll:true});
+    });
+    update();
+  });
+
   // Navigation: desktop hover/focus panels and the mobile menu.
   const nav = $('#main-nav');
   const toggle = $('.menu-toggle');
