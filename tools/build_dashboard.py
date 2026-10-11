@@ -38,6 +38,14 @@ for i,card in enumerate(soup.select('main article')):
             registration=registration.get_text(' ', strip=True).removeprefix('BM&DC ').strip() if registration else '',
             appointment_url=appointment.get('href', '') if appointment else '',
         )
+soup=BeautifulSoup((ROOT/'pages/about-us/index.html').read_text(),'html.parser')
+for card in soup.select('main figure'):
+    heading=card.select_one('figcaption h3')
+    image=card.select_one('img')
+    description=card.select_one('figcaption p')
+    if heading and image:
+        order=sum(r['section']=='clinic' for r in records)+1
+        records.append(dict(id=f'clinic-photo-{order}', section='clinic', title=heading.get_text(' ',strip=True), description=description.get_text(' ',strip=True) if description else '', image=image['src'], alt=image.get('alt',''), order=order, url='/about-us/', status='Website snapshot'))
 (ROOT/'static/dental_family/dashboard-content.json').write_text(json.dumps(records,indent=2)+'\n')
 source=(ROOT/'pages/dashboard/index.html').read_text()
 import re

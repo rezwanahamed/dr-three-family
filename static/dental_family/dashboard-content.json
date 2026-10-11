@@ -517,5 +517,82 @@
     "position": "",
     "registration": "",
     "appointment_url": "/appointment/"
+  },
+  {
+    "id": "clinic-photo-1",
+    "section": "clinic",
+    "title": "A warm welcome",
+    "description": "Step inside our clinic.",
+    "image": "/static/dental_family/assets/images/clinic.jpg",
+    "alt": "Clinic corridor beside the glass-fronted dental sterilization room",
+    "order": 1,
+    "url": "/about-us/",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "clinic-photo-2",
+    "section": "clinic",
+    "title": "Room to feel at ease",
+    "description": "A closer look at our treatment spaces.",
+    "image": "/static/dental_family/assets/images/gallery-1.jpg",
+    "alt": "Dental treatment chair, overhead light and instrument station at Dr. Teeth",
+    "order": 2,
+    "url": "/about-us/",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "clinic-photo-3",
+    "section": "clinic",
+    "title": "Care, up close",
+    "description": "The spaces where we look after your smile.",
+    "image": "/static/dental_family/assets/images/gallery-3.jpg",
+    "alt": "Dental chair and equipment beside the clinic windows",
+    "order": 3,
+    "url": "/about-us/",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "clinic-photo-4",
+    "section": "clinic",
+    "title": "A walk through the clinic",
+    "description": "Art and familiar details along our corridor.",
+    "image": "/static/dental_family/assets/images/detail.jpg",
+    "alt": "Clinic hallway with framed dental artwork and overhead spotlights",
+    "order": 4,
+    "url": "/about-us/",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "clinic-photo-5",
+    "section": "clinic",
+    "title": "A closer look at your care",
+    "description": "Dental imaging equipment in our treatment space.",
+    "image": "/static/dental_family/assets/images/care.jpg",
+    "alt": "Laptop displaying dental X-rays beside dental imaging equipment",
+    "order": 5,
+    "url": "/about-us/",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "clinic-photo-6",
+    "section": "clinic",
+    "title": "Space for a conversation",
+    "description": "Our consultation desk and treatment room.",
+    "image": "/static/dental_family/assets/images/gallery-2.jpg",
+    "alt": "Consultation desk and dental chair beside the clinic windows",
+    "order": 6,
+    "url": "/about-us/",
+    "status": "Website snapshot"
+  },
+  {
+    "id": "clinic-photo-7",
+    "section": "clinic",
+    "title": "The view from inside",
+    "description": "A wider view of our light-filled treatment room.",
+    "image": "/static/dental_family/assets/images/clinic-window-view.webp",
+    "alt": "Wide view of the clinic treatment room with a dental chair and large windows",
+    "order": 7,
+    "url": "/about-us/",
+    "status": "Website snapshot"
   }
 ]
