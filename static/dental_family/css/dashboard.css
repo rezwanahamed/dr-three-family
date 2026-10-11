@@ -422,3 +422,13 @@ h2 { font-size: 19px; letter-spacing: -.25px; }
   h2 { font-size: 18px; }
   .doctor-card .title-button { font-size: 18px; }
 }
+
+/* Doctor profiles share the Gallery table and ordering controls. */
+.doctor-table { min-width:900px; }
+.doctor-table th:nth-child(3) { width:300px; }
+.doctor-table th:nth-child(4) { width:auto; }
+.doctor-table th:nth-child(5) { width:150px; }
+.doctor-table td { height:110px; }
+.doctor-table .clinic-thumbnail { width:56px; height:64px; object-position:center 20%; }
+.doctor-qualification-summary { margin:0; color:var(--dash-text); font-size:11px; line-height:1.7; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; white-space:pre-line; }
+@media(max-width:650px) { .doctor-table td { height:110px; } }

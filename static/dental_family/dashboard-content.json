@@ -489,7 +489,8 @@
     "training": "Advanced training in cosmetic dentistry (Bio-Clear method)\nAdvanced training in root canal treatment",
     "position": "",
     "registration": "8625",
-    "appointment_url": "/appointment/"
+    "appointment_url": "/appointment/",
+    "order": 1
   },
   {
     "id": "doctor-1",
@@ -504,7 +505,8 @@
     "training": "Advanced training in root canal treatment\nAdvanced training in prosthetic treatment",
     "position": "",
     "registration": "8624",
-    "appointment_url": "/appointment/"
+    "appointment_url": "/appointment/",
+    "order": 2
   },
   {
     "id": "doctor-2",
@@ -519,7 +521,8 @@
     "training": "",
     "position": "Senior Lecturer, Orthodontic Department, CIDC",
     "registration": "5116",
-    "appointment_url": "/appointment/"
+    "appointment_url": "/appointment/",
+    "order": 3
   },
   {
     "id": "doctor-3",
@@ -534,7 +537,8 @@
     "training": "Advanced training in implant surgery",
     "position": "",
     "registration": "",
-    "appointment_url": "/appointment/"
+    "appointment_url": "/appointment/",
+    "order": 4
   },
   {
     "id": "clinic-photo-1",

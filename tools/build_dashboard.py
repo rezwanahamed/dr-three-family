@@ -25,7 +25,7 @@ for i,card in enumerate(soup.select('main article')):
     heading=card.select_one('h2,h3')
     img=card.select_one('img')
     if heading:
-        records.append(dict(id=f'doctor-{i}',title=heading.get_text(' ',strip=True),section='doctors',description='',url='/our-doctors/',image=img['src'] if img else '',status='Website snapshot'))
+        records.append(dict(id=f'doctor-{i}',title=heading.get_text(' ',strip=True),section='doctors',description='',url='/our-doctors/',image=img['src'] if img else '',order=i+1,status='Website snapshot'))
         details = [item.get_text(' ', strip=True) for item in card.select('.doctor-biography li')]
         specialty = card.select_one('.doctor-biography .eyebrow')
         registration = card.select_one('.registration')
