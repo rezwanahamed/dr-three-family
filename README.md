@@ -174,3 +174,9 @@ Treatment rows have a Delete action with a confirmation dialog. Confirmed deleti
 
 
 Article drafts now include an automatically generated unique title slug, short details, sanitized rich HTML details, one Pillow thumbnail upload and thumbnail alt text. The article editor shares treatment formatting controls while hiding service/treatment selectors and the old Website path/Description fields. SEO fields include `seo_title`, `meta_description`, comma-separated `keywords` (duplicates removed), absolute HTTP(S) `canonical_url`, `robots`, `og_title` and `og_description`. Blank SEO/social fields may fall back to the article title/short details when integrated into a CMS; the thumbnail is intended as the default social image. Existing article URLs remain stable. All values persist locally and are included in draft exports; public Django templates must consume these fields when you connect publishing before they affect live metadata.
+
+
+Treatments and articles share the Search & social settings section: SEO title, meta description, keywords, canonical URL, search visibility, social title/description, and thumbnail alt text. Both editors validate HTTP(S) canonical URLs and deduplicate keywords. Treatment SEO values persist in local drafts and JSON exports, with existing treatment URLs unchanged; live metadata still requires the publishing integration.
+
+
+Articles now share the treatment Delete action and confirmation flow. Confirmed removals persist locally, remove matching drafts, and appear in Activity and exported `deletions` with the correct content section. The public website and media files remain unchanged until deletion exports are integrated into publishing.

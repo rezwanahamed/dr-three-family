@@ -243,7 +243,7 @@ dialog::backdrop { background: #20182765; backdrop-filter: blur(4px); }
 #close-editor { padding: 0; width: 33px; min-height: 33px; border-color: var(--dash-border); }
 .editor-note { display: flex; align-items: center; gap: 8px; background: var(--dash-soft); border-radius: 9px; padding: 13px; font-size: 10px; line-height: 1.8; }
 .editor-actions { display: flex; justify-content: flex-end; gap: 10px; flex-shrink: 0; border-top: 1px solid var(--dash-border); background: white; padding: 20px 29px; }
-#doctor-fields, #clinic-fields, #treatment-fields, #location-fields, #content-fields, #article-fields { border: 0; padding: 0; margin: 24px 0 0; min-width: 0; }
+#doctor-fields, #clinic-fields, #treatment-fields, #location-fields, #content-fields, #seo-fields { border: 0; padding: 0; margin: 24px 0 0; min-width: 0; }
 fieldset legend { font-size: 13px; color: var(--dash-accent); font-weight: 600; }
 #discard-notice { background: #fff5e2; border: 1px solid #ead29e; padding: 15px; margin: 17px 0; border-radius: 9px; }
 #discard-notice p { font-size: 11px; margin: 0 0 10px; color: #75480a; }
@@ -447,8 +447,8 @@ h2 { font-size: 19px; letter-spacing: -.25px; }
 #treatment-fields > .text-link { margin: 10px 0 4px; min-height: 34px; padding: 6px 12px; font-size: 11px; }
 #editor .field-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; font-weight: inherit; }
 #editor .field-requirement { color: var(--dash-muted); font-size: 11px; font-weight: 400; white-space: nowrap; }
-#treatment-fields > label, #content-fields > label, #article-fields > label { margin-top: 24px; gap: 9px; }
-#treatment-fields > label:first-of-type, #content-fields > label:first-of-type, #article-fields > label:first-of-type { margin-top: 16px; }
+#treatment-fields > label, #content-fields > label, #seo-fields > label { margin-top: 24px; gap: 9px; }
+#treatment-fields > label:first-of-type, #content-fields > label:first-of-type, #seo-fields > label:first-of-type { margin-top: 16px; }
 #catalog-status:empty { display: none; }
 #details-label { margin-bottom: 9px; }
 .rich-editor { border: 1px solid #bcb0c8; border-radius: 12px; overflow: hidden; background: var(--dash-surface); margin-bottom: 22px; }
@@ -489,13 +489,13 @@ h2 { font-size: 19px; letter-spacing: -.25px; }
 .location-map-preview > a { display: inline-flex; margin-top: 10px; }
 @media (max-width: 1000px) { .location-grid { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .location-grid { padding: 14px; gap: 14px; } .location-card { padding: 18px; } .location-card h2 { font-size: 24px; } .location-contact { grid-template-columns: 1fr; } }
-.delete-treatment { color: var(--dashboard-danger, #a32943); border-color: transparent; background: transparent; }
-.delete-treatment:hover { color: var(--dashboard-danger, #a32943); border-color: #edc4cd; background: #fff2f5; }
+.delete-content { color: var(--dashboard-danger, #a32943); border-color: transparent; background: transparent; }
+.delete-content:hover { color: var(--dashboard-danger, #a32943); border-color: #edc4cd; background: #fff2f5; }
 .delete-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 button.danger { background: var(--dashboard-danger, #a32943); color: white; border-color: var(--dashboard-danger, #a32943); }
 button.danger:hover { background: #852036; color: white; }
-#delete-treatment-dialog h2 { margin: 0 0 14px; font-size: 28px; }
-#delete-treatment-message { overflow-wrap: anywhere; }
+#delete-content-dialog h2 { margin: 0 0 14px; font-size: 28px; }
+#delete-content-message { overflow-wrap: anywhere; }
 #editor-form[data-section="treatments"] input[name="title"],
 #new-service-name, #new-treatment-name,
 #treatment-service, #treatment-service option,
