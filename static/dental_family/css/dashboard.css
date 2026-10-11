@@ -496,3 +496,7 @@ button.danger { background: var(--dashboard-danger, #a32943); color: white; bord
 button.danger:hover { background: #852036; color: white; }
 #delete-treatment-dialog h2 { margin: 0 0 14px; font-size: 28px; }
 #delete-treatment-message { overflow-wrap: anywhere; }
+#editor-form[data-section="treatments"] input[name="title"],
+#new-service-name, #new-treatment-name,
+#treatment-service, #treatment-service option,
+#treatment-option, #treatment-option option { text-transform: capitalize; }
