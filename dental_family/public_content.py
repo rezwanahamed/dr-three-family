@@ -59,7 +59,7 @@ def managed_html(template, request, route, data, is_new=False):
             prose = soup.select_one('main .prose')
             if prose:
                 replace_children(prose, list(fragment(clean_html(record.get('details') or '<p>'+escape(record.get('description',''))+'</p>')).contents))
-                if record.get('image'):
+                if record['section']=='articles' and record.get('image'):
                     hero = fragment('<div class="article-hero"><img loading="lazy" alt="" /></div>').div
                     image(hero.img, record)
                     prose.insert(0, hero)

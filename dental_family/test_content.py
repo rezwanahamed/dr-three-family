@@ -178,3 +178,14 @@ class ContentIntegrationTests(TestCase):
         public=self.soup('/gallery/')
         self.assertEqual([node.text for node in public.select('.filter-label')],['All photos','Our space','Our team','Our technology'])
         self.assertEqual(public.select_one('.filter-row button')['aria-pressed'],'true')
+
+    def test_treatment_thumbnail_only_shown_on_listing_cards(self):
+        treatment=self.edit('treatments',title='Treatment without detail thumbnail',image='/media/gallery/treatment-thumb.webp',short_details='Treatment card summary',details='<p>Treatment details remain visible.</p>')
+        self.assertEqual(self.submit().status_code,200)
+        detail=self.soup(treatment['url'])
+        self.assertIsNone(detail.select_one('main .article-hero'))
+        self.assertFalse(any(img.get('src')==treatment['image'] for img in detail.select('main img')))
+        self.assertIn('Treatment details remain visible.',detail.select_one('.prose').text)
+        listing=self.soup('/services/')
+        card=listing.select_one(f'a.treatment-card--card[href="{treatment["url"]}"]')
+        self.assertEqual(card.img['src'],treatment['image'])

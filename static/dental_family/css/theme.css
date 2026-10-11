@@ -29,6 +29,7 @@
   --accent-earth: #8b6e64;
   --surface-rose: #eee6e9;
   --text-secondary: #766372;
+  --prose-text-color: #655e65;
   --focus-ring: #876b80;
   --shadow-color: #302031;
   --plum: var(--brand-deep);
@@ -54,4 +55,20 @@
   --dashboard-danger-border: #e9bdc8;
   --dashboard-draft-text: #75480a;
   --dashboard-draft-bg: #fff2d8;
+}
+
+/* Body text published from the rich-text editor. */
+.prose div,
+.prose p {
+  color: var(--prose-text-color);
+}
+
+/* Headings keep the brand colour, including headings nested in rich-text divs. */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: var(--brand-heading);
 }
