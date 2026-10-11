@@ -1,8 +1,11 @@
 from django.urls import path, re_path
 from . import views
+from django.contrib.auth.views import LogoutView
 
 app_name = 'dental_family'
 urlpatterns = [
+    path('dashboard/login/', views.DashboardLoginView.as_view(), name='login'),
+    path('dashboard/logout/', LogoutView.as_view(), name='logout'),
     path('dashboard/upload-image/', views.upload_image, name='upload-image'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard', views.legacy_redirect, {'destination': '/dashboard/'}),

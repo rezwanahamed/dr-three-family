@@ -500,3 +500,9 @@ button.danger:hover { background: #852036; color: white; }
 #new-service-name, #new-treatment-name,
 #treatment-service, #treatment-service option,
 #treatment-option, #treatment-option option { text-transform: capitalize; }
+
+.logout-form { margin: 0; display: inline-flex; }
+.logout-form button { min-height: 34px; padding: 7px 12px; font-size: 11px; background: var(--dashboard-danger); border-color: var(--dashboard-danger); color: white; }
+.logout-form button:hover { background: var(--dashboard-danger-hover); border-color: var(--dashboard-danger-hover); color: white; }
+
+@media (max-width: 600px) { .top-actions > .logout-form { display: none; } }

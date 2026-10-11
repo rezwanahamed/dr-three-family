@@ -48,6 +48,10 @@
   --dashboard-control-border: #a59aac;
   --dashboard-tint: #f0eaf5;
   --dashboard-purple: var(--brand-deep);
+  --dashboard-danger: #b4233c;
+  --dashboard-danger-hover: #961c31;
+  --dashboard-danger-soft: #fff1f4;
+  --dashboard-danger-border: #e9bdc8;
   --dashboard-draft-text: #75480a;
   --dashboard-draft-bg: #fff2d8;
 }

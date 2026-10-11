@@ -135,7 +135,7 @@ Framer Motion as a runtime dependency.
 
 Open `/dashboard/` for the Cloudflare-inspired website console (HTML, CSS, JavaScript). It contains a website overview, searchable pages, treatments, doctors, gallery, articles, activity, and workspace settings. It shares the brand variables in `static/dental_family/css/theme.css`.
 
-The console is a UI preview: edits are browser-local drafts, exportable as JSON. It has no authentication, database writes, live analytics, or publication API. Connect staff authentication and Django models before using it as a production CMS. No patient records are included.
+The console uses Django staff authentication and sessions. Content edits remain browser-local drafts, exportable as JSON; there is no publication API or live analytics. Authentication/session records use the Django database, and image uploads are saved to media storage. Connect Django content models and publishing before using it as a production CMS. No patient records are included.
 
 After regenerating the website export, run `python tools/build_dashboard.py` (requires Beautiful Soup) to refresh the content snapshot and Django dashboard template. The editable dashboard source is `pages/dashboard/index.html`, with `static/dental_family/css/dashboard.css` and `static/dental_family/js/dashboard.js`. The Django template uses the static tag so it supports configured static hosting.
 
@@ -158,7 +158,7 @@ Doctors now use the same sortable table as Gallery: uniform portraits, names, sp
 
 Dashboard image uploads use Pillow. Choose a file in any content editor instead of entering an image URL. JPEG, PNG and still WebP files up to 10 MB and 40 megapixels are accepted. Images are oriented automatically, resized to fit 2400×2400, stripped of source metadata, and saved as WebP with unique filenames under `media/gallery/`. Existing image references stay intact until replaced. Save the draft after uploading to associate the image with the content; drafts still live in this browser and do not publish automatically. Uploaded files remain on disk even if an edit is discarded.
 
-Install dependencies with `pip install -r requirements.txt`. The demo serves `/media/` while DEBUG is enabled. For production, serve MEDIA_ROOT at MEDIA_URL through your web server/storage service, keep DEBUG disabled, and integrate Django authentication/session middleware: the upload endpoint requires an authenticated staff user outside local preview mode. CSRF tokens are required for uploads in both modes. Back up the media folder separately; it is ignored by Git.
+Install dependencies with `pip install -r requirements.txt`. The demo serves `/media/` while DEBUG is enabled. For production, serve MEDIA_ROOT at MEDIA_URL through your web server/storage service, keep DEBUG disabled, and retain Django authentication/session middleware: the upload endpoint requires an active authenticated staff user in all modes. CSRF tokens are required for uploads in both modes. Back up the media folder separately; it is ignored by Git.
 
 
 Treatment drafts have a required service, an optional treatment within that service, short details, rich HTML details, and one thumbnail. Service/treatment dropdowns are seeded from the website’s service groups; Add service and Add treatment create browser-local options (duplicates select the existing option). Changing service resets the treatment choice. Details support H1–H3, paragraphs, bold, italic, underline, strikethrough, lists, quotes, code blocks, alignment, indentation, dividers, safe links, undo/redo and clear formatting. Image insertion is excluded. Pasted content stays plain text; saved HTML uses an allowlist that retains safe links and text alignment. Legacy descriptions populate the editor and remain available as plain text in exports; `short_details` and `details` are stored separately. Catalog options are persisted locally and included in JSON exports. These changes do not automatically publish new content or create public routes.
@@ -183,3 +183,20 @@ Articles now share the treatment Delete action and confirmation flow. Confirmed 
 
 
 Pages also expose the shared Search & social settings: SEO title, meta description, keywords, canonical URL, robots, social sharing title/description and image alt text. Existing page paths and description editing remain available. These values persist in local drafts and JSON exports; publishing integration is required to apply them to live page metadata.
+
+
+### Dashboard login and logout
+
+Open `/dashboard/login/` to sign in with the email address and password on your Django staff account. Dashboard access and image uploads require an active staff account, including during DEBUG development. Anonymous dashboard requests redirect to login. Logout is a CSRF-protected POST, available in the desktop header and account menu (including mobile); it invalidates the Django session. Password visibility and Stay signed in controls are included. Dashboard responses use no-store caching. Existing browser-local drafts survive logout; draft storage is still scoped to the browser rather than the account.
+
+From this directory, initialize authentication tables and create your account:
+
+```bash
+venv/bin/python manage.py migrate
+venv/bin/python manage.py createsuperuser
+```
+
+The current workspace migrations have already been applied. No default username/password is created. `db.sqlite3` is the default local database; `DJANGO_DATABASE_PATH` can select another SQLite database. Integration projects need auth/contenttypes/sessions apps, SessionMiddleware, CsrfViewMiddleware, AuthenticationMiddleware, a database, and LOGIN_URL/LOGIN_REDIRECT_URL/LOGOUT_REDIRECT_URL settings, as configured in `demo/settings.py`. Login and logout use Django’s authentication views; login credentials are never stored in browser storage. See [Django authentication documentation](https://docs.djangoproject.com/en/6.0/topics/auth/default/).
+
+
+Dashboard login now uses email rather than username. `DashboardAuthenticationForm` validates an email field and `EmailBackend` looks up accounts case-insensitively. Only active staff accounts can access the dashboard; missing, inactive, or duplicate-email matches are rejected. Usernames remain Django’s internal account identifiers, but are not login credentials here. Supply a unique email address when running `createsuperuser`, or set an email on an existing staff account. Integration settings must include `AUTHENTICATION_BACKENDS = ['dental_family.backends.EmailBackend']`.
