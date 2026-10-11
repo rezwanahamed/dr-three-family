@@ -164,7 +164,7 @@
   {
     "id": "/faqs-3d-intraoral-scanner/",
     "title": "3D intraoral scanning: your questions.",
-    "section": "articles",
+    "section": "pages",
     "description": "A closer look at digital scanning and treatment planning.",
     "url": "/faqs-3d-intraoral-scanner/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
@@ -173,7 +173,7 @@
   {
     "id": "/faqs-dental-braces/",
     "title": "Dental braces: your questions.",
-    "section": "articles",
+    "section": "pages",
     "description": "Getting started with braces and orthodontic care.",
     "url": "/faqs-dental-braces/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
@@ -182,7 +182,7 @@
   {
     "id": "/faqs-dental-implant/",
     "title": "Dental implants: your questions.",
-    "section": "articles",
+    "section": "pages",
     "description": "Planning, suitability, and caring for your implant.",
     "url": "/faqs-dental-implant/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
@@ -191,7 +191,7 @@
   {
     "id": "/faqs_teeth_whitening/",
     "title": "Teeth whitening: your questions.",
-    "section": "articles",
+    "section": "pages",
     "description": "Whitening options, sensitivity, and what to expect.",
     "url": "/faqs_teeth_whitening/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
@@ -200,7 +200,7 @@
   {
     "id": "/faqsinvisalign-clear-aligner/",
     "title": "Clear aligners: your questions.",
-    "section": "articles",
+    "section": "pages",
     "description": "Your questions about aligners and everyday wear.",
     "url": "/faqsinvisalign-clear-aligner/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
