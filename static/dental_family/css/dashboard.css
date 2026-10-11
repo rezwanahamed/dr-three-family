@@ -604,3 +604,5 @@ button.danger:hover { background: #852036; color: white; }
 .photo-row-actions button { flex-shrink:0; }
 .gallery-table td:last-child { overflow:hidden; }
 .gallery-table .clinic-row-copy { flex:1; }
+
+.homepage-treatment-note{display:flex;align-items:center;gap:16px;padding:18px 24px;margin:0;border-bottom:1px solid var(--border,#e3dce9);color:var(--dash-muted);font-size:13px}.homepage-treatment-note strong{color:var(--dash-accent);white-space:nowrap}.homepage-treatment-table{min-width:900px}.homepage-treatment-table th:first-child{width:45%}.homepage-treatment-toggle{display:inline-flex;align-items:center;gap:9px;cursor:pointer}.homepage-treatment-toggle input{width:18px;height:18px;accent-color:var(--dash-accent)}.homepage-treatment-toggle:has(input:disabled){opacity:.5;cursor:not-allowed}.homepage-treatment-table select{min-width:76px}.homepage-treatment-table .table-content small{max-width:430px;display:block;white-space:normal}.homepage-treatment-table .gallery-row-actions{display:flex;align-items:center;gap:10px}@media(max-width:640px){.homepage-treatment-note{align-items:flex-start;flex-direction:column;gap:5px}}

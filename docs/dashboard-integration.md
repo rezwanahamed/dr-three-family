@@ -45,3 +45,5 @@ The gallery photo editor includes a required Section dropdown with Our space, Ou
 Gallery section cards also provide Edit and Delete. Renaming updates the section on its photos without removing images. Delete opens a confirmation dialog; sections with photos require a destination section. Default sections can also be renamed or removed, and removed names stay removed after publication. The server rejects deleting a section while photos still reference it.
 
 The public gallery always starts on All photos. Its remaining filter buttons come exclusively from the published backend gallery section list, including empty custom sections. All photos is a permanent UI filter, not an editable section. Legacy Our spaces/Our space names are normalized to Our space to prevent duplicate filters. The initial unpublished gallery also uses the backend seed data.
+
+Homepage treatments: use the Homepage checkboxes in the Treatments table to select up to six items. Change Position to arrange them. These settings save with workspace drafts and take effect on the public homepage after publishing. Removing a selected treatment also removes it from the homepage selection.

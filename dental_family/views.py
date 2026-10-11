@@ -27,6 +27,9 @@ def page(request, route='/'):
     published = workspace.published if workspace else {}
     info = ROUTES.get(route)
     if published:
+        alias = next((r for r in published['records'] if r['section']=='treatments' and route in r.get('url_aliases',[])),None)
+        if alias:
+            return redirect(alias['url'], permanent=True)
         record = next((r for r in published['records'] if r['url']==route and r['section'] in {'pages','treatments','articles'}), None)
         topic = next((topic for topic in published['topics'] if topic['url']==route), None)
         if info and route.startswith('/faqs') and not topic:
@@ -83,6 +86,9 @@ def missing_page(request, unmatched_path=''):
     workspace = WebsiteWorkspace.objects.filter(pk=1).first()
     if workspace and workspace.published:
         route = '/' + unmatched_path.strip('/') + '/'
+        alias = next((r for r in workspace.published['records'] if r['section']=='treatments' and route in r.get('url_aliases',[])),None)
+        if alias:
+            return redirect(alias['url'], permanent=True)
         if any(record['url']==route and record['section'] in {'pages','treatments','articles'} for record in workspace.published['records']) or any(topic['url']==route for topic in workspace.published['topics']):
             if request.path != route:
                 return redirect(route, permanent=True)

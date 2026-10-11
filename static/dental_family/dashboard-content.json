@@ -19,7 +19,7 @@
   },
   {
     "id": "/9-signs-that-your-child-should-see-a-padiatric-dentist/",
-    "title": "Your child\u2019s first dental visit",
+    "title": "Your child’s first dental visit",
     "section": "articles",
     "description": "Make an early visit feel familiar, positive, and comfortable.",
     "url": "/9-signs-that-your-child-should-see-a-padiatric-dentist/",
@@ -42,7 +42,9 @@
     "description": "Explore thoughtfully planned solutions to replace missing teeth and restore your smile.",
     "url": "/advanced_oral_surgery/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": true,
+    "homepage_order": 4
   },
   {
     "id": "/appointment/",
@@ -100,7 +102,7 @@
   },
   {
     "id": "/category/padiatric-dentistry/",
-    "title": "Children\u2019s dentistry",
+    "title": "Children’s dentistry",
     "section": "articles",
     "description": "A little reading to help you prepare for your next conversation with the dentist.",
     "url": "/category/padiatric-dentistry/",
@@ -114,11 +116,13 @@
     "description": "A discreet, modern approach to a straighter smile, designed around your everyday life.",
     "url": "/clear_aligner/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": true,
+    "homepage_order": 3
   },
   {
     "id": "/contact/",
-    "title": "Let\u2019s start a conversation.",
+    "title": "Let’s start a conversation.",
     "section": "pages",
     "description": "Ask a question, find your nearest branch, or talk to us about planning your first visit.",
     "url": "/contact/",
@@ -132,7 +136,9 @@
     "description": "Explore subtle refinements to the shape and appearance of your teeth.",
     "url": "/cosmetic-bonding/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/cosmetic_dentistry/",
@@ -141,16 +147,20 @@
     "description": "Small refinements. A renewed confidence. Explore the possibilities for your smile.",
     "url": "/cosmetic_dentistry/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": true,
+    "homepage_order": 2
   },
   {
     "id": "/emergency_dental_care/",
     "title": "Urgent dental care",
     "section": "treatments",
-    "description": "When something doesn\u2019t feel right, talk to our team about your next available appointment.",
+    "description": "When something doesn’t feel right, talk to our team about your next available appointment.",
     "url": "/emergency_dental_care/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": true,
+    "homepage_order": 6
   },
   {
     "id": "/faq/",
@@ -213,7 +223,9 @@
     "description": "Carefully considered restoration for teeth affected by decay or damage.",
     "url": "/fillings/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/financing-2/",
@@ -222,7 +234,9 @@
     "description": "Talk to the team about treatment costs and the payment method that works for you.",
     "url": "/financing-2/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/gallery/",
@@ -240,7 +254,9 @@
     "description": "Healthy habits start here. Keep your smile feeling its best with regular, personalized care.",
     "url": "/general_dentistry/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": true,
+    "homepage_order": 1
   },
   {
     "id": "/google-reviews/",
@@ -258,7 +274,9 @@
     "description": "A consultation-led approach to the balance of your teeth and gum line.",
     "url": "/gum-reshaping/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/how-to-maintain-a-beautiful-holiday-smile/",
@@ -294,13 +312,15 @@
     "description": "An indicative guide to selected treatments. Your dentist will explain your personal plan and estimate before treatment.",
     "url": "/pricing-guide-2/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/privacy-policy/",
     "title": "Your privacy matters.",
     "section": "pages",
-    "description": "The clinic\u2019s published policy on personal information and communication.",
+    "description": "The clinic’s published policy on personal information and communication.",
     "url": "/privacy-policy/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
     "status": "Website snapshot"
@@ -312,7 +332,9 @@
     "description": "A thoughtful check-in for your teeth, gums, and everyday oral health.",
     "url": "/regular-dental-checkup/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/restorative_dentistry/",
@@ -321,13 +343,15 @@
     "description": "Personalized treatment to restore function, comfort, and confidence.",
     "url": "/restorative_dentistry/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/root-canal-treatment-for-children-what-parents-need-to-know/",
-    "title": "Questions about your child\u2019s dental treatment",
+    "title": "Questions about your child’s dental treatment",
     "section": "articles",
-    "description": "Prepare for a clear, reassuring conversation about your child\u2019s care.",
+    "description": "Prepare for a clear, reassuring conversation about your child’s care.",
     "url": "/root-canal-treatment-for-children-what-parents-need-to-know/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
     "status": "Website snapshot"
@@ -339,7 +363,9 @@
     "description": "Focused care for a tooth that needs extra attention, with your comfort at the heart of it.",
     "url": "/root-canals/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": true,
+    "homepage_order": 5
   },
   {
     "id": "/services/",
@@ -357,7 +383,9 @@
     "description": "Explore professional whitening options with a dentist who understands your smile.",
     "url": "/teeth-whitening/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/veneers/",
@@ -366,7 +394,9 @@
     "description": "Discover whether veneers are the right choice for your smile goals.",
     "url": "/veneers/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot"
+    "status": "Website snapshot",
+    "show_on_homepage": false,
+    "homepage_order": 0
   },
   {
     "id": "/what-foods-can-you-eat-after-getting-dental-implant/",

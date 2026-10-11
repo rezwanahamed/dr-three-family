@@ -28,7 +28,7 @@ class ContentIntegrationTests(TestCase):
         return record
 
     def soup(self, route):
-        response = self.client.get(route)
+        response = self.client.get(route, follow=True)
         self.assertEqual(response.status_code, 200)
         return BeautifulSoup(response.content, 'html.parser')
 
@@ -187,5 +187,66 @@ class ContentIntegrationTests(TestCase):
         self.assertFalse(any(img.get('src')==treatment['image'] for img in detail.select('main img')))
         self.assertIn('Treatment details remain visible.',detail.select_one('.prose').text)
         listing=self.soup('/services/')
-        card=listing.select_one(f'a.treatment-card--card[href="{treatment["url"]}"]')
+        canonical=self.client.get(treatment["url"]).url
+        card=listing.select_one(f'a.treatment-card--card[href="{canonical}"]')
         self.assertEqual(card.img['src'],treatment['image'])
+
+    def test_homepage_treatment_selection_order_and_limit(self):
+        treatments=[r for r in self.base['records'] if r['section']=='treatments']
+        self.assertEqual(len([r for r in treatments if r.get('show_on_homepage')]),6)
+        chosen=list(reversed(treatments[-6:]))
+        self.state['homepageTreatmentOrder']=[r['id'] for r in chosen]
+        self.assertEqual(self.submit().status_code,200)
+        cards=self.soup('/').select('main .treatment-card--card')
+        self.assertEqual([card['href'] for card in cards],[r['url'] for r in chosen])
+        self.base=self.client.get('/dashboard/content/').json()
+        self.state['homepageTreatmentOrder']=[r['id'] for r in treatments[:7]]
+        self.assertEqual(self.submit('/dashboard/content/').status_code,400)
+        self.assertEqual(self.submit().status_code,400)
+        self.assertEqual(len(self.soup('/').select('main .treatment-card--card')),6)
+
+    def test_homepage_treatment_selection_survives_edit_and_can_be_empty(self):
+        selected=next(r for r in self.base['records'] if r['section']=='treatments' and r.get('show_on_homepage'))
+        edited={**selected,'title':'Updated homepage treatment'}
+        edited.pop('show_on_homepage');edited.pop('homepage_order')
+        self.state['drafts']=[edited]
+        self.assertEqual(self.submit().status_code,200)
+        self.assertIn('Updated homepage treatment',self.soup('/').get_text())
+        self.base=self.client.get('/dashboard/content/').json()
+        self.state={'drafts':[],'homepageTreatmentOrder':[]}
+        self.assertEqual(self.submit().status_code,200)
+        self.assertEqual(len(self.soup('/').select('main .treatment-card--card')),0)
+
+    def test_title_generates_unique_treatment_slug_and_detail_url(self):
+        template=next(r for r in self.base['records'] if r['section']=='treatments')
+        self.state['drafts']=[{**template,'id':f'new-{i}','show_on_homepage':False,'title':"Café & Children's Dental Care!",'url':f'/ignored-{i}/','details':f'<p>Details for treatment {i}</p>'} for i in range(2)]
+        response=self.submit()
+        self.assertEqual(response.status_code,200)
+        records=[r for r in response.json()['records'] if r['id'].startswith('new-')]
+        self.assertEqual([r['slug'] for r in records],['cafe-and-childrens-dental-care','cafe-and-childrens-dental-care-2'])
+        for i,record in enumerate(records):
+            self.assertEqual(record['url'],f"/{record['slug']}/")
+            self.assertContains(self.client.get(record['url']),f'Details for treatment {i}')
+            self.assertRedirects(self.client.get(record['url'].rstrip('/')),record['url'],status_code=301)
+            self.assertIsNotNone(self.soup('/services/').select_one(f'a[href="{record["url"]}"]'))
+
+    def test_renaming_treatment_updates_url_and_redirects_old_url(self):
+        record=self.edit('treatments',title='Modern Smile Care',details='<p>Matching treatment details</p>')
+        old_url=record['url']
+        self.assertEqual(self.submit().status_code,200)
+        self.assertRedirects(self.client.get(old_url),'/modern-smile-care/',status_code=301)
+        self.base=self.client.get('/dashboard/content/').json()
+        current=next(r for r in self.base['records'] if r['id']==record['id'])
+        self.state={'drafts':[{**current,'title':'Modern Smile Care Plus'}]}
+        self.assertEqual(self.submit().status_code,200)
+        self.assertRedirects(self.client.get('/modern-smile-care/'),'/modern-smile-care-plus/',status_code=301)
+        self.assertRedirects(self.client.get(old_url),'/modern-smile-care-plus/',status_code=301)
+        self.assertContains(self.client.get('/modern-smile-care-plus/'),'Matching treatment details')
+
+    def test_treatment_slugs_avoid_page_and_topic_urls(self):
+        template=next(r for r in self.base['records'] if r['section']=='treatments')
+        self.state['drafts']=[{**template,'id':'new-services','show_on_homepage':False,'title':'Services','url':'/arbitrary/'}]
+        response=self.submit()
+        self.assertEqual(response.status_code,200)
+        record=next(r for r in response.json()['records'] if r['id']=='new-services')
+        self.assertEqual(record['url'],'/services-2/')

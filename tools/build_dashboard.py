@@ -48,6 +48,12 @@ for card in soup.select('main figure'):
     if heading and image:
         order=sum(r['section']=='clinic' for r in records)+1
         records.append(dict(id=f'clinic-photo-{order}', section='clinic', title=heading.get_text(' ',strip=True), description=description.get_text(' ',strip=True) if description else '', image=image['src'], alt=image.get('alt',''), order=order, url='/about-us/', status='Website snapshot'))
+homepage=BeautifulSoup((ROOT/'pages/index.html').read_text(),'html.parser')
+homepage_urls=[card.get('href') for card in homepage.select('main .treatment-card--card')][:6]
+for record in records:
+    if record['section']=='treatments':
+        record['show_on_homepage']=record['url'] in homepage_urls
+        record['homepage_order']=homepage_urls.index(record['url'])+1 if record['url'] in homepage_urls else 0
 (ROOT/'static/dental_family/dashboard-content.json').write_text(json.dumps(records,indent=2)+'\n')
 source=(ROOT/'pages/dashboard/index.html').read_text().replace('<body ', '<body data-server-url="/dashboard/content/" data-publish-url="/dashboard/publish/" ', 1)
 import re

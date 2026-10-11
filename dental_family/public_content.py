@@ -35,6 +35,10 @@ def managed_html(template, request, route, data, is_new=False):
     soup = BeautifulSoup(render_to_string(template, request=request), 'html.parser')
     data = gallery_snapshot(data)
     records = data['records']
+    aliases = {url:r['url'] for r in records if r['section']=='treatments' for url in r.get('url_aliases',[])}
+    for link in soup.select('a[href]'):
+        if link['href'] in aliases:
+            link['href'] = aliases[link['href']]
     record = next((r for r in records if r['section'] in {'pages','articles','treatments'} and r['url'] == route), None)
     if record and (record.get('_edited') or is_new):
         text(soup.select_one('main h1'), record['title'])
@@ -208,6 +212,18 @@ def managed_html(template, request, route, data, is_new=False):
     for selector,section in [('.treatment-card--card','treatments'),('.blog-card','articles')]:
         cards=soup.select('main '+selector)
         if not cards:
+            continue
+        if route=='/' and section=='treatments':
+            container=cards[0].parent
+            originals={card.get('href'):deepcopy(card) for card in cards}
+            selected=sorted((r for r in records if r['section']=='treatments' and r.get('show_on_homepage')),key=lambda r:r.get('homepage_order',0))[:6]
+            nodes=[]
+            for index,r in enumerate(selected,1):
+                card=deepcopy(originals.get(r['url'],cards[0]));card['href']=r['url']
+                text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r)
+                text(card.select_one('.treatment-card--number'),str(index).zfill(2))
+                nodes.append(card)
+            replace_children(container,nodes)
             continue
         base=deepcopy(cards[0]);containers=[];shown=set()
         for card in cards:

@@ -5,6 +5,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
+from django.utils.text import slugify
 
 ROOT = Path(__file__).resolve().parents[1]
 SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', 'locations', 'faqs'}
@@ -38,6 +39,12 @@ def gallery_snapshot(data):
     from copy import deepcopy
     result = deepcopy(data)
     result['gallery_sections'] = gallery_names(data.get('gallery_sections', ['Our space','Our team','Our technology']))
+    homepage_defaults = {r['id']:r for r in seeds()['records'] if r['section']=='treatments'}
+    for record in result['records']:
+        if record['section']=='treatments':
+            default = homepage_defaults.get(record['id'], {})
+            record.setdefault('show_on_homepage', default.get('show_on_homepage', False))
+            record.setdefault('homepage_order', default.get('homepage_order', 0))
     original = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     for record in result['records']:
         if record['section']=='gallery':
@@ -75,6 +82,10 @@ def validate_state(data):
     for name in ['drafts','deletions','activity','services','faqTopics','deletedFAQTopics','deletedServices','faqTopicOrder','serviceOrder','galleryCategories','deletedGalleryCategories']:
         if name in data and (not isinstance(data[name], list) or len(data[name]) > 2000):
             raise ValidationError(f'Invalid {name}.')
+    if 'homepageTreatmentOrder' in data:
+        ids = data['homepageTreatmentOrder']
+        if not isinstance(ids, list) or len(ids)>6 or not all(isinstance(value,str) for value in ids) or len(set(ids))!=len(ids):
+            raise ValidationError('Select up to six unique homepage treatments.')
     for name in ['settings','serviceEdits','treatmentOptions','optionOrder']:
         if name in data and not isinstance(data[name], dict):
             raise ValidationError(f'Invalid {name}.')
@@ -123,13 +134,56 @@ def ordered(items, ids, key):
     return sorted(items, key=lambda item: positions.get(key(item), len(ids)))
 
 
+def treatment_slug(title):
+    title = title.replace('’', "'").replace("'", '').replace('&', ' and ')
+    return slugify(title)[:100].rstrip('-') or 'treatment'
+
+
+def assign_treatment_urls(records, original, drafts, topics):
+    """Generate canonical treatment URLs and retain previous URLs as redirects."""
+    edited = {r['id'] for r in drafts if r['section']=='treatments'}
+    old = {r['id']:r for r in original}
+    exported = json.loads((ROOT / 'routes.json').read_text())
+    original_urls = {r['url'] for r in original if r['section']=='treatments'}
+    used = {'/dashboard/', '/static/', '/media/'} | (set(exported)-original_urls)
+    used.update(t['url'] for t in topics)
+    used.update(r['url'] for r in records if r['id'] not in edited)
+    for r in records:
+        used.update(old.get(r['id'],{}).get('url_aliases',[]))
+    for r in records:
+        if r['id'] not in edited:
+            continue
+        previous = old.get(r['id'], {})
+        own_aliases = set(previous.get('url_aliases', []))
+        base = treatment_slug(r['title'])
+        slug = base
+        suffix = 2
+        while '/' + slug + '/' in used-own_aliases:
+            slug = f'{base}-{suffix}'
+            suffix += 1
+        r['slug'] = slug
+        r['url'] = '/' + slug + '/'
+        aliases = own_aliases | ({previous['url']} if previous.get('url') else set())
+        r['url_aliases'] = sorted(aliases-{r['url']})
+        used.add(r['url'])
+        used.update(r['url_aliases'])
+
+
 def snapshot(published, state):
-    base = published or seeds()
+    base = gallery_snapshot(published or seeds())
     by_id = {record['id']: record for record in base['records']}
     for record in state.get('drafts', []):
-        by_id[record['id']] = {**record, 'status': 'Website snapshot', '_edited': True}
+        by_id[record['id']] = {**by_id.get(record['id'], {}), **record, 'status': 'Website snapshot', '_edited': True}
     for deletion in state.get('deletions', []):
         by_id.pop(deletion['id'], None)
+    selected = state.get('homepageTreatmentOrder', [r['id'] for r in sorted(by_id.values(), key=lambda r:r.get('homepage_order',0)) if r['section']=='treatments' and r.get('show_on_homepage')])
+    selected = [identifier for identifier in selected if identifier not in {d['id'] for d in state.get('deletions', [])}]
+    if len(selected)>6 or any(identifier not in by_id or by_id[identifier]['section']!='treatments' for identifier in selected):
+        raise ValidationError('Select up to six existing treatments for the homepage.')
+    for record in by_id.values():
+        if record['section']=='treatments':
+            record['show_on_homepage'] = record['id'] in selected
+            record['homepage_order'] = selected.index(record['id'])+1 if record['id'] in selected else 0
     topics = {topic['id']: topic for topic in base['topics']}
     topics.update({topic['id']: topic for topic in state.get('faqTopics', [])})
     for topic in state.get('deletedFAQTopics', []):
@@ -142,6 +196,7 @@ def snapshot(published, state):
     for service_id, service in services.items():
         options = list(dict.fromkeys(service['treatments'] + state.get('treatmentOptions', {}).get(service_id, [])))
         service['treatments'] = ordered(options, state.get('optionOrder', {}).get(service_id, []), lambda value: value)
+    assign_treatment_urls(list(by_id.values()), base['records'], state.get('drafts',[]), list(topics.values()))
     result = {'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
     topic_routes = {}
     for topic in result['topics']:
