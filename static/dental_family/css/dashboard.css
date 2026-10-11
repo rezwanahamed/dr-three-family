@@ -558,3 +558,20 @@ button.danger:hover { background: #852036; color: white; }
 
 .faq-topic-number { flex-shrink:0; min-width:28px; color:var(--dash-muted); font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; text-align:center; }
 @media(max-width:650px) { .faq-topic-number { min-width:20px; font-size:11px; } .faq-topic-info { gap:6px; } }
+.catalog-manager { padding:28px; margin-bottom:24px; }
+.catalog-manager h2 { margin:4px 0; }
+.catalog-manager-grid { display:grid; grid-template-columns:1fr; gap:28px; margin-top:24px; }
+.catalog-manager-grid > div { min-width:0; }
+.catalog-manager-grid h3 { margin:0 0 18px; font-size:14px; }
+.catalog-row:has([aria-pressed="true"]) { background:var(--dash-soft); border-radius:var(--control-radius); }
+.catalog-row .title-button { text-align:left; white-space:normal; }
+.catalog-row .faq-topic-info { gap:8px; }
+.catalog-row { gap:8px; }
+.catalog-row > div:last-child { gap:4px; }
+.catalog-row > div:last-child button { padding:8px 10px; }
+#catalog-editor,#catalog-remove-dialog { width:min(500px,calc(100vw - 32px)); padding:28px; max-height:85vh; overflow-y:auto; }
+#catalog-editor h2,#catalog-remove-dialog h2 { margin:0 0 16px; }
+#catalog-editor .faq-topic-actions,#catalog-remove-dialog .faq-topic-actions { justify-content:flex-end; margin-top:24px; }
+#catalog-editor-error,#catalog-remove-error { color:var(--dashboard-danger); }
+@media(max-width:1100px) { .catalog-manager-grid { grid-template-columns:1fr; } }
+@media(max-width:650px) { .catalog-manager { padding:20px; } .catalog-manager > .faq-topics-header { flex-wrap:wrap; align-items:flex-start; } #catalog-editor,#catalog-remove-dialog { padding:20px; } }
