@@ -555,3 +555,6 @@ button.danger:hover { background: #852036; color: white; }
 .faq-topic-row.dragging { background:var(--dash-soft); box-shadow:0 0 0 1px var(--dash-border); border-radius:var(--control-radius); }
 .faq-topic-row.dragging .drag-handle { cursor:grabbing; }
 @media(max-width:650px) { .faq-topic-info { gap:8px; } #faq-topic-removal { padding:20px; } }
+
+.faq-topic-number { flex-shrink:0; min-width:28px; color:var(--dash-muted); font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; text-align:center; }
+@media(max-width:650px) { .faq-topic-number { min-width:20px; font-size:11px; } .faq-topic-info { gap:6px; } }
