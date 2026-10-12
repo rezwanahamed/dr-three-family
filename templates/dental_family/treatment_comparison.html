@@ -1,0 +1,12 @@
+<section class="treatment-comparison" data-treatment-comparison aria-label="Before and after comparison">
+<figure class="smile-comparison--figure">
+<div class="smile-comparison--figureHeader"><span>A closer look</span><span>Before &amp; after</span></div>
+<div class="smile-comparison--comparison" data-comparison>
+<img class="smile-comparison--after" src="{{ treatment.after_image }}" alt="After {{ treatment.title }}" loading="lazy">
+<div class="smile-comparison--before"><img src="{{ treatment.before_image }}" alt="Before {{ treatment.title }}" loading="lazy"></div>
+<span class="smile-comparison--beforeLabel">Before</span><span class="smile-comparison--afterLabel">After</span>
+<div class="smile-comparison--divider" aria-hidden="true"><span class="smile-comparison--handle"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M9 5 2 12l7 7V5Zm6 0v14l7-7-7-7Z"/></svg></span></div>
+<input class="smile-comparison--slider" type="range" min="0" max="100" value="50" aria-label="Compare before and after treatment images">
+</div>
+<figcaption><div><strong>Explore the difference</strong><span>Drag the slider · Arrow keys when focused</span></div><small>Individual results vary.</small></figcaption>
+</figure></section>

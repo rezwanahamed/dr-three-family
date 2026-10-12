@@ -72,6 +72,22 @@ def managed_html(template, request, route, data, is_new=False):
                 if cta:
                     body.append(cta)
 
+    if record and record['section']=='treatments':
+        for previous in soup.select('[data-treatment-comparison]'):
+            previous.decompose()
+        if all(record.get(key) and safe_url(record[key]) for key in ('before_image','after_image')):
+            comparison = fragment(render_to_string('dental_family/treatment_comparison.html', {'treatment': record}))
+            body = soup.select_one('main .page-body')
+            related = soup.select_one('main .related-section')
+            if related:
+                related.insert_before(comparison)
+            elif body:
+                cta = body.select_one('.page-cta')
+                if cta:
+                    cta.insert_before(comparison)
+                else:
+                    body.append(comparison)
+
     for hero in soup.select('main .article-hero'):
         hero.decompose()
 

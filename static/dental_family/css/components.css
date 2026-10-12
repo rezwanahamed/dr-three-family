@@ -3147,3 +3147,6 @@
  .smile-comparison--figure figcaption small br{display:none}
  .smile-comparison--handle{width:48px;height:48px}
 }
+
+.treatment-comparison{margin:40px 0;width:100%;max-width:760px}.treatment-comparison .smile-comparison--comparison{aspect-ratio:1.42}
+.treatment-comparison .smile-comparison--comparison img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}

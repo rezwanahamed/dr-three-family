@@ -416,14 +416,15 @@
   }
   function setUploading(value){
     uploading=value;
-    $('#image-file').disabled=value;
+    for(const id of ['image-file','before-image-file','after-image-file'])$('#'+id).disabled=value;
     $('#editor-form button[type="submit"]').disabled=value;
     $('.image-upload').setAttribute('aria-busy',String(value));
+    $$('[data-remove-comparison]').forEach(button=>button.disabled=value||!$('#editor-form').elements[button.dataset.removeComparison+'_image'].value);
   }
   function resetUpload(){uploadController?.abort();uploadController=null;setUploading(false);}
   $('#editor').addEventListener('close',resetUpload);
-  $('#image-file').addEventListener('change',async event=>{
-    const status=$('#upload-status');
+  for(const kind of ['','before','after'])$('#'+(kind?kind+'-':'')+'image-file').addEventListener('change',async event=>{
+    const prefix=kind?kind+'-':'';const status=$('#'+prefix+'upload-status');
     if(event.target.files.length>1){status.textContent='Choose only one image.';event.target.value='';return;}
     const file=event.target.files[0];if(!file)return;
     if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024){status.textContent='Choose a JPEG, PNG, or WebP image up to 10 MB.';event.target.value='';return;}
@@ -436,11 +437,20 @@
       const result=await response.json().catch(()=>({error:'Image uploads require the Django server. Please open the dashboard through Django.'}));
       if(!response.ok)throw Error(result.error||'Upload failed. Please try again.');
       if(uploadController!==controller)return;
-      $('#editor-form').elements.image.value=result.url;showImagePreview();
+      $('#editor-form').elements[kind?kind+'_image':'image'].value=result.url;if(kind)showComparisonPreview(kind);else showImagePreview();
       status.textContent=`Uploaded · ${result.width} × ${result.height} · Save draft to use this image.`;
     }catch(error){if(error.name!=='AbortError'&&uploadController===controller)status.textContent=error.message;}
     finally{if(uploadController===controller){uploadController=null;setUploading(false);event.target.value='';}}
   });
+  function showComparisonPreview(kind){
+    const url=safeURL($('#editor-form').elements[kind+'_image'].value);
+    $('#'+kind+'-upload-preview').hidden=false;
+    $('#'+kind+'-upload-preview').dataset.empty=String(!url);
+    $('#'+kind+'-image-preview').hidden=!url;
+    if(url)$('#'+kind+'-image-preview').src=url;else $('#'+kind+'-image-preview').removeAttribute('src');
+    $('[data-remove-comparison="'+kind+'"]').disabled=uploading||!url;
+  }
+  $$('[data-remove-comparison]').forEach(button=>button.onclick=()=>{const kind=button.dataset.removeComparison;$('#editor-form').elements[kind+'_image'].value='';showComparisonPreview(kind);$('#'+kind+'-upload-status').textContent='No image selected.';});
   function titleSlug(title,fallback='treatment'){
     return title.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/['’]/g,'').replace(/&/g,' and ').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,100).replace(/-+$/g,'')||fallback;
   }
@@ -504,6 +514,7 @@
     $('#seo-description-help').textContent=isPage?'Leave blank to use the page description.':'Leave blank to use short details.';
     $('#seo-image-label').textContent=isPage?'Image alt text':'Thumbnail alt text';
     $('#content-fields').hidden=!(isTreatment||isArticle);$('#content-fields').disabled=!(isTreatment||isArticle);
+    $('#treatment-comparison-fields').hidden=!isTreatment;$('#treatment-comparison-fields').disabled=!isTreatment;
     $('#treatment-fields').hidden=!isTreatment;$('#treatment-fields').disabled=!isTreatment;
     $('#treatment-details').contentEditable=String(isTreatment||isArticle);
     $('#treatment-details').dataset.placeholder=isArticle?'Write the article details…':'Write the treatment details…';
@@ -551,6 +562,7 @@
     if(form.elements.section.value==='locations'){for(const name of ['area','address','phone','hours','map_pin'])form.elements[name].value=record?.[name]||'';form.elements.location_order.value=record?.order||Math.max(0,...all().filter(item=>item.section==='locations').map(item=>Number(item.order)||0))+1;}
     $('#location-map-preview').hidden=true;$('#location-map-preview').innerHTML='';
     $('#rich-link-panel').hidden=true;richLinkRange=null;$('#new-service').hidden=true;$('#catalog-status').textContent='';
+    for(const kind of ['before','after']){form.elements[kind+'_image'].value=record?.[kind+'_image']||'';showComparisonPreview(kind);$('#'+kind+'-upload-status').textContent=record?.[kind+'_image']?'Current image · Choose a file to replace it.':'No image selected.';}
     showImagePreview();$('#upload-status').textContent=form.elements.image.value?'Current image · Choose a file to replace it.':'No image selected.';$('#discard-notice').hidden=true;
     editorInitial=JSON.stringify(Object.fromEntries(new FormData(form)));
     openDialog($('#editor'));$('.editor-body').scrollTop=0;

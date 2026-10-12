@@ -335,3 +335,22 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(len(soup.select('[data-treatment-service] option')),len(self.base['services'])+1)
         self.assertEqual(soup.select_one('a[href="/teeth-whitening/"].treatment-card--card')['data-service'],'cosmetic_dentistry')
         self.assertIsNone(self.soup('/').select_one('[data-treatment-search]'))
+
+    def test_treatment_comparison_images_publish_and_can_be_removed(self):
+        record = self.edit('treatments', before_image='/media/gallery/before.webp', after_image='/media/gallery/after.webp')
+        self.assertEqual(self.submit().status_code, 200)
+        comparison = self.soup(record['url']).select_one('[data-treatment-comparison]')
+        self.assertIsNotNone(comparison)
+        self.assertEqual(comparison.select_one('.smile-comparison--before img')['src'], record['before_image'])
+        self.assertEqual(comparison.select_one('.smile-comparison--after')['src'], record['after_image'])
+        self.assertIsNotNone(comparison.select_one('[data-comparison] input[type="range"]'))
+        self.assertIn('related-section', comparison.find_next_sibling().get('class', []))
+        self.base = self.client.get('/dashboard/content/').json()
+        record['before_image'] = ''
+        self.state['drafts'] = [record]
+        self.assertEqual(self.submit().status_code, 200)
+        self.assertIsNone(self.soup(record['url']).select_one('[data-treatment-comparison]'))
+
+    def test_treatment_comparison_rejects_unsafe_image_urls(self):
+        self.edit('treatments', before_image='javascript:alert(1)', after_image='/media/gallery/after.webp')
+        self.assertEqual(self.submit().status_code, 400)

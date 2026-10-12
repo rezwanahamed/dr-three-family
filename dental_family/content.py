@@ -177,7 +177,7 @@ def validate_state(data):
             raise ValidationError('Use a valid local content URL.')
         if record['url'].split('/')[1] in {'dashboard','static','media'}:
             raise ValidationError('This URL is reserved.')
-        for key in ['image','canonical_url']:
+        for key in ['image','before_image','after_image','canonical_url']:
             if record.get(key) and (not safe_url(record[key]) or (not record[key].startswith('/') and urlsplit(record[key]).scheme not in {'http','https'})):
                 raise ValidationError(f'Invalid {key}.')
         if record['section']=='payments':
@@ -238,7 +238,7 @@ def validate_state(data):
         if record.get('details'):
             record['details'] = clean_html(record['details'])
         for key, value in record.items():
-            if key in {'gallery_category','description','short_details','topic','service','image','alt','address','phone','hours','map_pin','qualifications','training','position','registration','specialty','robots','seo_title','meta_description','keywords','og_title','og_description'} and not isinstance(value,str):
+            if key in {'gallery_category','description','short_details','topic','service','image','before_image','after_image','alt','address','phone','hours','map_pin','qualifications','training','position','registration','specialty','robots','seo_title','meta_description','keywords','og_title','og_description'} and not isinstance(value,str):
                 raise ValidationError(f'Invalid {key}.')
             if isinstance(value, str) and len(value) > 100000:
                 raise ValidationError(f'{key} is too long.')
