@@ -4,3 +4,8 @@ __pycache__/
 collected-static/
 db.sqlite3
 media/
+
+# Local email credentials
+.env
+.env.*
+!.env.example

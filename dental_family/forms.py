@@ -26,3 +26,19 @@ class DashboardAuthenticationForm(forms.Form):
 
     def get_user(self):
         return self.user_cache
+
+
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+
+
+class DashboardPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(label='Registered email address', max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete':'email','autocapitalize':'none','spellcheck':'false','autofocus':True,'placeholder':'you@example.com'}))
+
+
+class DashboardSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['autocomplete'] = 'new-password'
+        self.fields['new_password1'].widget.attrs['autofocus'] = True

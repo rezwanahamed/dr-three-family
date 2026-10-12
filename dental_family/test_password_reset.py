@@ -1,0 +1,75 @@
+import re
+from datetime import timedelta
+from smtplib import SMTPException
+from unittest.mock import patch
+from urllib.parse import urlsplit
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.core import mail
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
+
+
+@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+class PasswordResetTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user=get_user_model().objects.create_user(username='reset-editor',email='editor@example.com',password='OldPassword!937',is_staff=True)
+        cls.member=get_user_model().objects.create_user(username='registered-member',email='member@example.com',password='MemberPassword!937')
+        cls.inactive=get_user_model().objects.create_user(username='inactive-member',email='inactive@example.com',password='OldPassword!937',is_active=False)
+
+    def request_reset(self,email='editor@example.com'):
+        return self.client.post(reverse('dental_family:password-reset'),{'email':email})
+
+    def reset_path(self):
+        return urlsplit(re.search(r'https?://\S+',mail.outbox[-1].body).group()).path
+
+    def test_registered_email_reset_and_login(self):
+        self.assertContains(self.client.get(reverse('dental_family:login')),'Forgot password?')
+        self.assertRedirects(self.request_reset('EDITOR@example.com'),reverse('dental_family:password-reset-done'))
+        self.assertEqual(len(mail.outbox),1)
+        self.assertEqual(mail.outbox[0].to,['editor@example.com'])
+        original=self.reset_path()
+        response=self.client.get(original)
+        self.assertEqual(response.status_code,302)
+        confirmation=response.url
+        self.assertContains(self.client.get(confirmation),'A fresh start.')
+        self.assertRedirects(self.client.post(confirmation,{'new_password1':'FreshPassword!572','new_password2':'FreshPassword!572'}),reverse('dental_family:password-reset-complete'))
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('FreshPassword!572'))
+        self.assertContains(self.client.get(original),'This reset link has expired')
+        login=self.client.post(reverse('dental_family:login'),{'email':'editor@example.com','password':'FreshPassword!572'})
+        self.assertRedirects(login,reverse('dental_family:dashboard'))
+
+    def test_unknown_and_inactive_emails_do_not_send_mail(self):
+        for email in ['unknown@example.com','inactive@example.com']:
+            self.assertRedirects(self.request_reset(email),reverse('dental_family:password-reset-done'))
+        self.assertEqual(len(mail.outbox),0)
+
+    def test_registered_nonstaff_user_can_reset_password(self):
+        self.assertRedirects(self.request_reset('member@example.com'),reverse('dental_family:password-reset-done'))
+        self.assertEqual(mail.outbox[0].to,['member@example.com'])
+
+    def test_invalid_expired_and_weak_password(self):
+        invalid=reverse('dental_family:password-reset-confirm',kwargs={'uidb64':'invalid','token':'invalid'})
+        self.assertContains(self.client.get(invalid),'Request a new link')
+        self.request_reset()
+        original=self.reset_path()
+        with override_settings(PASSWORD_RESET_TIMEOUT=1),patch.object(default_token_generator,'_now',return_value=default_token_generator._now()+timedelta(seconds=10)):
+            self.assertContains(self.client.get(original),'This reset link has expired')
+        confirmation=self.client.get(original).url
+        response=self.client.post(confirmation,{'new_password1':'123','new_password2':'123'})
+        self.assertEqual(response.status_code,200)
+        self.assertContains(response,'This password is too short')
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('OldPassword!937'))
+
+    def test_reset_request_requires_csrf(self):
+        client=Client(enforce_csrf_checks=True)
+        self.assertEqual(client.post(reverse('dental_family:password-reset'),{'email':'editor@example.com'}).status_code,403)
+        client.get(reverse('dental_family:password-reset'))
+        self.assertEqual(client.post(reverse('dental_family:password-reset'),{'email':'editor@example.com'},HTTP_X_CSRFTOKEN=client.cookies['csrftoken'].value).status_code,302)
+
+    def test_email_delivery_error_is_displayed(self):
+        with patch('django.contrib.auth.forms.PasswordResetForm.send_mail',side_effect=SMTPException('SMTP not configured')):
+            self.assertContains(self.request_reset(),'We could not send the reset email right now.')

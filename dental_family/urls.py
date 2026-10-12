@@ -1,10 +1,16 @@
 from django.urls import path, re_path
 from . import views
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth.views import LogoutView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.urls import reverse_lazy
+from .forms import DashboardSetPasswordForm
 
 app_name = 'dental_family'
 urlpatterns = [
     path('dashboard/login/', views.DashboardLoginView.as_view(), name='login'),
+    path('dashboard/forgot-password/', views.DashboardPasswordResetView.as_view(), name='password-reset'),
+    path('dashboard/forgot-password/sent/', PasswordResetDoneView.as_view(template_name='dental_family/dashboard/password_reset_done.html'), name='password-reset-done'),
+    path('dashboard/reset-password/<uidb64>/<token>/', PasswordResetConfirmView.as_view(template_name='dental_family/dashboard/password_reset_confirm.html', form_class=DashboardSetPasswordForm, success_url=reverse_lazy('dental_family:password-reset-complete')), name='password-reset-confirm'),
+    path('dashboard/reset-password/complete/', PasswordResetCompleteView.as_view(template_name='dental_family/dashboard/password_reset_complete.html'), name='password-reset-complete'),
     path('dashboard/logout/', LogoutView.as_view(), name='logout'),
     path('dashboard/upload-image/', views.upload_image, name='upload-image'),
     path('dashboard/content/', views.dashboard_content, name='dashboard-content'),

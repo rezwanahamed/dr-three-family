@@ -12,9 +12,10 @@ from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from django.views.decorators.http import require_POST
 from PIL import Image, ImageOps, UnidentifiedImageError
 from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView
 from django.views.decorators.cache import never_cache
-from .forms import DashboardAuthenticationForm
+from .forms import DashboardAuthenticationForm, DashboardPasswordResetForm
+from django.urls import reverse_lazy
 
 ROOT = Path(__file__).resolve().parent.parent
 ROUTES = json.loads((ROOT / 'routes.json').read_text(encoding='utf-8'))
@@ -231,3 +232,21 @@ def publish_content(request):
         workspace.revision += 1
         workspace.save()
         return JsonResponse(workspace_response(workspace))
+
+
+class DashboardPasswordResetView(PasswordResetView):
+    template_name = 'dental_family/dashboard/password_reset_form.html'
+    email_template_name = 'dental_family/dashboard/password_reset_email.txt'
+    subject_template_name = 'dental_family/dashboard/password_reset_subject.txt'
+    form_class = DashboardPasswordResetForm
+    success_url = reverse_lazy('dental_family:password-reset-done')
+
+    def form_valid(self, form):
+        from smtplib import SMTPException
+        import logging
+        try:
+            return super().form_valid(form)
+        except (SMTPException, OSError):
+            logging.getLogger(__name__).error('Password-reset email delivery failed. Check SMTP configuration.')
+            form.add_error(None, 'We could not send the reset email right now. Please try again later or contact your administrator.')
+            return self.form_invalid(form)
