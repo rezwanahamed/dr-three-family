@@ -315,3 +315,23 @@ class ContentIntegrationTests(TestCase):
             if article['url'].startswith('/category/'):
                 continue
             self.assertIsNone(self.soup(article['url']).select_one('main .article-hero'))
+
+    def test_treatment_service_filter_uses_published_catalog_and_assignments(self):
+        self.state['services']=[{'id':'new-service-filter','name':'New service filter','treatments':[]}]
+        treatment=self.edit('treatments',service='new-service-filter',short_details='Searchable treatment summary')
+        response=self.submit()
+        self.assertEqual(response.status_code,200)
+        published=next(r for r in response.json()['records'] if r['id']==treatment['id'])
+        soup=self.soup('/services/')
+        self.assertIsNotNone(soup.select_one('[data-treatment-search]'))
+        self.assertEqual(soup.select_one('[data-treatment-service] option[value="new-service-filter"]').text,'New service filter')
+        card=soup.select_one(f'a.treatment-card--card[href="{published["url"]}"]')
+        self.assertEqual(card['data-service'],'new-service-filter')
+        self.assertIn('Searchable treatment summary',card['data-search'])
+        self.assertIn('New service filter',card['data-search'])
+
+    def test_initial_treatment_service_filter_has_seed_assignments(self):
+        soup=self.soup('/services/')
+        self.assertEqual(len(soup.select('[data-treatment-service] option')),len(self.base['services'])+1)
+        self.assertEqual(soup.select_one('a[href="/teeth-whitening/"].treatment-card--card')['data-service'],'cosmetic_dentistry')
+        self.assertIsNone(self.soup('/').select_one('[data-treatment-search]'))

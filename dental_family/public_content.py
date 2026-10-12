@@ -232,6 +232,10 @@ def managed_html(template, request, route, data, is_new=False):
                 card.decompose()
                 continue
             shown.add(r['id']);containers.append(card.parent)
+            if section=='treatments':
+                card['data-service']=r.get('service','')
+                service_name=next((service['name'] for service in data['services'] if service['id']==r.get('service')),'')
+                card['data-search']=' '.join([r['title'],r.get('short_details') or r.get('description') or '',service_name])
             if r.get('_edited'):
                 text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r)
         if route in {'/services/','/blog/'}:
@@ -240,7 +244,15 @@ def managed_html(template, request, route, data, is_new=False):
                 for r in records:
                     if r['section']!=section or r['id'] in shown:
                         continue
-                    card=deepcopy(base);card['href']=r['url'];text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r);container.append(card)
+                    card=deepcopy(base);card['href']=r['url'];text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r)
+                    if section=='treatments':
+                        card['data-service']=r.get('service','')
+                        service_name=next((service['name'] for service in data['services'] if service['id']==r.get('service')),'')
+                        card['data-search']=' '.join([r['title'],r.get('short_details') or r.get('description') or '',service_name])
+                    container.append(card)
+    service_filter=soup.select_one('[data-treatment-service]')
+    if service_filter:
+        replace_children(service_filter,[fragment('<option value="">All services</option>').option]+[fragment('<option value="'+escape(service['id'])+'">'+escape(service['name'])+'</option>').option for service in data['services']])
     payment_grid=soup.select_one('main .payment-grid')
     if payment_grid:
         nodes=[]
