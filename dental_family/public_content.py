@@ -241,6 +241,16 @@ def managed_html(template, request, route, data, is_new=False):
                     if r['section']!=section or r['id'] in shown:
                         continue
                     card=deepcopy(base);card['href']=r['url'];text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r);container.append(card)
+    price_grid=soup.select_one('main .prices-grid')
+    if price_grid:
+        categories={}
+        for price in group('prices'):
+            categories.setdefault(price['category'],[]).append(price)
+        nodes=[]
+        for category,items in categories.items():
+            card=fragment('<section class="price-card"><h2>'+escape(category)+'</h2><dl>'+''.join('<div><dt>'+escape(item['title'])+'</dt><dd>'+escape(item['price'])+'</dd></div>' for item in items)+'</dl></section>').section
+            nodes.append(card)
+        replace_children(price_grid,nodes)
     treatment_navigation(soup,data)
     return str(soup)
 

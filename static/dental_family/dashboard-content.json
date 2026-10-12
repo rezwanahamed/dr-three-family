@@ -308,13 +308,11 @@
   {
     "id": "/pricing-guide-2/",
     "title": "A little clarity on costs.",
-    "section": "treatments",
+    "section": "pages",
     "description": "An indicative guide to selected treatments. Your dentist will explain your personal plan and estimate before treatment.",
     "url": "/pricing-guide-2/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot",
-    "show_on_homepage": false,
-    "homepage_order": 0
+    "status": "Website snapshot"
   },
   {
     "id": "/privacy-policy/",

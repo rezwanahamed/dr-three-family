@@ -17,7 +17,7 @@ LEGACY_TREATMENT_SERVICES = {
     '/regular-dental-checkup/':'general_dentistry', '/restorative_dentistry/':'general_dentistry',
     '/root-canals/':'root-canals', '/emergency_dental_care/':'emergency_dental_care',
 }
-SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', 'locations', 'faqs'}
+SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', 'locations', 'faqs', 'prices'}
 
 
 def script_data(name, variable):
@@ -27,7 +27,7 @@ def script_data(name, variable):
 
 def seeds():
     records = json.loads((ROOT / 'static/dental_family/dashboard-content.json').read_text())
-    return {'records': records + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology']}
+    return {'records': records + script_data('price-data.js', 'DashboardPrices') + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology'], 'price_guide_initialized':True}
 
 
 def gallery_name(value):
@@ -47,6 +47,13 @@ def gallery_names(values):
 def gallery_snapshot(data):
     from copy import deepcopy
     result = deepcopy(data)
+    if not data.get('price_guide_initialized'):
+        existing = {r['id'] for r in result['records']}
+        result['records'].extend(r for r in script_data('price-data.js','DashboardPrices') if r['id'] not in existing)
+    result['price_guide_initialized'] = True
+    for record in result['records']:
+        if record['id']=='/pricing-guide-2/' and record['section']=='treatments':
+            record['section']='pages'
     result['gallery_sections'] = gallery_names(data.get('gallery_sections', ['Our space','Our team','Our technology']))
     homepage_defaults = {r['id']:r for r in seeds()['records'] if r['section']=='treatments'}
     for record in result['records']:
@@ -120,6 +127,15 @@ def validate_state(data):
         for key in ['image','canonical_url']:
             if record.get(key) and (not safe_url(record[key]) or (not record[key].startswith('/') and urlsplit(record[key]).scheme not in {'http','https'})):
                 raise ValidationError(f'Invalid {key}.')
+        if record['section']=='prices':
+            for field in ['category','price']:
+                if not isinstance(record.get(field),str) or not record[field].strip() or len(record[field])>120:
+                    raise ValidationError(f'A valid {field} is required for price entries.')
+                record[field]=record[field].strip()
+            if type(record.get('order')) is not int or not 1<=record['order']<=10000:
+                raise ValidationError('Price display order must be an integer from 1 to 10000.')
+            if record['url']!='/pricing-guide-2/':
+                raise ValidationError('Price entries must use the price guide URL.')
         if record.get('details'):
             record['details'] = clean_html(record['details'])
         for key, value in record.items():
@@ -210,7 +226,7 @@ def snapshot(published, state):
         options = list(dict.fromkeys(service['treatments'] + state.get('treatmentOptions', {}).get(service_id, [])))
         service['treatments'] = ordered(options, state.get('optionOrder', {}).get(service_id, []), lambda value: value)
     assign_treatment_urls(list(by_id.values()), base['records'], state.get('drafts',[]), list(topics.values()))
-    result = {'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
+    result = {'price_guide_initialized':True, 'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
     topic_routes = {}
     for topic in result['topics']:
         if not re.fullmatch(r'/[\w.-]+/',topic['url']) or topic['url'].split('/')[1] in {'dashboard','static','media'}:

@@ -623,3 +623,17 @@ button.danger:hover { background: #852036; color: white; }
 @keyframes publish-draft-ping{0%{transform:scale(.8);opacity:.8}75%,100%{transform:scale(2.2);opacity:0}}
 #publish-changes:disabled .publish-draft-point::after{animation-play-state:paused}
 @media(prefers-reduced-motion:reduce){.publish-draft-point::after{animation:none;opacity:0}}
+
+.price-guide-table{min-width:820px}.price-guide-table th:first-child{width:30%}.price-guide-table strong{color:var(--dash-accent);white-space:nowrap}#price-editor h2{margin:4px 0 0}#price-editor .faq-topic-actions{margin-top:24px;justify-content:flex-end}#price-editor .faq-topics-header{align-items:flex-start}#price-editor label{gap:8px}
+@media(max-width:650px){
+  .price-guide-table{display:block;min-width:0;width:100%}
+  .price-guide-table tbody{display:block;width:100%;padding:0 18px}
+  .price-guide-table tr{grid-template-columns:minmax(0,1fr) auto;gap:10px}
+  .price-guide-table td{min-width:0;white-space:normal;height:auto}
+  .price-guide-table td:nth-child(2){color:var(--dash-muted);font-size:11px}
+  .price-guide-table td:nth-child(3){text-align:right;font-size:12px}
+  .price-guide-table td:nth-child(4){color:var(--dash-muted);font-size:11px}
+  .price-guide-table td:nth-child(4)::before{content:"Order: "}
+  .price-guide-table td:last-child{grid-column:1/-1}
+  .price-guide-table .photo-row-actions{justify-content:flex-end}
+}

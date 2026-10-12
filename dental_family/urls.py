@@ -6,6 +6,8 @@ from .forms import DashboardSetPasswordForm
 
 app_name = 'dental_family'
 urlpatterns = [
+    path('a-little-clarity-on-costs/', views.page, {'route':'/a-little-clarity-on-costs/'}, name='price-guide-details'),
+    path('a-little-clarity-on-costs', views.legacy_redirect, {'destination':'/a-little-clarity-on-costs/'}),
     path('dashboard/login/', views.DashboardLoginView.as_view(), name='login'),
     path('dashboard/forgot-password/', views.DashboardPasswordResetView.as_view(), name='password-reset'),
     path('dashboard/forgot-password/sent/', PasswordResetDoneView.as_view(template_name='dental_family/dashboard/password_reset_done.html'), name='password-reset-done'),

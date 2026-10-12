@@ -27,6 +27,9 @@ def page(request, route='/'):
     workspace = WebsiteWorkspace.objects.filter(pk=1).first()
     published = workspace.published if workspace else {}
     info = ROUTES.get(route)
+    if route in {'/pricing-guide-2/', '/a-little-clarity-on-costs/'}:
+        from .content import seeds
+        return HttpResponse(managed_html(ROUTES['/pricing-guide-2/']['template'], request, route, published or seeds()))
     if published:
         alias = next((r for r in published['records'] if r['section']=='treatments' and route in r.get('url_aliases',[])),None)
         if alias:
