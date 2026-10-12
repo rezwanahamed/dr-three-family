@@ -615,3 +615,11 @@ button.danger:hover { background: #852036; color: white; }
 .table-pagination button[aria-current="page"]{background:var(--dash-accent);color:#fff;border-color:var(--dash-accent)}
 .table-pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination-gap{padding:0 3px}.table-pagination [data-page-control="previous"] svg{transform:rotate(180deg)}
 @media(max-width:680px){.table-pagination{padding:16px;gap:14px}.table-pagination nav{width:100%;justify-content:center;flex-wrap:wrap}.table-pagination nav [data-page-control] span{display:none}.table-pagination p{flex:1}}
+
+#publish-changes{position:relative;--publish-dot-color:#f59e0b}
+.publish-draft-point{display:none;position:absolute;top:-3px;right:-3px;width:10px;height:10px;border:2px solid var(--dash-surface);border-radius:50%;background:var(--publish-dot-color);pointer-events:none}
+#publish-changes.has-drafts .publish-draft-point{display:block}
+.publish-draft-point::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:2px solid var(--publish-dot-color);animation:publish-draft-ping 1.8s ease-out infinite}
+@keyframes publish-draft-ping{0%{transform:scale(.8);opacity:.8}75%,100%{transform:scale(2.2);opacity:0}}
+#publish-changes:disabled .publish-draft-point::after{animation-play-state:paused}
+@media(prefers-reduced-motion:reduce){.publish-draft-point::after{animation:none;opacity:0}}

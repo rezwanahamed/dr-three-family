@@ -280,3 +280,11 @@ class ContentIntegrationTests(TestCase):
         links=cosmetic.select('.doctor-nav--treatmentList a')
         self.assertEqual([a['href'] for a in links],['/veneers/','/teeth-whitening/','/gum-reshaping/'])
         self.assertTrue(all(len(card.select('.doctor-nav--treatmentList a'))<=3 for card in services))
+
+    def test_treatment_dropdown_shows_maximum_six_services(self):
+        self.state['services']=[{'id':f'extra-service-{i}','name':f'Extra service {i}','treatments':[]} for i in range(3)]
+        self.assertEqual(self.submit().status_code,200)
+        cards=self.soup('/').select('.doctor-nav--serviceGrid > li')
+        self.assertEqual(len(cards),6)
+        self.assertEqual([card.select_one('.doctor-nav--serviceTitle').text for card in cards],[service['name'] for service in self.base['services'][:6]])
+        self.assertNotIn('Extra service',self.soup('/services/').select_one('.doctor-nav--serviceGrid').text)

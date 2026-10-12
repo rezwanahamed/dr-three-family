@@ -255,7 +255,7 @@ def treatment_navigation(soup,data):
     cards=nav.select(':scope > li')
     base=cards[0] if cards else None
     nodes=[]
-    for i,service in enumerate(data['services']):
+    for i,service in enumerate(data['services'][:6]):
         if not base:
             break
         card=deepcopy(base)
