@@ -230,13 +230,11 @@
   {
     "id": "/financing-2/",
     "title": "Simple ways to pay.",
-    "section": "treatments",
+    "section": "pages",
     "description": "Talk to the team about treatment costs and the payment method that works for you.",
     "url": "/financing-2/",
     "image": "/static/dental_family/assets/images/hero/dental-studio.png",
-    "status": "Website snapshot",
-    "show_on_homepage": false,
-    "homepage_order": 0
+    "status": "Website snapshot"
   },
   {
     "id": "/gallery/",

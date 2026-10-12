@@ -5,7 +5,7 @@ from urllib.parse import quote
 import re
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
-from .content import clean_html, safe_url, gallery_snapshot
+from .content import clean_html, safe_url, gallery_snapshot, payment_lines
 
 
 def text(node, value):
@@ -242,6 +242,15 @@ def managed_html(template, request, route, data, is_new=False):
                     if r['section']!=section or r['id'] in shown:
                         continue
                     card=deepcopy(base);card['href']=r['url'];text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r);container.append(card)
+    payment_grid=soup.select_one('main .payment-grid')
+    if payment_grid:
+        nodes=[]
+        for payment in group('payments'):
+            if not payment.get('enabled',True):
+                continue
+            card=fragment('<article class="payment-card"><div class="eyebrow">'+escape(payment['payment_label'])+'</div><h2>'+escape(payment['title'])+'</h2>'+''.join('<p>'+escape(line)+'</p>' for line in payment_lines(payment))+'</article>').article
+            nodes.append(card)
+        replace_children(payment_grid,nodes)
     price_grid=soup.select_one('main .prices-grid')
     if price_grid:
         categories={}

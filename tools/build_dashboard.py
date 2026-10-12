@@ -17,7 +17,7 @@ for route, info in routes.items():
     description=main.select_one('p')
     kind='pages'
     if route not in ['/', '/about-us/','/appointment/','/blog/','/contact/','/faq/','/gallery/','/google-reviews/','/our-doctors/','/privacy-policy/','/services/']:
-        kind='pages' if route.startswith('/faqs') or route=='/pricing-guide-2/' else 'articles' if route.startswith(('/11-','/6-','/9-','/how-','/what-','/root-canal-treatment-for-','/faqs','/category/')) else 'treatments'
+        kind='pages' if route.startswith('/faqs') or route in {'/pricing-guide-2/','/financing-2/'} else 'articles' if route.startswith(('/11-','/6-','/9-','/how-','/what-','/root-canal-treatment-for-','/faqs','/category/')) else 'treatments'
     records.append(dict(id=route, title=title, section=kind, description=description.get_text(' ',strip=True) if description else '', url=route, image=image.get('src','') if image else '', status='Website snapshot'))
 soup=BeautifulSoup((ROOT/'pages/gallery/index.html').read_text(),'html.parser')
 for i,img in enumerate(soup.select('.gallery-grid button img')):

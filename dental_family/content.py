@@ -19,7 +19,7 @@ LEGACY_TREATMENT_SERVICES = {
     '/regular-dental-checkup/':'general_dentistry', '/restorative_dentistry/':'general_dentistry',
     '/root-canals/':'root-canals', '/emergency_dental_care/':'emergency_dental_care',
 }
-SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', 'locations', 'faqs', 'prices'}
+SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', 'locations', 'faqs', 'prices', 'payments'}
 
 
 def script_data(name, variable):
@@ -29,7 +29,7 @@ def script_data(name, variable):
 
 def seeds():
     records = json.loads((ROOT / 'static/dental_family/dashboard-content.json').read_text())
-    return {'records': records + script_data('price-data.js', 'DashboardPrices') + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology'], 'price_guide_initialized':True, 'contact_details':script_data('contact-data.js','DashboardContactDetails')}
+    return {'records': records + script_data('payment-data.js','DashboardPayments') + script_data('price-data.js', 'DashboardPrices') + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology'], 'price_guide_initialized':True, 'payments_initialized':True, 'contact_details':script_data('contact-data.js','DashboardContactDetails')}
 
 
 def gallery_name(value):
@@ -52,11 +52,15 @@ def gallery_snapshot(data):
     if not data.get('price_guide_initialized'):
         existing = {r['id'] for r in result['records']}
         result['records'].extend(r for r in script_data('price-data.js','DashboardPrices') if r['id'] not in existing)
+    if not data.get('payments_initialized'):
+        existing={r['id'] for r in result['records']}
+        result['records'].extend(r for r in script_data('payment-data.js','DashboardPayments') if r['id'] not in existing)
+    result['payments_initialized']=True
     result.setdefault('contact_details',script_data('contact-data.js','DashboardContactDetails'))
     result['price_guide_initialized'] = True
     result.setdefault('price_services', list(dict.fromkeys(r['category'] for r in result['records'] if r['section']=='prices')))
     for record in result['records']:
-        if record['id']=='/pricing-guide-2/' and record['section']=='treatments':
+        if record['id'] in {'/pricing-guide-2/','/financing-2/'} and record['section']=='treatments':
             record['section']='pages'
     result['gallery_sections'] = gallery_names(data.get('gallery_sections', ['Our space','Our team','Our technology']))
     homepage_defaults = {r['id']:r for r in seeds()['records'] if r['section']=='treatments'}
@@ -118,6 +122,20 @@ def validate_contact_details(details):
     return details
 
 
+def payment_lines(record):
+    lines=[]
+    if record.get('payment_type')=='mobile':
+        lines.append(record.get('mobile_number',''))
+    elif record.get('payment_type')=='bank':
+        lines.extend([record.get('account_name',''), 'Account: '+record.get('account_number','')])
+        if record.get('branch'):
+            lines.append(record['branch'])
+        if record.get('routing'):
+            lines.append('Routing: '+record['routing'])
+    lines.extend(record.get('notes','').splitlines())
+    return [line for line in lines if line.strip()]
+
+
 def validate_state(data):
     if not isinstance(data, dict):
         raise ValidationError('Invalid workspace.')
@@ -162,6 +180,28 @@ def validate_state(data):
         for key in ['image','canonical_url']:
             if record.get(key) and (not safe_url(record[key]) or (not record[key].startswith('/') and urlsplit(record[key]).scheme not in {'http','https'})):
                 raise ValidationError(f'Invalid {key}.')
+        if record['section']=='payments':
+            kind=record.get('payment_type')
+            if not isinstance(kind,str) or kind not in {'mobile','bank','cash','card','other'}:
+                raise ValidationError('Choose a valid payment method.')
+            for field in ['payment_label','mobile_number','account_name','account_number','branch','routing','notes']:
+                value=record.get(field,'')
+                if not isinstance(value,str) or len(value)>(2000 if field=='notes' else 150):
+                    raise ValidationError('Enter valid payment details.')
+                record[field]=value.strip()
+            if not record['payment_label']:
+                raise ValidationError('A payment label is required.')
+            if kind=='mobile' and (not re.fullmatch(r'[+0-9 ()-]+',record['mobile_number']) or not 7<=len(re.sub(r'\D','',record['mobile_number']))<=15):
+                raise ValidationError('Enter a valid mobile wallet number.')
+            if kind=='bank' and (not record['account_name'] or not re.fullmatch(r'[0-9 -]+',record['account_number'])):
+                raise ValidationError('Enter the bank account name and account number.')
+            if kind=='bank' and record['routing'] and not record['routing'].isdigit():
+                raise ValidationError('Routing numbers must contain digits only.')
+            if type(record.get('order')) is not int or not 1<=record['order']<=10000 or type(record.get('enabled')) is not bool:
+                raise ValidationError('Enter a valid payment order and visibility.')
+            if record['url']!='/financing-2/':
+                raise ValidationError('Use the payment options page URL.')
+            record['description']='\n'.join(payment_lines(record))
         if record['section']=='prices':
             if 'price_type' in record:
                 kind=record['price_type']
@@ -294,7 +334,7 @@ def snapshot(published, state):
         options = list(dict.fromkeys(service['treatments'] + state.get('treatmentOptions', {}).get(service_id, [])))
         service['treatments'] = ordered(options, state.get('optionOrder', {}).get(service_id, []), lambda value: value)
     assign_treatment_urls(list(by_id.values()), base['records'], state.get('drafts',[]), list(topics.values()))
-    result = {'price_guide_initialized':True, 'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
+    result = {'payments_initialized':True, 'price_guide_initialized':True, 'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
     result['contact_details']=state.get('contactDetails',base.get('contact_details',script_data('contact-data.js','DashboardContactDetails')))
     price_services = list(state.get('priceServices',base.get('price_services',[])))
     for record in result['records']:
