@@ -2091,7 +2091,7 @@ details[open] .faq-symbol:after {
 .doctor-biography ul {
   color: var(--muted);
   margin-block: 24px;
-  padding-left: 18px;
+  padding-left: 0;
   line-height: 1.8;
 }
 .doctor-biography .registration {
