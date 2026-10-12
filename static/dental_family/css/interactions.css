@@ -50,3 +50,24 @@
   #doctors > .doctors-all-actions { margin-top:32px; }
   #doctors > .doctors-all-actions .button { width:100%; max-width:320px; min-width:0; }
 }
+
+/* Shared treatment search and service filter toolbar. */
+.treatment-library-tools{grid-template-columns:minmax(0,1fr) minmax(250px,.48fr);gap:18px 24px;padding:22px 24px 14px;margin-bottom:32px;border:1px solid var(--line);border-radius:22px;background:var(--surface-card);box-shadow:var(--shadow-soft)}
+.treatment-library-tools label{gap:9px;min-width:0}
+.treatment-tool-label{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.treatment-tool-control{display:block;position:relative;min-width:0}
+.treatment-tool-control>svg{position:absolute;left:17px;top:50%;transform:translateY(-50%);width:19px;height:19px;pointer-events:none;color:var(--accent);transition:color 160ms ease}
+.treatment-library-tools .treatment-tool-control input,.treatment-library-tools .treatment-tool-control select{min-height:54px;padding-left:48px;border-radius:13px;background-color:var(--surface);color:var(--ink);font:400 14px/1.4 var(--font-inter),sans-serif;transition:border-color 160ms ease,box-shadow 160ms ease,background-color 160ms ease}
+.treatment-library-tools .treatment-tool-control select{padding-right:44px;cursor:pointer}
+.treatment-library-tools .treatment-tool-control input::placeholder{color:var(--muted);font-weight:400}
+.treatment-tool-control:hover input,.treatment-tool-control:hover select{border-color:var(--accent-soft)}
+.treatment-library-tools .treatment-tool-control input:focus-visible,.treatment-library-tools .treatment-tool-control select:focus-visible{outline:none;border-color:var(--focus-ring);box-shadow:0 0 0 3px color-mix(in srgb,var(--focus-ring) 14%,transparent);background-color:var(--surface-card)}
+.treatment-tool-control:focus-within>svg{color:var(--plum)}
+.treatment-tools-meta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:32px;padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+.treatment-tools-meta button{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:5px 10px;border:0;border-radius:8px;background:transparent;color:var(--plum);font:500 12px var(--font-inter),sans-serif;cursor:pointer}
+.treatment-tools-meta button:hover{background:var(--blush)}
+.treatment-tools-meta button:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+.treatment-tools-meta button svg{width:15px;height:15px}
+.treatment-tools-meta button[hidden]{display:none!important}
+@media(max-width:650px){.treatment-library-tools{grid-template-columns:1fr;gap:16px;padding:18px 16px 12px;border-radius:18px;margin-bottom:24px}}
+@media(prefers-reduced-motion:reduce){.treatment-tool-control>svg,.treatment-library-tools .treatment-tool-control input,.treatment-library-tools .treatment-tool-control select{transition:none}}

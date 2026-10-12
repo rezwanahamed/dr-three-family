@@ -15,6 +15,7 @@
     const cards=$$(articles?'.blog-card':'.treatment-card--card',grid),batch=6;
     if(articles&&cards.length<=batch)return;
     const search=articles?null:$('[data-treatment-search]'),service=articles?null:$('[data-treatment-service]');
+    const reset=articles?null:$('[data-treatment-reset]'),resultCount=articles?null:$('[data-treatment-filter-status]');
     const normalize=value=>String(value||'').normalize('NFKD').replace(/\p{M}/gu,'').toLocaleLowerCase().trim();
     let matching=cards,visible=Math.min(batch,cards.length);
     const controls=document.createElement('div');controls.className=articles?'treatment-load-more article-load-more':'treatment-load-more';
@@ -23,10 +24,11 @@
     const empty=document.createElement('div');empty.className='treatment-library-empty';empty.hidden=true;
     empty.innerHTML='<h3>No treatments found</h3><p>Try another search or choose a different service.</p><button type="button" class="button">Clear filters</button>';
     if(!articles)grid.after(empty);
-    function update(){const shown=new Set(matching.slice(0,visible));cards.forEach(card=>card.hidden=!shown.has(card));status.textContent=`${Math.min(visible,matching.length)} of ${matching.length} ${articles?'articles':'treatments'}`;button.hidden=visible>=matching.length;if(!articles){grid.hidden=!matching.length;empty.hidden=!!matching.length;}}
+    function update(){const shown=new Set(matching.slice(0,visible));cards.forEach(card=>card.hidden=!shown.has(card));status.textContent=`${Math.min(visible,matching.length)} of ${matching.length} ${articles?'articles':'treatments'}`;button.hidden=visible>=matching.length;if(!articles){grid.hidden=!matching.length;empty.hidden=!!matching.length;if(resultCount)resultCount.textContent=`${matching.length} ${matching.length===1?'treatment':'treatments'}`;if(reset)reset.hidden=!normalize(search?.value)&&!service?.value;}}
     function filter(){const query=normalize(search?.value),selected=service?.value||'';matching=cards.filter(card=>(!selected||card.dataset.service===selected)&&normalize(card.dataset.search||`${$('h3',card)?.textContent||''} ${$('p',card)?.textContent||''}`).includes(query));visible=Math.min(batch,matching.length);update();}
     search?.addEventListener('input',filter);service?.addEventListener('change',filter);
-    $('button',empty).addEventListener('click',()=>{if(search)search.value='';if(service)service.value='';filter();search?.focus({preventScroll:true});});
+    const clearFilters=()=>{if(search)search.value='';if(service)service.value='';filter();search?.focus({preventScroll:true});};
+    $('button',empty).addEventListener('click',clearFilters);reset?.addEventListener('click',clearFilters);
     button.addEventListener('click',()=>{const firstNew=visible;visible=Math.min(visible+batch,matching.length);update();matching.slice(firstNew,visible).forEach(card=>animate(card,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:300,easing:'cubic-bezier(.22,1,.36,1)'}));matching[firstNew]?.focus({preventScroll:true});});
     update();
   });
