@@ -606,3 +606,12 @@ button.danger:hover { background: #852036; color: white; }
 .gallery-table .clinic-row-copy { flex:1; }
 
 .homepage-treatment-note{display:flex;align-items:center;gap:16px;padding:18px 24px;margin:0;border-bottom:1px solid var(--border,#e3dce9);color:var(--dash-muted);font-size:13px}.homepage-treatment-note strong{color:var(--dash-accent);white-space:nowrap}.homepage-treatment-table{min-width:900px}.homepage-treatment-table th:first-child{width:45%}.homepage-treatment-toggle{display:inline-flex;align-items:center;gap:9px;cursor:pointer}.homepage-treatment-toggle input{width:18px;height:18px;accent-color:var(--dash-accent)}.homepage-treatment-toggle:has(input:disabled){opacity:.5;cursor:not-allowed}.homepage-treatment-table select{min-width:76px}.homepage-treatment-table .table-content small{max-width:430px;display:block;white-space:normal}.homepage-treatment-table .gallery-row-actions{display:flex;align-items:center;gap:10px}@media(max-width:640px){.homepage-treatment-note{align-items:flex-start;flex-direction:column;gap:5px}}
+
+.table-pagination{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:18px 24px;border-top:1px solid var(--dash-border);background:var(--dash-surface);color:var(--dash-muted);font-size:12px}
+.table-pagination p{margin:0;flex:1;white-space:nowrap}.table-pagination strong{color:var(--dash-text);font-weight:600}
+.table-pagination .table-page-size{display:flex;flex-direction:row;align-items:center;flex-shrink:0;gap:10px;margin:0;font-size:12px;font-weight:500;line-height:1;white-space:nowrap}
+.table-pagination .table-page-size select{flex:none;width:88px;height:40px;min-height:40px;margin:0;padding:8px 34px 8px 12px;font-size:12px;line-height:1.2;background-position:right 10px center}
+.table-pagination nav{display:flex;align-items:center;gap:5px}.table-pagination nav button{min-width:40px;height:40px;min-height:40px;padding:8px 12px;font-size:12px;line-height:1.2}
+.table-pagination button[aria-current="page"]{background:var(--dash-accent);color:#fff;border-color:var(--dash-accent)}
+.table-pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination-gap{padding:0 3px}.table-pagination [data-page-control="previous"] svg{transform:rotate(180deg)}
+@media(max-width:680px){.table-pagination{padding:16px;gap:14px}.table-pagination nav{width:100%;justify-content:center;flex-wrap:wrap}.table-pagination nav [data-page-control] span{display:none}.table-pagination p{flex:1}}
