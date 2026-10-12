@@ -14,7 +14,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.views import LoginView, PasswordResetView
 from django.views.decorators.cache import never_cache
-from .forms import DashboardAuthenticationForm, DashboardPasswordResetForm
+from .forms import DashboardAuthenticationForm, DashboardPasswordResetForm, reset_expiry_label
 from django.urls import reverse_lazy
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -247,12 +247,17 @@ class DashboardPasswordResetView(PasswordResetView):
     form_class = DashboardPasswordResetForm
     success_url = reverse_lazy('dental_family:password-reset-done')
 
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        context['reset_expiry']=reset_expiry_label()
+        return context
+
     def form_valid(self, form):
         from smtplib import SMTPException
         import logging
         try:
             return super().form_valid(form)
-        except (SMTPException, OSError):
-            logging.getLogger(__name__).error('Password-reset email delivery failed. Check SMTP configuration.')
+        except (SMTPException, OSError, ValueError) as error:
+            logging.getLogger(__name__).error('Password-reset email delivery failed (%s). Check SMTP configuration and network connectivity.', type(error).__name__)
             form.add_error(None, 'We could not send the reset email right now. Please try again later or contact your administrator.')
             return self.form_invalid(form)

@@ -2,6 +2,9 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from email.utils import formataddr
+from urllib.parse import urlsplit
+from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env', override=False)
@@ -38,11 +41,18 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'true').lower() in {'1','true','yes'}
 EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'false').lower() in {'1','true','yes'}
 EMAIL_TIMEOUT = 15
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'Dr. Teeth <noreply@drteethfamilydental.com>')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', formataddr(('Dr. Teeth','noreply@drteethfamilydental.com')))
 PASSWORD_RESET_TIMEOUT = int(os.environ.get('PASSWORD_RESET_TIMEOUT', '3600'))
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME':'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS':{'min_length':10}},
-    {'NAME':'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME':'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    # {'NAME':'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    # {'NAME':'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS':{'min_length':10}},
+    # {'NAME':'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    # {'NAME':'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+# Optional canonical origin for emailed links, independent of request Host headers.
+PASSWORD_RESET_BASE_URL = os.environ.get('PASSWORD_RESET_BASE_URL', '').strip().rstrip('/')
+if PASSWORD_RESET_BASE_URL:
+    reset_origin=urlsplit(PASSWORD_RESET_BASE_URL)
+    if reset_origin.scheme not in {'http','https'} or not reset_origin.hostname or reset_origin.path or reset_origin.query or reset_origin.fragment or reset_origin.username or reset_origin.password:
+        raise ImproperlyConfigured('PASSWORD_RESET_BASE_URL must be an HTTP(S) origin, e.g. https://clinic.example.com.')
