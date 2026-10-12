@@ -2432,11 +2432,7 @@
   text-transform: uppercase;
 }
 .smile-comparison--eyebrow:before {
-  content: "";
-  width: 28px;
-  height: 1px;
-  flex-shrink: 0;
-  background: var(--accent);
+  content: none;
 }
 .smile-comparison--copy h2 {
   font-size: clamp(36px,3.6vw,56px);
@@ -3136,7 +3132,6 @@
  .smile-comparison--section{padding:8px;border-radius:22px;margin-bottom:56px}
  .smile-comparison--copy{padding:22px 16px 24px}
  .smile-comparison--eyebrow{margin-bottom:20px;font-size:8px;letter-spacing:.9px;gap:10px}
- .smile-comparison--eyebrow:before{width:20px}
  .smile-comparison--copy h2{font-size:clamp(27px,7.6vw,38px);letter-spacing:-.7px}
  .smile-comparison--copy p{font-size:13px;line-height:1.8;margin-top:20px}
  .smile-comparison--features{gap:10px;margin:22px 0;padding:16px 0}
