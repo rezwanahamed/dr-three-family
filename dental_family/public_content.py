@@ -64,10 +64,6 @@ def managed_html(template, request, route, data, is_new=False):
             prose = soup.select_one('main .prose')
             if prose:
                 replace_children(prose, list(fragment(clean_html(record.get('details') or '<p>'+escape(record.get('description',''))+'</p>')).contents))
-                if record['section']=='articles' and record.get('image'):
-                    hero = fragment('<div class="article-hero"><img loading="lazy" alt="" /></div>').div
-                    image(hero.img, record)
-                    prose.insert(0, hero)
         elif is_new:
             body = soup.select_one('main .page-body')
             cta = body.select_one('.page-cta') if body else None
@@ -75,6 +71,9 @@ def managed_html(template, request, route, data, is_new=False):
                 replace_children(body, list(fragment('<div class="prose"><p>'+escape(record.get('description',''))+'</p></div>').contents))
                 if cta:
                     body.append(cta)
+
+    for hero in soup.select('main .article-hero'):
+        hero.decompose()
 
     def group(section):
         return sorted([r for r in records if r['section']==section], key=lambda r:int(r.get('order') or 1))

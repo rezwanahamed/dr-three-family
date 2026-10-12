@@ -288,3 +288,29 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(len(cards),6)
         self.assertEqual([card.select_one('.doctor-nav--serviceTitle').text for card in cards],[service['name'] for service in self.base['services'][:6]])
         self.assertNotIn('Extra service',self.soup('/services/').select_one('.doctor-nav--serviceGrid').text)
+
+    def test_article_thumbnail_is_only_shown_on_listing_card(self):
+        article=self.edit('articles',image='/media/gallery/article-thumb.webp',details='<h2>Article heading</h2><p>Article body remains visible.</p>')
+        self.assertEqual(self.submit().status_code,200)
+        detail=self.soup(article['url'])
+        self.assertIsNone(detail.select_one('main .article-hero'))
+        self.assertFalse(any(img.get('src')==article['image'] for img in detail.select('main img')))
+        self.assertIn('Article body remains visible.',detail.select_one('.prose').text)
+        card=self.soup('/blog/').select_one(f'a.blog-card[href="{article["url"]}"]')
+        self.assertEqual(card.img['src'],article['image'])
+
+    def test_new_article_details_do_not_insert_thumbnail(self):
+        original=next(r for r in self.base['records'] if r['section']=='articles')
+        article={**original,'id':'new-article-no-hero','title':'New article without hero','url':'/new-article-no-hero/','image':'/media/gallery/new-article-thumb.webp','details':'<p>New article body.</p>'}
+        self.state['drafts']=[article]
+        self.assertEqual(self.submit().status_code,200)
+        detail=self.soup(article['url'])
+        self.assertIsNone(detail.select_one('main .article-hero'))
+        self.assertFalse(any(img.get('src')==article['image'] for img in detail.select('main img')))
+        self.assertIsNotNone(self.soup('/blog/').select_one(f'a.blog-card[href="{article["url"]}"] img'))
+
+    def test_initial_article_details_have_no_thumbnail(self):
+        for article in [r for r in self.base['records'] if r['section']=='articles']:
+            if article['url'].startswith('/category/'):
+                continue
+            self.assertIsNone(self.soup(article['url']).select_one('main .article-hero'))
