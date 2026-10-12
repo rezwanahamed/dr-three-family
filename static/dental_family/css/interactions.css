@@ -36,6 +36,7 @@
 
 /* Treatment listing pagination. */
 [data-treatment-library] .treatment-card--card[hidden],
+[data-article-library] .blog-card[hidden],
 .treatment-load-more button[hidden] { display:none !important; }
 .treatment-load-more { display:flex; flex-direction:column; align-items:center; gap:12px; margin:32px 0 0; }
 .treatment-load-more p { margin:0; color:var(--muted); font-size:13px; }

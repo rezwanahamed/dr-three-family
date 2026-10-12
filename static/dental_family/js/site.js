@@ -9,13 +9,14 @@
   };
 
 
-  // Reveal treatment cards in batches of six on the treatment listing page.
-  $$('[data-treatment-library]').forEach(grid => {
-    const cards = $$('.treatment-card--card', grid), batch = 6;
+  // Reveal listing cards in batches of six.
+  $$('[data-treatment-library], [data-article-library]').forEach(grid => {
+    const articles=grid.hasAttribute('data-article-library');
+    const cards = $$(articles?'.blog-card':'.treatment-card--card', grid), batch = 6;
     let visible = Math.min(batch, cards.length);
     if (cards.length <= batch) return;
     const controls = document.createElement('div');
-    controls.className = 'treatment-load-more';
+    controls.className = articles?'treatment-load-more article-load-more':'treatment-load-more';
     const button = document.createElement('button');
     button.type = 'button';button.className = 'button';button.textContent = 'See more';
     button.setAttribute('aria-controls', grid.id);
@@ -24,7 +25,7 @@
     controls.append(button, status);grid.after(controls);
     function update() {
       cards.forEach((card, index) => { card.hidden = index >= visible; });
-      status.textContent = `${visible} of ${cards.length} treatments`;
+      status.textContent = `${visible} of ${cards.length} ${articles?'articles':'treatments'}`;
       button.hidden = visible >= cards.length;
     }
     button.addEventListener('click', () => {
