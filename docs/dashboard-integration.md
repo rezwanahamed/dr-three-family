@@ -11,9 +11,9 @@ The Django dashboard now reads and saves a shared workspace in the `WebsiteWorks
 
 Publication updates treatment/article details and summaries, thumbnails, page titles/descriptions, SEO tags and sitemap, listings, doctors, gallery images, clinic photos/captions, locations/maps/footer branches, FAQ topics/answers/order, and service navigation. New pages, treatment pages, articles, and FAQ topics receive public routes. Deleted public content returns the custom 404. Topic/service removal keeps the reassignment rules from the dashboard.
 
-Drafts do not affect public pages until publication. The public site uses the last published snapshot; a database backup therefore includes both drafts and published content. JSON export remains available. Uploaded images remain under `MEDIA_ROOT/gallery`.
+Drafts do not affect public pages until publication. The public site uses the last published snapshot; a database backup therefore includes both drafts and published content. Uploaded images remain under `MEDIA_ROOT/gallery`.
 
-The server requires active staff access and CSRF tokens for mutation requests. Revision checks reject stale writes from another editing session rather than overwriting its work. The dashboard reports conflicts and failed saves; keep/export unsaved local edits before reloading to resolve a conflict. Rich text is sanitized on the server before it is rendered.
+The server requires active staff access and CSRF tokens for mutation requests. Revision checks reject stale writes from another editing session rather than overwriting its work. The dashboard reports conflicts and failed saves; keep a copy of unsaved local edits before reloading to resolve a conflict. Rich text is sanitized on the server before it is rendered.
 
 ## Setup
 
@@ -40,7 +40,7 @@ The plain `pages/dashboard/index.html` export still supports offline local draft
 
 ## Gallery sections
 
-The gallery photo editor includes a required Section dropdown with Our space, Our team, and Our technology. The separate Gallery sections panel above the image library lists sections and photo counts. Its Add section button opens a dialog for creating custom sections. The image editor keeps only the selection dropdown; duplicate section names are blocked without regard to capitalization. Section selection is stored with the photo as `gallery_category`. Custom section names persist in server drafts and are included in JSON exports. After publication, the public gallery builds its filter buttons from the saved sections and filters photos using their selected section. Existing technology/team photos retain their categories.
+The gallery photo editor includes a required Section dropdown with Our space, Our team, and Our technology. The separate Gallery sections panel above the image library lists sections and photo counts. Its Add section button opens a dialog for creating custom sections. The image editor keeps only the selection dropdown; duplicate section names are blocked without regard to capitalization. Section selection is stored with the photo as `gallery_category`. Custom section names persist in server drafts. After publication, the public gallery builds its filter buttons from the saved sections and filters photos using their selected section. Existing technology/team photos retain their categories.
 
 Gallery section cards also provide Edit and Delete. Renaming updates the section on its photos without removing images. Delete opens a confirmation dialog; sections with photos require a destination section. Default sections can also be renamed or removed, and removed names stay removed after publication. The server rejects deleting a section while photos still reference it.
 

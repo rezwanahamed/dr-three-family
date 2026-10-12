@@ -31,9 +31,7 @@ with sync_playwright() as p:
     page.locator('#settings-form input[name="name"]').fill('QA workspace')
     page.get_by_role('button',name='Save preferences').click()
     expect(page.locator('.workspace strong')).to_have_text('QA workspace')
-    with page.expect_download() as download:
-        page.locator('#export').click()
-    assert download.value.suggested_filename=='dr-teeth-website-drafts.json'
+    expect(page.locator('#export')).to_have_count(0)
     page.keyboard.press('Control+k')
     expect(page.locator('#search-dialog')).to_be_visible()
     page.locator('#global-query').fill('QA draft treatment')
@@ -70,4 +68,4 @@ with sync_playwright() as p:
     expect(page.locator('tbody tr')).to_have_count(4)
     assert not errors,errors
     browser.close()
-print('PASS: desktop/mobile layout, search, filters, draft editing and persistence, activity, settings, JSON export, gallery, mobile navigation. No browser errors.')
+print('PASS: desktop/mobile layout, search, filters, draft editing and persistence, activity, settings, gallery, mobile navigation. No browser errors.')
