@@ -2165,7 +2165,7 @@ details[open] .faq-symbol:after {
 .lightbox::backdrop {
   -webkit-backdrop-filter: blur(7px);
   backdrop-filter: blur(7px);
-  background: #211c24d9;
+  background: color-mix(in srgb,var(--overlay-color) 85.098%,transparent);
 }
 .lightbox-image {
   height: 70dvh;
@@ -4251,7 +4251,7 @@ h1 em,h2 em {
   content: "";
   position: absolute;
   inset: 50% 0 0;
-  background: linear-gradient(transparent,#251c2acf);
+  background: linear-gradient(transparent,color-mix(in srgb,var(--overlay-color) 81.176%,transparent));
   pointer-events: none;
 }
 .photo-inset {
@@ -4420,7 +4420,7 @@ h1 em,h2 em {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: linear-gradient(120deg,#2e2332ed,#392b3bc7 55%,#352738a8);
+  background: linear-gradient(120deg,color-mix(in srgb,var(--overlay-color) 92.941%,transparent),color-mix(in srgb,var(--overlay-color) 78.039%,transparent) 55%,color-mix(in srgb,var(--overlay-color) 65.882%,transparent));
 }
 .page-intro .breadcrumbs {
   color: #ebdfe7;
@@ -4486,7 +4486,7 @@ h1 em,h2 em {
   content: "";
   position: absolute;
   inset: 0;
-  background: #302332dc;
+  background: var(--overlay-cta);
   z-index: -2;
 }
 .page-cta h2 {

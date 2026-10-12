@@ -5,7 +5,7 @@
     "section": "articles",
     "description": "A starting point for discussing treatment with your dentist.",
     "url": "/11-important-facts-you-need-to-know-about-root-canal-treatment/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -14,7 +14,7 @@
     "section": "articles",
     "description": "Bring your goals, your questions, and a clear idea of what matters to you.",
     "url": "/6-cosmetic-dental-treatment-to-consider-this-fall/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -23,7 +23,7 @@
     "section": "articles",
     "description": "Make an early visit feel familiar, positive, and comfortable.",
     "url": "/9-signs-that-your-child-should-see-a-padiatric-dentist/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -41,7 +41,7 @@
     "section": "treatments",
     "description": "Explore thoughtfully planned solutions to replace missing teeth and restore your smile.",
     "url": "/advanced_oral_surgery/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": true,
     "homepage_order": 4
@@ -52,7 +52,7 @@
     "section": "pages",
     "description": "Choose a branch and prepare for your visit. Our booking partner handles your appointment request.",
     "url": "/appointment/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -61,7 +61,7 @@
     "section": "pages",
     "description": "Practical reading and useful questions for your next conversation with the dentist.",
     "url": "/blog/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -70,7 +70,7 @@
     "section": "articles",
     "description": "A little reading to help you prepare for your next conversation with the dentist.",
     "url": "/category/children-dentistry/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -79,7 +79,7 @@
     "section": "articles",
     "description": "A little reading to help you prepare for your next conversation with the dentist.",
     "url": "/category/dental-implants/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -88,7 +88,7 @@
     "section": "articles",
     "description": "A little reading to help you prepare for your next conversation with the dentist.",
     "url": "/category/endo-dontics/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -97,7 +97,7 @@
     "section": "articles",
     "description": "A little reading to help you prepare for your next conversation with the dentist.",
     "url": "/category/general-dentistry/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -106,7 +106,7 @@
     "section": "articles",
     "description": "A little reading to help you prepare for your next conversation with the dentist.",
     "url": "/category/padiatric-dentistry/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -115,7 +115,7 @@
     "section": "treatments",
     "description": "A discreet, modern approach to a straighter smile, designed around your everyday life.",
     "url": "/clear_aligner/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": true,
     "homepage_order": 3
@@ -135,7 +135,7 @@
     "section": "treatments",
     "description": "Explore subtle refinements to the shape and appearance of your teeth.",
     "url": "/cosmetic-bonding/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -146,7 +146,7 @@
     "section": "treatments",
     "description": "Small refinements. A renewed confidence. Explore the possibilities for your smile.",
     "url": "/cosmetic_dentistry/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": true,
     "homepage_order": 2
@@ -157,7 +157,7 @@
     "section": "treatments",
     "description": "When something doesn’t feel right, talk to our team about your next available appointment.",
     "url": "/emergency_dental_care/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": true,
     "homepage_order": 6
@@ -168,7 +168,7 @@
     "section": "pages",
     "description": "Explore answers by treatment, or speak with our team about your own concerns.",
     "url": "/faq/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -177,7 +177,7 @@
     "section": "pages",
     "description": "A closer look at digital scanning and treatment planning.",
     "url": "/faqs-3d-intraoral-scanner/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -186,7 +186,7 @@
     "section": "pages",
     "description": "Getting started with braces and orthodontic care.",
     "url": "/faqs-dental-braces/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -195,7 +195,7 @@
     "section": "pages",
     "description": "Planning, suitability, and caring for your implant.",
     "url": "/faqs-dental-implant/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -204,7 +204,7 @@
     "section": "pages",
     "description": "Whitening options, sensitivity, and what to expect.",
     "url": "/faqs_teeth_whitening/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -213,7 +213,7 @@
     "section": "pages",
     "description": "Your questions about aligners and everyday wear.",
     "url": "/faqsinvisalign-clear-aligner/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -222,7 +222,7 @@
     "section": "treatments",
     "description": "Carefully considered restoration for teeth affected by decay or damage.",
     "url": "/fillings/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -233,7 +233,7 @@
     "section": "pages",
     "description": "Talk to the team about treatment costs and the payment method that works for you.",
     "url": "/financing-2/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -251,7 +251,7 @@
     "section": "treatments",
     "description": "Healthy habits start here. Keep your smile feeling its best with regular, personalized care.",
     "url": "/general_dentistry/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": true,
     "homepage_order": 1
@@ -271,7 +271,7 @@
     "section": "treatments",
     "description": "A consultation-led approach to the balance of your teeth and gum line.",
     "url": "/gum-reshaping/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -282,7 +282,7 @@
     "section": "articles",
     "description": "Keep everyday care simple, even when your routine changes.",
     "url": "/how-to-maintain-a-beautiful-holiday-smile/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -291,7 +291,7 @@
     "section": "pages",
     "description": "A thoughtful approach to dentistry. A little more comfort. And a team that puts you first.",
     "url": "/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -300,7 +300,7 @@
     "section": "pages",
     "description": "Meet the team bringing skill, patience, and a personal touch to your dental care.",
     "url": "/our-doctors/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -309,7 +309,7 @@
     "section": "pages",
     "description": "An indicative guide to selected treatments. Your dentist will explain your personal plan and estimate before treatment.",
     "url": "/pricing-guide-2/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -318,7 +318,7 @@
     "section": "pages",
     "description": "The clinic’s published policy on personal information and communication.",
     "url": "/privacy-policy/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -327,7 +327,7 @@
     "section": "treatments",
     "description": "A thoughtful check-in for your teeth, gums, and everyday oral health.",
     "url": "/regular-dental-checkup/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -338,7 +338,7 @@
     "section": "treatments",
     "description": "Personalized treatment to restore function, comfort, and confidence.",
     "url": "/restorative_dentistry/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -349,7 +349,7 @@
     "section": "articles",
     "description": "Prepare for a clear, reassuring conversation about your child’s care.",
     "url": "/root-canal-treatment-for-children-what-parents-need-to-know/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -358,7 +358,7 @@
     "section": "treatments",
     "description": "Focused care for a tooth that needs extra attention, with your comfort at the heart of it.",
     "url": "/root-canals/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": true,
     "homepage_order": 5
@@ -369,7 +369,7 @@
     "section": "pages",
     "description": "From everyday prevention to a complete treatment plan, explore dental care designed around you.",
     "url": "/services/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {
@@ -378,7 +378,7 @@
     "section": "treatments",
     "description": "Explore professional whitening options with a dentist who understands your smile.",
     "url": "/teeth-whitening/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -389,7 +389,7 @@
     "section": "treatments",
     "description": "Discover whether veneers are the right choice for your smile goals.",
     "url": "/veneers/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot",
     "show_on_homepage": false,
     "homepage_order": 0
@@ -400,7 +400,7 @@
     "section": "articles",
     "description": "Useful questions to ask your treating clinician before going home.",
     "url": "/what-foods-can-you-eat-after-getting-dental-implant/",
-    "image": "/static/dental_family/assets/images/hero/dental-studio.png",
+    "image": "/static/dental_family/assets/images/hero/dental-studio-purple.png",
     "status": "Website snapshot"
   },
   {

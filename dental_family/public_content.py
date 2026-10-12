@@ -16,7 +16,7 @@ def text(node, value):
 
 def image(node, record):
     if node and record.get('image') and safe_url(record['image']):
-        node['src'] = record['image']
+        node['src'] = record['image'].replace('/assets/images/theme/aligners.png', '/assets/images/theme/aligners-purple.png')
         node['alt'] = record.get('image_alt') or record.get('alt') or record['title']
         node.attrs.pop('srcset', None)
 

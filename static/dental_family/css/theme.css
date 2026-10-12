@@ -32,6 +32,9 @@
   --prose-text-color: #655e65;
   --focus-ring: #8a4ad4;
   --shadow-color: #68339f;
+  --overlay-color: color-mix(in srgb, var(--brand-dark) 70%, #241531);
+  --overlay-backdrop: color-mix(in srgb, var(--overlay-color) 45%, transparent);
+  --overlay-cta: linear-gradient(120deg, color-mix(in srgb, var(--overlay-color) 90%, transparent), color-mix(in srgb, var(--brand-dark) 86%, transparent));
   --plum: var(--brand-deep);
   --shadow-soft: 0 10px 40px color-mix(in srgb, var(--brand-dark) 3.137%, transparent);
   --shadow-raised: 0 22px 55px color-mix(in srgb, var(--brand-dark) 7.843%, transparent);

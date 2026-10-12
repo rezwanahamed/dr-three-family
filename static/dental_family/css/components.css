@@ -7,11 +7,11 @@
   grid-template-columns: 1fr 1.35fr 1fr 1fr;
   margin: 0;
   padding: 34px 16px;
-  border: 1px solid #806578;
+  border: 1px solid var(--brand-deep);
   border-radius: 18px;
-  background: linear-gradient(120deg,var(--brand-heading) 10%,#61465d 65%,#806078);
+  background: linear-gradient(120deg,var(--brand-deep),var(--accent) 60%,var(--brand-dark));
   box-shadow: 0 12px 30px color-mix(in srgb,var(--brand-heading) 7.059%,transparent);
-  color: var(--surface-ivory);
+  color: var(--text-inverse);
 }
 .clinic-stats--stat {
   display: flex;
@@ -1008,7 +1008,7 @@
   position: absolute;
   inset: 0;
   z-index: -2;
-  background: linear-gradient(180deg,#29212c70,#30263466 28%,#352b396e 60%,#211b28e8);
+  background: linear-gradient(180deg,color-mix(in srgb,var(--overlay-color) 43.922%,transparent),color-mix(in srgb,var(--overlay-color) 40.000%,transparent) 28%,color-mix(in srgb,var(--overlay-color) 43.137%,transparent) 60%,color-mix(in srgb,var(--overlay-color) 90.980%,transparent));
 }
 .hero--topline {
   display: flex;
@@ -1355,7 +1355,7 @@
     object-position: 72% center;
   }
   .hero--shade {
-    background: linear-gradient(180deg,#30253396,#35283bc2 50%,#241b2ceb);
+    background: linear-gradient(180deg,color-mix(in srgb,var(--overlay-color) 58.824%,transparent),color-mix(in srgb,var(--overlay-color) 76.078%,transparent) 50%,color-mix(in srgb,var(--overlay-color) 92.157%,transparent));
   }
   .hero--topline {
     margin: 19px 20px 0;
@@ -1612,7 +1612,7 @@
   content: "";
   position: absolute;
   inset: 55% 0 0;
-  background: linear-gradient(transparent,#251e2be0);
+  background: linear-gradient(transparent,color-mix(in srgb,var(--overlay-color) 87.843%,transparent));
   pointer-events: none;
 }
 .about-page--heroImage figcaption {
@@ -1753,7 +1753,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,#20192312 25%,#20192322 45%,#201923e8);
+  background: linear-gradient(180deg,color-mix(in srgb,var(--overlay-color) 7.059%,transparent) 25%,color-mix(in srgb,var(--overlay-color) 13.333%,transparent) 45%,color-mix(in srgb,var(--overlay-color) 90.980%,transparent));
   pointer-events: none;
 }
 .about-page--photo img {
