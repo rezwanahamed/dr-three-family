@@ -71,3 +71,14 @@
 .treatment-tools-meta button[hidden]{display:none!important}
 @media(max-width:650px){.treatment-library-tools{grid-template-columns:1fr;gap:16px;padding:18px 16px 12px;border-radius:18px;margin-bottom:24px}}
 @media(prefers-reduced-motion:reduce){.treatment-tool-control>svg,.treatment-library-tools .treatment-tool-control input,.treatment-library-tools .treatment-tool-control select{transition:none}}
+
+/* A consistent, centered toggle for static and backend-generated FAQs. */
+.accordion-item>h3>button{cursor:pointer;min-height:76px}
+.accordion-item>h3>button:focus-visible{outline:2px solid var(--focus-ring);outline-offset:4px;border-radius:6px}
+.accordion-plus{position:relative;display:block;width:34px;height:34px;flex:0 0 34px;font-size:0;line-height:0;transition:background .2s,color .2s,border-color .2s}
+.accordion-plus svg{display:none}
+.accordion-plus::before,.accordion-plus::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.5px;background:currentColor;border-radius:2px;transform:translate(-50%,-50%)}
+.accordion-plus::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .2s,opacity .2s}
+.accordion-item.expanded .accordion-plus{background:var(--brand-deep);border-color:var(--brand-deep);color:var(--text-inverse)}
+.accordion-item.expanded .accordion-plus::after{transform:translate(-50%,-50%) rotate(0);opacity:0}
+@media(prefers-reduced-motion:reduce){.accordion-plus,.accordion-plus::after{transition:none}}
