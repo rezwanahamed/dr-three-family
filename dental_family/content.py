@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.utils import timezone
+from django.core.validators import validate_email, URLValidator
 
 ROOT = Path(__file__).resolve().parents[1]
 LEGACY_TREATMENT_SERVICES = {
@@ -28,7 +29,7 @@ def script_data(name, variable):
 
 def seeds():
     records = json.loads((ROOT / 'static/dental_family/dashboard-content.json').read_text())
-    return {'records': records + script_data('price-data.js', 'DashboardPrices') + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology'], 'price_guide_initialized':True}
+    return {'records': records + script_data('price-data.js', 'DashboardPrices') + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology'], 'price_guide_initialized':True, 'contact_details':script_data('contact-data.js','DashboardContactDetails')}
 
 
 def gallery_name(value):
@@ -51,6 +52,7 @@ def gallery_snapshot(data):
     if not data.get('price_guide_initialized'):
         existing = {r['id'] for r in result['records']}
         result['records'].extend(r for r in script_data('price-data.js','DashboardPrices') if r['id'] not in existing)
+    result.setdefault('contact_details',script_data('contact-data.js','DashboardContactDetails'))
     result['price_guide_initialized'] = True
     result.setdefault('price_services', list(dict.fromkeys(r['category'] for r in result['records'] if r['section']=='prices')))
     for record in result['records']:
@@ -95,9 +97,32 @@ def clean_html(value):
     return str(soup)
 
 
+def validate_contact_details(details):
+    fields={'phone','email','whatsapp','facebook','instagram','opening_hours'}
+    if not isinstance(details,dict) or set(details)!=fields:
+        raise ValidationError('Enter valid contact details.')
+    for name,value in details.items():
+        if not isinstance(value,str) or len(value)>500:
+            raise ValidationError('Contact fields must contain valid text.')
+        details[name]=value.strip()
+    validate_email(details['email'])
+    for name in ['phone','whatsapp']:
+        value=details[name]
+        if name=='whatsapp' and not value:
+            continue
+        if not re.fullmatch(r'[+0-9 ()-]+',value) or not 7<=len(re.sub(r'\D','',value))<=15:
+            raise ValidationError('Enter a valid phone number including its country code.')
+    for name in ['facebook','instagram']:
+        if details[name]:
+            URLValidator(schemes=['http','https'])(details[name])
+    return details
+
+
 def validate_state(data):
     if not isinstance(data, dict):
         raise ValidationError('Invalid workspace.')
+    if 'contactDetails' in data:
+        validate_contact_details(data['contactDetails'])
     for name in ['drafts','deletions','activity','services','faqTopics','deletedFAQTopics','deletedServices','faqTopicOrder','serviceOrder','galleryCategories','deletedGalleryCategories']:
         if name in data and (not isinstance(data[name], list) or len(data[name]) > 2000):
             raise ValidationError(f'Invalid {name}.')
@@ -270,6 +295,7 @@ def snapshot(published, state):
         service['treatments'] = ordered(options, state.get('optionOrder', {}).get(service_id, []), lambda value: value)
     assign_treatment_urls(list(by_id.values()), base['records'], state.get('drafts',[]), list(topics.values()))
     result = {'price_guide_initialized':True, 'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
+    result['contact_details']=state.get('contactDetails',base.get('contact_details',script_data('contact-data.js','DashboardContactDetails')))
     price_services = list(state.get('priceServices',base.get('price_services',[])))
     for record in result['records']:
         if record['section']=='prices' and record['category'] not in price_services:

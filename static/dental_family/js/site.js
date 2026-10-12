@@ -341,7 +341,7 @@
       if(first){first.focus();return;}
       const data=new FormData(form),topic=data.get('topic');
       const body=`Name: ${String(data.get('name')).trim()}\nReply email: ${String(data.get('email')).trim()}\nTopic: ${topic}\n\n${textarea.value.trim()}`;
-      location.href=`mailto:info@drteethfamilydental.com?subject=${encodeURIComponent(`Website inquiry: ${topic}`)}&body=${encodeURIComponent(body)}`;
+      location.href=`mailto:${encodeURIComponent(form.dataset.contactEmail||'info@drteethfamilydental.com')}?subject=${encodeURIComponent(`Website inquiry: ${topic}`)}&body=${encodeURIComponent(body)}`;
       status.hidden=false;
     });
   });

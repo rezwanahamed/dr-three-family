@@ -1,0 +1,1 @@
+window.DashboardContactDetails={"phone": "+880 1999-961517", "email": "info@drteethfamilydental.com", "whatsapp": "+8801999961517", "facebook": "https://www.facebook.com/dr.teethfamily2", "instagram": "https://www.instagram.com/dr_teeth_family", "opening_hours": "Please call to confirm opening hours and appointment availability at your branch."};

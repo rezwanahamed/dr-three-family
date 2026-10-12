@@ -2,6 +2,7 @@
 from copy import deepcopy
 from html import escape
 from urllib.parse import quote
+import re
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 from .content import clean_html, safe_url, gallery_snapshot
@@ -255,6 +256,7 @@ def managed_html(template, request, route, data, is_new=False):
             nodes.append(card)
         replace_children(price_grid,nodes)
     treatment_navigation(soup,data)
+    contact_details(soup,data)
     return str(soup)
 
 
@@ -287,4 +289,41 @@ def treatment_navigation(soup,data):
 def treatment_navigation_html(html,data):
     soup=BeautifulSoup(html,'html.parser')
     treatment_navigation(soup,data)
+    contact_details(soup,data)
     return str(soup)
+
+
+def contact_details(soup,data):
+    """Apply shared contact details while keeping branch-specific phone numbers."""
+    details=gallery_snapshot(data)['contact_details']
+    phone=details['phone']
+    digits=re.sub(r'\D','',phone)
+    email=details['email']
+    for link in list(soup.select('a[href]')):
+        href=link['href']
+        if href.startswith('tel:') and re.sub(r'\D','',href)== '8801999961517':
+            link['href']='tel:+'+digits
+            for value in list(link.find_all(string=True)):
+                if re.sub(r'\D','',str(value))=='8801999961517' or '+880 1999-961517' in str(value):
+                    value.replace_with(str(value).replace('+880 1999-961517',phone).replace('+8801999961517',phone))
+        elif href.startswith('mailto:info@drteethfamilydental.com'):
+            link['href']='mailto:'+email
+            for value in list(link.find_all(string=True)):
+                if 'info@drteethfamilydental.com' in str(value):
+                    value.replace_with(str(value).replace('info@drteethfamilydental.com',email))
+        elif href.startswith('https://wa.me/'):
+            if details['whatsapp']:
+                link['href']='https://wa.me/'+re.sub(r'\D','',details['whatsapp'])
+            else:
+                link.decompose()
+        elif href.startswith(('https://www.facebook.com/dr.teethfamily2','https://www.instagram.com/dr_teeth_family')):
+            name='facebook' if 'facebook.com' in href else 'instagram'
+            if details[name]:
+                link['href']=details[name]
+            else:
+                link.decompose()
+    for form in soup.select('[data-contact-form]'):
+        form['data-contact-email']=email
+    if details['opening_hours']:
+        for note in soup.select('.hours-note'):
+            text(note,details['opening_hours'])
