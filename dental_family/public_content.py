@@ -247,7 +247,10 @@ def managed_html(template, request, route, data, is_new=False):
         for price in group('prices'):
             categories.setdefault(price['category'],[]).append(price)
         nodes=[]
-        for category,items in categories.items():
+        for category in data.get('price_services',list(categories)):
+            items=categories.get(category,[])
+            if not items:
+                continue
             card=fragment('<section class="price-card"><h2>'+escape(category)+'</h2><dl>'+''.join('<div><dt>'+escape(item['title'])+'</dt><dd>'+escape(item['price'])+'</dd></div>' for item in items)+'</dl></section>').section
             nodes.append(card)
         replace_children(price_grid,nodes)

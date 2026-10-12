@@ -177,7 +177,7 @@ def workspace_response(workspace):
     base = gallery_snapshot(workspace.published or seeds())
     gallery = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     records = [{**r,'gallery_category':r.get('gallery_category') or gallery.get(r['id']) or 'Our space'} if r['section']=='gallery' else r for r in base['records']]
-    return {'records': records, 'topics': base['topics'], 'services': base['services'], 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
+    return {'records': records, 'topics': base['topics'], 'services': base['services'], 'price_services': base.get('price_services',[]), 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
             'state': workspace.draft, 'revision': workspace.revision,
             'published_settings': base.get('settings', {}),
             'published': bool(workspace.published)}

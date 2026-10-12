@@ -1,5 +1,6 @@
 """Dashboard persistence, validation, and public content projection."""
 import json
+from decimal import Decimal, InvalidOperation
 import re
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -51,6 +52,7 @@ def gallery_snapshot(data):
         existing = {r['id'] for r in result['records']}
         result['records'].extend(r for r in script_data('price-data.js','DashboardPrices') if r['id'] not in existing)
     result['price_guide_initialized'] = True
+    result.setdefault('price_services', list(dict.fromkeys(r['category'] for r in result['records'] if r['section']=='prices')))
     for record in result['records']:
         if record['id']=='/pricing-guide-2/' and record['section']=='treatments':
             record['section']='pages'
@@ -103,6 +105,14 @@ def validate_state(data):
         ids = data['homepageTreatmentOrder']
         if not isinstance(ids, list) or len(ids)>6 or not all(isinstance(value,str) for value in ids) or len(set(ids))!=len(ids):
             raise ValidationError('Select up to six unique homepage treatments.')
+    if 'priceServices' in data:
+        names=data['priceServices']
+        if not isinstance(names,list) or len(names)>200 or any(not isinstance(name,str) or not name.strip() or len(name)>120 for name in names):
+            raise ValidationError('Enter valid price guide service names.')
+        names=[' '.join(name.split()) for name in names]
+        if len({name.casefold() for name in names})!=len(names):
+            raise ValidationError('Price guide service names must be unique.')
+        data['priceServices']=names
     for name in ['settings','serviceEdits','treatmentOptions','optionOrder']:
         if name in data and not isinstance(data[name], dict):
             raise ValidationError(f'Invalid {name}.')
@@ -128,9 +138,33 @@ def validate_state(data):
             if record.get(key) and (not safe_url(record[key]) or (not record[key].startswith('/') and urlsplit(record[key]).scheme not in {'http','https'})):
                 raise ValidationError(f'Invalid {key}.')
         if record['section']=='prices':
+            if 'price_type' in record:
+                kind=record['price_type']
+                if not isinstance(kind,str) or kind not in {'single','range','custom'}:
+                    raise ValidationError('Choose a valid price type.')
+                if kind!='custom':
+                    amounts=[]
+                    for field in ['price_min']+(['price_max'] if kind=='range' else []):
+                        try:
+                            value=Decimal(str(record.get(field,'')))
+                            if not value.is_finite() or not 0<=value<=1000000000 or value.quantize(Decimal('.01'))!=value:
+                                raise InvalidOperation
+                        except (InvalidOperation,ValueError):
+                            raise ValidationError('Enter valid prices with up to two decimal places.')
+                        record[field]=str(value)
+                        amounts.append(value)
+                    if kind=='range' and amounts[1]<=amounts[0]:
+                        raise ValidationError('The maximum price must be greater than the minimum price.')
+                    if kind=='single':
+                        record.pop('price_max',None)
+                    record['price']='–'.join(format(value,',.2f').rstrip('0').rstrip('.') for value in amounts)+' Tk'
+                    record['description']=record['price']
+                else:
+                    record.pop('price_min',None)
+                    record.pop('price_max',None)
             for field in ['category','price']:
                 if not isinstance(record.get(field),str) or not record[field].strip() or len(record[field])>120:
-                    raise ValidationError(f'A valid {field} is required for price entries.')
+                    raise ValidationError(f'A valid {"service" if field=="category" else field} is required for price entries.')
                 record[field]=record[field].strip()
             if type(record.get('order')) is not int or not 1<=record['order']<=10000:
                 raise ValidationError('Price display order must be an integer from 1 to 10000.')
@@ -200,6 +234,15 @@ def snapshot(published, state):
     by_id = {record['id']: record for record in base['records']}
     for record in state.get('drafts', []):
         by_id[record['id']] = {**by_id.get(record['id'], {}), **record, 'status': 'Website snapshot', '_edited': True}
+        if record['section']=='prices':
+            saved=by_id[record['id']]
+            if 'price_type' not in record:
+                for field in ['price_type','price_min','price_max']:
+                    saved.pop(field,None)
+            elif record['price_type']!='range':
+                saved.pop('price_max',None)
+                if record['price_type']=='custom':
+                    saved.pop('price_min',None)
         if record['section']=='treatments':
             previous = next((r for r in base['records'] if r['id']==record['id']),None)
             by_id[record['id']]['created_at'] = previous.get('created_at','') if previous else timezone.now().isoformat()
@@ -227,6 +270,13 @@ def snapshot(published, state):
         service['treatments'] = ordered(options, state.get('optionOrder', {}).get(service_id, []), lambda value: value)
     assign_treatment_urls(list(by_id.values()), base['records'], state.get('drafts',[]), list(topics.values()))
     result = {'price_guide_initialized':True, 'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
+    price_services = list(state.get('priceServices',base.get('price_services',[])))
+    for record in result['records']:
+        if record['section']=='prices' and record['category'] not in price_services:
+            if 'priceServices' in state:
+                raise ValidationError('Move price entries to another service before deleting their service.')
+            price_services.append(record['category'])
+    result['price_services'] = price_services
     topic_routes = {}
     for topic in result['topics']:
         if not re.fullmatch(r'/[\w.-]+/',topic['url']) or topic['url'].split('/')[1] in {'dashboard','static','media'}:

@@ -32,7 +32,7 @@ class PriceGuideTests(TestCase):
         response=self.client.get('/pricing-guide-2/')
         self.assertContains(response,'650–900 Tk')
         soup=BeautifulSoup(response.content,'html.parser')
-        first=soup.select_one('main .price-card')
+        first=next(card for card in soup.select('main .price-card') if card.h2.text=='Updated dental essentials')
         self.assertEqual(first.h2.text,'Updated dental essentials')
         self.assertEqual([dt.text for dt in first.select('dt')],[edited['title'],new['title']])
         self.assertNotIn(self.prices[-1]['title'],soup.select_one('.prices-grid').text)
@@ -103,3 +103,70 @@ class PriceGuideTests(TestCase):
         response=self.client.get('/a-little-clarity-on-costs/')
         self.assertEqual(response.status_code,200)
         self.assertContains(response,'Dental essentials')
+
+    def test_services_create_rename_and_order_public_cards(self):
+        names=self.base['price_services']
+        self.assertEqual(len(names),3)
+        moved={**self.prices[0],'category':'Personalized care'}
+        order=['Personalized care',names[2],names[1],names[0]]
+        state={'drafts':[moved],'priceServices':order}
+        self.assertEqual(self.submit(state).status_code,200)
+        soup=BeautifulSoup(self.client.get('/a-little-clarity-on-costs/').content,'html.parser')
+        self.assertEqual([h.text for h in soup.select('.price-card h2')],order)
+        self.base=self.client.get('/dashboard/content/').json()
+        renamed='Personal care'
+        current=next(r for r in self.base['records'] if r['id']==moved['id'])
+        state={'drafts':[{**current,'category':renamed}],'priceServices':[renamed,*order[1:]]}
+        self.assertEqual(self.submit(state).status_code,200)
+        self.assertContains(self.client.get('/pricing-guide-2/'),renamed)
+        self.assertNotContains(self.client.get('/pricing-guide-2/'),'Personalized care')
+
+    def test_service_delete_requires_price_reassignment(self):
+        names=self.base['price_services']
+        remaining=names[1:]
+        self.assertEqual(self.submit({'priceServices':remaining}).status_code,400)
+        updates=[{**r,'category':remaining[0]} for r in self.prices if r['category']==names[0]]
+        self.assertEqual(self.submit({'priceServices':remaining,'drafts':updates}).status_code,200)
+        self.assertEqual(self.client.get('/dashboard/content/').json()['price_services'],remaining)
+        self.assertNotContains(self.client.get('/pricing-guide-2/'),names[0])
+        self.base=self.client.get('/dashboard/content/').json()
+        self.assertEqual(self.submit({'drafts':[]}).status_code,200)
+        self.assertEqual(self.client.get('/dashboard/content/').json()['price_services'],remaining)
+
+    def test_service_names_are_unique_and_empty_services_can_be_saved(self):
+        names=self.base['price_services']
+        self.assertEqual(self.submit({'priceServices':[names[0],names[0].upper()]}).status_code,400)
+        self.assertEqual(self.submit({'priceServices':[names[0],'  ']}).status_code,400)
+        response=self.submit({'priceServices':[*names,'New empty service']})
+        self.assertEqual(response.status_code,200)
+        self.assertIn('New empty service',response.json()['price_services'])
+        self.assertNotContains(self.client.get('/pricing-guide-2/'),'New empty service')
+
+    def test_single_and_range_prices_are_formatted_by_backend(self):
+        record={**self.prices[0],'price_type':'range','price_min':'1000','price_max':'1500','price':'untrusted display'}
+        response=self.submit({'drafts':[record]})
+        self.assertEqual(response.status_code,200)
+        saved=next(r for r in response.json()['records'] if r['id']==record['id'])
+        self.assertEqual(saved['price'],'1,000–1,500 Tk')
+        self.assertContains(self.client.get('/a-little-clarity-on-costs/'),'1,000–1,500 Tk')
+        self.base=self.client.get('/dashboard/content/').json()
+        record={**saved,'price_type':'single','price_min':'1250.50'}
+        response=self.submit({'drafts':[record]})
+        self.assertEqual(response.status_code,200)
+        saved=next(r for r in response.json()['records'] if r['id']==record['id'])
+        self.assertEqual(saved['price'],'1,250.5 Tk')
+        self.assertNotIn('price_max',saved)
+
+    def test_invalid_price_ranges_are_rejected(self):
+        template={**self.prices[0],'price_type':'range','price_min':'1000','price_max':'1500'}
+        for changes in [{'price_max':'500'},{'price_max':'1000'},{'price_min':'-1'},{'price_max':'NaN'},{'price_min':'1.001'},{'price_type':{}},{'price_min':'1000000001'}]:
+            self.assertEqual(self.submit({'drafts':[{**template,**changes}]}).status_code,400)
+
+    def test_custom_price_text_is_preserved(self):
+        record={**self.prices[0],'price_type':'custom','price':'Contact for estimate','price_min':'1000','price_max':'1500'}
+        response=self.submit({'drafts':[record]})
+        self.assertEqual(response.status_code,200)
+        saved=next(r for r in response.json()['records'] if r['id']==record['id'])
+        self.assertEqual(saved['price'],'Contact for estimate')
+        self.assertNotIn('price_min',saved)
+        self.assertNotIn('price_max',saved)
