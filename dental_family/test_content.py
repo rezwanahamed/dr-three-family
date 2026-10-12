@@ -250,3 +250,33 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(response.status_code,200)
         record=next(r for r in response.json()['records'] if r['id']=='new-services')
         self.assertEqual(record['url'],'/services-2/')
+
+    def test_service_dropdown_latest_three_link_to_treatment_details(self):
+        service=self.base['services'][0]
+        template=next(r for r in self.base['records'] if r['section']=='treatments')
+        additions=[{**template,'id':f'nav-treatment-{i}','title':f'Latest service treatment {i}','service':service['id'],'show_on_homepage':False,'url':f'/nav-treatment-{i}/','details':f'<p>Service treatment details {i}</p>'} for i in range(4)]
+        self.state['drafts']=additions
+        self.assertEqual(self.submit('/dashboard/content/').status_code,200)
+        self.assertNotIn('Latest service treatment',self.soup('/').select_one('.doctor-nav--serviceGrid').text)
+        self.base=self.client.get('/dashboard/content/').json()
+        self.assertEqual(self.submit().status_code,200)
+        nav=self.soup('/').select_one('.doctor-nav--serviceGrid > li')
+        links=nav.select('.doctor-nav--treatmentList a')
+        self.assertEqual([a.text for a in links],[f'Latest service treatment {i}' for i in [3,2,1]])
+        for link,i in zip(links,[3,2,1]):
+            self.assertContains(self.client.get(link['href']),f'Service treatment details {i}')
+        self.base=self.client.get('/dashboard/content/').json()
+        oldest=next(r for r in self.base['records'] if r['id']=='nav-treatment-0')
+        self.state={'drafts':[{**oldest,'title':'Edited oldest treatment'}]}
+        self.assertEqual(self.submit().status_code,200)
+        nav=self.soup('/services/').select_one('.doctor-nav--serviceGrid > li')
+        self.assertNotIn('Edited oldest treatment',nav.text)
+        self.assertEqual(len(nav.select('.doctor-nav--treatmentList a')),3)
+
+    def test_service_dropdown_without_publication_uses_real_records(self):
+        soup=self.soup('/')
+        services=soup.select('.doctor-nav--serviceGrid > li')
+        cosmetic=next(card for card in services if card.select_one('.doctor-nav--serviceTitle').text=='Cosmetic dentistry')
+        links=cosmetic.select('.doctor-nav--treatmentList a')
+        self.assertEqual([a['href'] for a in links],['/veneers/','/teeth-whitening/','/gum-reshaping/'])
+        self.assertTrue(all(len(card.select('.doctor-nav--treatmentList a'))<=3 for card in services))

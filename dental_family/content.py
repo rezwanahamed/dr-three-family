@@ -6,8 +6,17 @@ from urllib.parse import urlsplit
 from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
+from django.utils import timezone
 
 ROOT = Path(__file__).resolve().parents[1]
+LEGACY_TREATMENT_SERVICES = {
+    '/advanced_oral_surgery/':'advanced_oral_surgery', '/clear_aligner/':'clear_aligner',
+    '/cosmetic_dentistry/':'cosmetic_dentistry', '/cosmetic-bonding/':'cosmetic_dentistry',
+    '/gum-reshaping/':'cosmetic_dentistry', '/teeth-whitening/':'cosmetic_dentistry', '/veneers/':'cosmetic_dentistry',
+    '/general_dentistry/':'general_dentistry', '/fillings/':'general_dentistry',
+    '/regular-dental-checkup/':'general_dentistry', '/restorative_dentistry/':'general_dentistry',
+    '/root-canals/':'root-canals', '/emergency_dental_care/':'emergency_dental_care',
+}
 SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', 'locations', 'faqs'}
 
 
@@ -43,6 +52,7 @@ def gallery_snapshot(data):
     for record in result['records']:
         if record['section']=='treatments':
             default = homepage_defaults.get(record['id'], {})
+            record.setdefault('service', LEGACY_TREATMENT_SERVICES.get(record['id'],''))
             record.setdefault('show_on_homepage', default.get('show_on_homepage', False))
             record.setdefault('homepage_order', default.get('homepage_order', 0))
     original = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
@@ -174,6 +184,9 @@ def snapshot(published, state):
     by_id = {record['id']: record for record in base['records']}
     for record in state.get('drafts', []):
         by_id[record['id']] = {**by_id.get(record['id'], {}), **record, 'status': 'Website snapshot', '_edited': True}
+        if record['section']=='treatments':
+            previous = next((r for r in base['records'] if r['id']==record['id']),None)
+            by_id[record['id']]['created_at'] = previous.get('created_at','') if previous else timezone.now().isoformat()
     for deletion in state.get('deletions', []):
         by_id.pop(deletion['id'], None)
     selected = state.get('homepageTreatmentOrder', [r['id'] for r in sorted(by_id.values(), key=lambda r:r.get('homepage_order',0)) if r['section']=='treatments' and r.get('show_on_homepage')])

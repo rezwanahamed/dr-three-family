@@ -241,15 +241,37 @@ def managed_html(template, request, route, data, is_new=False):
                     if r['section']!=section or r['id'] in shown:
                         continue
                     card=deepcopy(base);card['href']=r['url'];text(card.select_one('h2,h3'),r['title']);text(card.select_one('p'),r.get('short_details') or r.get('description'));image(card.select_one('img'),r);container.append(card)
+    treatment_navigation(soup,data)
+    return str(soup)
+
+
+def treatment_navigation(soup,data):
+    """List the newest three published treatment records for each service."""
+    data=gallery_snapshot(data)
+    records=data['records']
     nav=soup.select_one('.doctor-nav--serviceGrid')
-    if nav:
-        cards=nav.select(':scope > li');base=cards[0] if cards else None
-        nodes=[]
-        for i,service in enumerate(data['services']):
-            if not base:
-                break
-            card=deepcopy(base);text(card.select_one('.doctor-nav--serviceNumber'),str(i+1).zfill(2));link=card.select_one('.doctor-nav--serviceTitle');text(link,service['name']);link['href']=next((r['url'] for r in records if r['section']=='treatments' and (r.get('service')==service['id'] or r['url']==f'/{service["id"]}/')),'/services/')
-            replace_children(card.select_one('.doctor-nav--treatmentList'),[fragment('<li><a href="'+escape(link['href'])+'">'+escape(name)+'</a></li>').li for name in service['treatments'][:3]])
-            nodes.append(card)
-        replace_children(nav,nodes)
+    if not nav:
+        return
+    cards=nav.select(':scope > li')
+    base=cards[0] if cards else None
+    nodes=[]
+    for i,service in enumerate(data['services']):
+        if not base:
+            break
+        card=deepcopy(base)
+        text(card.select_one('.doctor-nav--serviceNumber'),str(i+1).zfill(2))
+        link=card.select_one('.doctor-nav--serviceTitle')
+        text(link,service['name'])
+        items=[(index,r) for index,r in enumerate(records) if r['section']=='treatments' and r.get('service')==service['id']]
+        items.sort(key=lambda pair:(pair[1].get('created_at',''),pair[0]),reverse=True)
+        latest=[r for _,r in items[:3]]
+        link['href']='/services/'
+        replace_children(card.select_one('.doctor-nav--treatmentList'),[fragment('<li><a href="'+escape(r['url'])+'">'+escape(r['title'])+'</a></li>').li for r in latest])
+        nodes.append(card)
+    replace_children(nav,nodes)
+
+
+def treatment_navigation_html(html,data):
+    soup=BeautifulSoup(html,'html.parser')
+    treatment_navigation(soup,data)
     return str(soup)

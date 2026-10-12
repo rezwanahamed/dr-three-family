@@ -48,7 +48,10 @@ def page(request, route='/'):
     if route == '/gallery/':
         from .content import seeds
         return HttpResponse(managed_html(info['template'], request, route, seeds()))
-    return render(request, info['template'])
+    from django.template.loader import render_to_string
+    from .content import seeds
+    from .public_content import treatment_navigation_html
+    return HttpResponse(treatment_navigation_html(render_to_string(info['template'], request=request), seeds()))
 
 
 def legacy_redirect(request, destination, **kwargs):

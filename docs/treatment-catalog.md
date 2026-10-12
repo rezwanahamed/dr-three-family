@@ -13,3 +13,5 @@ Orders, catalog changes, linked content changes, and removal records persist in 
 The Django-hosted dashboard now saves shared server drafts and publishes through **Publish changes**. The earlier local-only workflow described above applies to the standalone HTML preview. See [dashboard-integration.md](dashboard-integration.md) for the current Django workflow.
 
 Treatment URLs are generated from the title using lowercase ASCII letters, numbers, and hyphens (for example, `Clear Aligners` → `/clear-aligners/`). Duplicate or reserved slugs receive `-2`, `-3`, etc. The server verifies uniqueness during publication. Saving a changed title regenerates the treatment URL; after publishing, previous URLs redirect permanently to the current treatment details page.
+
+The public navigation groups actual treatment records by their selected service and links to their canonical detail URLs. Each service shows its newest three published treatments, based on server-recorded creation time. Edits keep the original creation time; older imported records use their existing catalog sequence when no creation date is available. Unpublished drafts do not appear.
