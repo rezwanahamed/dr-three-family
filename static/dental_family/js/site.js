@@ -27,6 +27,19 @@
     function update(){const shown=new Set(matching.slice(0,visible));cards.forEach(card=>card.hidden=!shown.has(card));status.textContent=`${Math.min(visible,matching.length)} of ${matching.length} ${articles?'articles':'treatments'}`;button.hidden=visible>=matching.length;if(!articles){grid.hidden=!matching.length;empty.hidden=!!matching.length;if(resultCount)resultCount.textContent=`${matching.length} ${matching.length===1?'treatment':'treatments'}`;if(reset)reset.hidden=!normalize(search?.value)&&!service?.value;}}
     function filter(){const query=normalize(search?.value),selected=service?.value||'';matching=cards.filter(card=>(!selected||card.dataset.service===selected)&&normalize(card.dataset.search||`${$('h3',card)?.textContent||''} ${$('p',card)?.textContent||''}`).includes(query));visible=Math.min(batch,matching.length);update();}
     search?.addEventListener('input',filter);service?.addEventListener('change',filter);
+    if(service?.dataset.servicesUrl){
+      const refreshServices=()=>fetch(service.dataset.servicesUrl,{headers:{Accept:'application/json'},cache:'no-store'})
+        .then(response=>{if(!response.ok)throw new Error('Services unavailable');return response.json();})
+        .then(data=>{
+          if(!Array.isArray(data.services)||!data.services.every(item=>typeof item.id==='string'&&typeof item.name==='string'))return;
+          const selected=service.value;
+          service.replaceChildren(new Option('All services',''),...data.services.map(item=>new Option(item.name,item.id)));
+          service.value=data.services.some(item=>item.id===selected)?selected:'';
+          filter();
+        }).catch(()=>{/* Keep rendered options if the backend is temporarily unavailable. */});
+      refreshServices();
+      window.addEventListener('focus',refreshServices);
+    }
     const clearFilters=()=>{if(search)search.value='';if(service)service.value='';filter();search?.focus({preventScroll:true});};
     $('button',empty).addEventListener('click',clearFilters);reset?.addEventListener('click',clearFilters);
     button.addEventListener('click',()=>{const firstNew=visible;visible=Math.min(visible+batch,matching.length);update();matching.slice(firstNew,visible).forEach(card=>animate(card,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:300,easing:'cubic-bezier(.22,1,.36,1)'}));matching[firstNew]?.focus({preventScroll:true});});

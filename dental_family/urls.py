@@ -6,6 +6,7 @@ from .forms import DashboardSetPasswordForm
 
 app_name = 'dental_family'
 urlpatterns = [
+    path('api/services/', views.public_services, name='public-services'),
     path('simple-ways-to-pay/', views.page, {'route':'/simple-ways-to-pay/'}, name='payment-options'),
     path('simple-ways-to-pay', views.legacy_redirect, {'destination':'/simple-ways-to-pay/'}),
     path('a-little-clarity-on-costs/', views.page, {'route':'/a-little-clarity-on-costs/'}, name='price-guide-details'),

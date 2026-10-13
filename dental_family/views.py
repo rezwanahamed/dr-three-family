@@ -21,12 +21,27 @@ ROOT = Path(__file__).resolve().parent.parent
 ROUTES = json.loads((ROOT / 'routes.json').read_text(encoding='utf-8'))
 
 
+@never_cache
+def public_services(request):
+    from .models import WebsiteWorkspace
+    from .content import available_services
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Method not allowed.'}, status=405)
+    workspace = WebsiteWorkspace.objects.filter(pk=1).first()
+    services = available_services(workspace.published if workspace else {}, workspace.draft if workspace else {})
+    return JsonResponse({'services': [{'id': s['id'], 'name': s['name']} for s in services]})
+
+
 def page(request, route='/'):
     from .models import WebsiteWorkspace
     from .public_content import managed_html
     workspace = WebsiteWorkspace.objects.filter(pk=1).first()
     published = workspace.published if workspace else {}
     info = ROUTES.get(route)
+    if route == '/services/':
+        from .content import available_services, seeds
+        services = available_services(published, workspace.draft if workspace else {})
+        return HttpResponse(managed_html(info['template'], request, route, published or seeds(), filter_services=services))
     if route in {'/financing-2/', '/simple-ways-to-pay/'}:
         from .content import seeds
         return HttpResponse(managed_html(ROUTES['/financing-2/']['template'], request, route, published or seeds()))

@@ -32,7 +32,7 @@ def replace_children(container, nodes):
             container.append(node)
 
 
-def managed_html(template, request, route, data, is_new=False):
+def managed_html(template, request, route, data, is_new=False, filter_services=None):
     soup = BeautifulSoup(render_to_string(template, request=request), 'html.parser')
     data = gallery_snapshot(data)
     records = data['records']
@@ -268,7 +268,8 @@ def managed_html(template, request, route, data, is_new=False):
                     container.append(card)
     service_filter=soup.select_one('[data-treatment-service]')
     if service_filter:
-        replace_children(service_filter,[fragment('<option value="">All services</option>').option]+[fragment('<option value="'+escape(service['id'])+'">'+escape(service['name'])+'</option>').option for service in data['services']])
+        services = data['services'] if filter_services is None else filter_services
+        replace_children(service_filter,[fragment('<option value="">All services</option>').option]+[fragment('<option value="'+escape(service['id'])+'">'+escape(service['name'])+'</option>').option for service in services])
     payment_grid=soup.select_one('main .payment-grid')
     if payment_grid:
         nodes=[]

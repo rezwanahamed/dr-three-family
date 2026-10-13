@@ -336,6 +336,38 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(soup.select_one('a[href="/teeth-whitening/"].treatment-card--card')['data-service'],'cosmetic_dentistry')
         self.assertIsNone(self.soup('/').select_one('[data-treatment-search]'))
 
+    def test_service_filter_uses_dashboard_changes_without_publishing(self):
+        original, removed = self.base['services'][:2]
+        self.state.update({
+            'services': [{'id': 'new-care', 'name': 'New & gentle care', 'treatments': []}],
+            'serviceEdits': {original['id']: {**original, 'name': 'Renamed care'}},
+            'deletedServices': [removed['id']],
+            'serviceOrder': ['new-care', original['id']],
+        })
+        response = self.submit('/dashboard/content/')
+        self.assertEqual(response.status_code, 200)
+        # No publication step: public options must match the saved dashboard catalog.
+        client = Client()
+        response = client.get('/api/services/')
+        self.assertEqual(response.status_code, 200)
+        services = response.json()['services']
+        self.assertEqual(services[:2], [
+            {'id': 'new-care', 'name': 'New & gentle care'},
+            {'id': original['id'], 'name': 'Renamed care'},
+        ])
+        self.assertNotIn(removed['id'], [s['id'] for s in services])
+        self.assertTrue(all(set(s) == {'id', 'name'} for s in services))
+        soup = BeautifulSoup(client.get('/services/').content, 'html.parser')
+        self.assertEqual([(o['value'], o.text) for o in soup.select('[data-treatment-service] option')],
+                         [('', 'All services')] + [(s['id'], s['name']) for s in services])
+        self.assertIn('no-store', response['Cache-Control'])
+
+    def test_service_filter_all_services_removed(self):
+        self.state['deletedServices'] = [s['id'] for s in self.base['services']]
+        self.assertEqual(self.submit('/dashboard/content/').status_code, 200)
+        self.assertEqual(Client().get('/api/services/').json(), {'services': []})
+        self.assertEqual(len(self.soup('/services/').select('[data-treatment-service] option')), 1)
+
     def test_treatment_comparison_images_publish_and_can_be_removed(self):
         record = self.edit('treatments', before_image='/media/gallery/before.webp', after_image='/media/gallery/after.webp')
         self.assertEqual(self.submit().status_code, 200)

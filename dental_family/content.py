@@ -294,6 +294,17 @@ def assign_treatment_urls(records, original, drafts, topics):
         used.update(r['url_aliases'])
 
 
+def available_services(published, state):
+    """Current dashboard catalog, including saved service edits and removals."""
+    base = published or seeds()
+    services = {service['id']: service for service in base['services']}
+    services.update({service['id']: service for service in state.get('services', [])})
+    services.update(state.get('serviceEdits', {}))
+    for identifier in state.get('deletedServices', []):
+        services.pop(identifier, None)
+    return ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id'])
+
+
 def snapshot(published, state):
     base = gallery_snapshot(published or seeds())
     by_id = {record['id']: record for record in base['records']}
