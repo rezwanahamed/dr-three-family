@@ -1,14 +1,15 @@
 """Dashboard persistence, validation, and public content projection."""
 import json
-from decimal import Decimal, InvalidOperation
 import re
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from urllib.parse import urlsplit
+
 from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
-from django.utils.text import slugify
+from django.core.validators import URLValidator, validate_email
 from django.utils import timezone
-from django.core.validators import validate_email, URLValidator
+from django.utils.text import slugify
 
 ROOT = Path(__file__).resolve().parents[1]
 LEGACY_TREATMENT_SERVICES = {
@@ -28,7 +29,7 @@ def script_data(name, variable):
 
 
 def seeds():
-    records = json.loads((ROOT / 'static/dental_family/dashboard-content.json').read_text())
+    records = json.loads((ROOT / 'static/dental_family/dashboard-content.json').read_text(encoding='utf-8'))
     return {'records': records + script_data('payment-data.js','DashboardPayments') + script_data('price-data.js', 'DashboardPrices') + script_data('location-data.js', 'DashboardLocations') + script_data('faq-data.js', 'DashboardFAQs'), 'topics': script_data('faq-data.js', 'DashboardFAQTopics'), 'services': script_data('service-catalog.js', 'DashboardServices'), 'gallery_sections': ['Our space','Our team','Our technology'], 'price_guide_initialized':True, 'payments_initialized':True, 'contact_details':script_data('contact-data.js','DashboardContactDetails')}
 
 
