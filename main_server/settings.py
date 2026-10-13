@@ -18,7 +18,7 @@ LOGIN_URL = '/dashboard/login/'
 AUTHENTICATION_BACKENDS = ['dental_family.backends.EmailBackend']
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/dashboard/login/'
-ROOT_URLCONF = 'demo.urls'
+ROOT_URLCONF = 'main_server.urls'
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': [BASE_DIR / 'templates'], 'APP_DIRS': True,

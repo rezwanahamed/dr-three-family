@@ -9,3 +9,8 @@ media/
 .env
 .env.*
 !.env.example
+
+# Local environment and generated outputs
+venv/
+dist/
+validation/

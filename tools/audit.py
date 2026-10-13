@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'demo.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'main_server.settings')
 import django
 django.setup()
 from django.test import Client, override_settings

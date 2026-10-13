@@ -44,8 +44,8 @@ use paths from the website root.
 - `static/dental_family/fonts/`: compiled local font files used by the original layout.
 - `routes.json`: route-to-template mapping and page titles.
 - `dental_family/`: Django views, URLs, and legacy redirects.
-- `demo/`: local Django preview project.
-- `validation/`: route/asset audit, browser results, and comparison screenshots.
+- `main_server/`: local Django preview project.
+- `validation/`: generated audit reports and browser screenshots (created by validation tools; ignored by Git).
 
 CSS selector names are readable, for example `.hero--scene` and
 `.doctor-nav--dropdown`, while retaining the original cascade and dimensions.
@@ -74,7 +74,7 @@ The `__variable_*` font classes preserve the original locally hosted typefaces.
    `python manage.py collectstatic` for deployment. Serve collected static files
    using your web server or your project's static-file middleware.
 7. Use your existing production settings, secret key, hosts, and security settings;
-   `demo/settings.py` is for local preview.
+   `main_server/settings.py` is for local preview.
 
 URLs use trailing slashes; Django's `CommonMiddleware` supports the previous URLs
 without them. Legacy treatment, payment, author, and form URLs retain their 301
@@ -196,7 +196,7 @@ venv/bin/python manage.py migrate
 venv/bin/python manage.py createsuperuser
 ```
 
-The current workspace migrations have already been applied. No default username/password is created. `db.sqlite3` is the default local database; `DJANGO_DATABASE_PATH` can select another SQLite database. Integration projects need auth/contenttypes/sessions apps, SessionMiddleware, CsrfViewMiddleware, AuthenticationMiddleware, a database, and LOGIN_URL/LOGIN_REDIRECT_URL/LOGOUT_REDIRECT_URL settings, as configured in `demo/settings.py`. Login and logout use Django’s authentication views; login credentials are never stored in browser storage. See [Django authentication documentation](https://docs.djangoproject.com/en/6.0/topics/auth/default/).
+The current workspace migrations have already been applied. No default username/password is created. `db.sqlite3` is the default local database; `DJANGO_DATABASE_PATH` can select another SQLite database. Integration projects need auth/contenttypes/sessions apps, SessionMiddleware, CsrfViewMiddleware, AuthenticationMiddleware, a database, and LOGIN_URL/LOGIN_REDIRECT_URL/LOGOUT_REDIRECT_URL settings, as configured in `main_server/settings.py`. Login and logout use Django’s authentication views; login credentials are never stored in browser storage. See [Django authentication documentation](https://docs.djangoproject.com/en/6.0/topics/auth/default/).
 
 
 Dashboard login now uses email rather than username. `DashboardAuthenticationForm` validates an email field and `EmailBackend` looks up accounts case-insensitively. Only active staff accounts can access the dashboard; missing, inactive, or duplicate-email matches are rejected. Usernames remain Django’s internal account identifiers, but are not login credentials here. Supply a unique email address when running `createsuperuser`, or set an email on an existing staff account. Integration settings must include `AUTHENTICATION_BACKENDS = ['dental_family.backends.EmailBackend']`.

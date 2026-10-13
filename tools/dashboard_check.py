@@ -3,6 +3,7 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 ROOT=Path(__file__).resolve().parents[1]
+(ROOT / 'validation/screenshots').mkdir(parents=True, exist_ok=True)
 with sync_playwright() as p:
     browser=p.chromium.launch(executable_path='/usr/bin/google-chrome',headless=True,args=['--no-sandbox'])
     page=browser.new_page(viewport={'width':1440,'height':1050})
