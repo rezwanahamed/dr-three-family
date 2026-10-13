@@ -37,19 +37,25 @@ from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 
 
 def reset_expiry_label():
-    seconds=settings.PASSWORD_RESET_TIMEOUT
-    if seconds%3600==0:
-        count=seconds//3600
-        return f'{count} hour'+('s' if count!=1 else '')
-    if seconds%60==0:
-        count=seconds//60
-        return f'{count} minute'+('s' if count!=1 else '')
-    return f'{seconds} seconds'
+    minutes = settings.PASSWORD_RESET_TIMEOUT / 60
+    count = f'{minutes:.2f}'.rstrip('0').rstrip('.')
+    return f'{count} minute' + ('' if minutes == 1 else 's')
 
 
 class DashboardPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(label='Registered email address', max_length=254,
         widget=forms.EmailInput(attrs={'autocomplete':'email','autocapitalize':'none','spellcheck':'false','autofocus':True,'placeholder':'you@example.com'}))
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        # Reuse Django's case-insensitive lookup and account eligibility checks.
+        if not any(self.get_users(email)):
+            raise ValidationError(
+                'No active account eligible for password reset was found with this '
+                'email address. Check your registered email or contact your administrator.',
+                code='no_reset_account',
+            )
+        return email
 
 
     def send_mail(self, subject_template_name, email_template_name, context, from_email, to_email, html_email_template_name=None):

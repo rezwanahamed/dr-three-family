@@ -1,7 +1,7 @@
 """Django settings for main_server, configured through environment variables."""
 
 import os
-from email.utils import formataddr
+from email.utils import formataddr, parseaddr
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -148,3 +148,8 @@ DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
     formataddr(('Dr. Teeth', 'noreply@drteethfamilydental.com')),
 )
+
+# Allow readable unquoted display names in .env while supplying valid SMTP syntax.
+_sender_name, _sender_address = parseaddr(DEFAULT_FROM_EMAIL, strict=False)
+if _sender_name and _sender_address:
+    DEFAULT_FROM_EMAIL = formataddr((_sender_name, _sender_address))

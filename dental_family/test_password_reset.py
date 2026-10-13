@@ -41,9 +41,24 @@ class PasswordResetTests(TestCase):
         login=self.client.post(reverse('dental_family:login'),{'email':'editor@example.com','password':'FreshPassword!572'})
         self.assertRedirects(login,reverse('dental_family:dashboard'))
 
-    def test_unknown_and_inactive_emails_do_not_send_mail(self):
-        for email in ['unknown@example.com','inactive@example.com']:
-            self.assertRedirects(self.request_reset(email),reverse('dental_family:password-reset-done'))
+    def test_ineligible_emails_show_error_without_sending_mail(self):
+        get_user_model().objects.create_user(
+            username='external-login', email='external@example.com', password=None,
+        )
+        for email in ['unknown@example.com', 'inactive@example.com', 'external@example.com']:
+            with self.subTest(email=email), patch.object(
+                mail.EmailMultiAlternatives, 'send',
+            ) as send:
+                response = self.request_reset(email)
+                self.assertContains(
+                    response,
+                    'No active account eligible for password reset was found',
+                )
+                self.assertEqual(
+                    response.context['form'].errors.as_data()['email'][0].code,
+                    'no_reset_account',
+                )
+                send.assert_not_called()
         self.assertEqual(len(mail.outbox),0)
 
     def test_registered_nonstaff_user_can_reset_password(self):

@@ -7,7 +7,7 @@ The login page's **Forgot password?** link opens `/dashboard/forgot-password/`.
 3. Enter and confirm a new password.
 4. Return to sign-in and use the new password.
 
-Active registered accounts with usable passwords can reset their passwords, including nonstaff users. Dashboard access still requires staff status. Unknown or inactive addresses receive the same confirmation page, with no email sent. Reset links expire after one hour by default and become invalid after use. Django validates password strength and CSRF tokens.
+Active registered accounts with usable passwords can reset their passwords, including nonstaff users. Dashboard access still requires staff status. Before sending email, the form checks for an eligible account using Django's case-insensitive email lookup. Unknown addresses, inactive accounts, and accounts without usable passwords show an email-field error and do not send mail. This explicit error reveals whether an address is eligible for reset. Reset links expire after one hour by default and become invalid after use. Changing a password requires the valid token sent to the account's email address. Django validates CSRF tokens; password-strength checks depend on the configured password validators.
 
 ## Configure email
 
