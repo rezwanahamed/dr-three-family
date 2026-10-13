@@ -1,211 +1,170 @@
-# Dr. Teeth — Django-ready website
+# Development and production configuration
 
-The website is converted into plain HTML, CSS, and browser JavaScript. The delivered
-pages do **not** load React, Next.js, Framer Motion, or a Tailwind runtime. Django
-renders the same HTML through reusable templates.
+This Django project reads configuration directly from **`production_env.py`**, located beside `manage.py`. The same filename is used for both local development and production; its values differ between installations.
 
-## Preview with Django
+`main_server/settings.py` imports this file. Editing `.env` or setting cPanel environment variables does not override these configuration values.
 
-Run from this directory:
+## 1. Create the configuration file
+
+Expected layout:
+
+```text
+project-root/
+├── manage.py
+├── production_env.py
+├── requirements.txt
+└── main_server/
+    ├── settings.py
+    └── wsgi.py
+```
+
+If `production_env.py` already exists, edit it and preserve your existing production secret key. Otherwise, create it using one of the examples below.
+
+This is a **Python file**, so quote text, use `True`/`False` for booleans, and use numbers for ports and timeouts. Do not use `.env` syntax with unquoted domain names.
+
+## 2. Local development example
+
+```python
+# production_env.py — local development
+DJANGO_SECRET_KEY = 'development-only-secret-do-not-use-in-production'
+DJANGO_DEBUG = True
+DJANGO_ALLOWED_HOSTS = 'localhost'
+DJANGO_CSRF_TRUSTED_ORIGINS = 'http://localhost:8000,http://127.0.0.1:8000'
+
+# Print reset emails in the terminal without sending real mail.
+DJANGO_EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'Dr. Teeth Family <noreply@example.com>'
+
+PASSWORD_RESET_TIMEOUT = 300
+# An empty value builds reset links from the incoming request.
+PASSWORD_RESET_BASE_URL = ''
+```
+
+Install dependencies and start Django from the project root:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python -m venv venv
+source venv/bin/activate
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
 python manage.py check
 python manage.py runserver
 ```
 
-Open `http://127.0.0.1:8000/`. Database migrations are unnecessary for this frontend.
+Use a Python version compatible with the pinned dependencies in `requirements.txt`.
 
-## Preview without Django
+Open `http://localhost:8000/dashboard/`. Supply an email address when creating your superuser: dashboard sign-in uses email and password.
+
+The current local development database has this admin login:
+
+- Email: `admin@gmail.com`
+- Password: `123456`
+
+These credentials are for local development only. They are stored as a Django user in `db.sqlite3`, not in `production_env.py`. A fresh database needs its own account created with `createsuperuser`; uploading configuration alone does not create a user. Use a different, strong password for production.
+
+To test password resets, submit an active account's registered email. The console backend prints the reset link in the terminal running Django. The password-reset timeout above is **300 seconds (5 minutes)**.
+
+## 3. Production example
+
+Generate a random secret locally or in your hosting terminal:
 
 ```bash
-python3 tools/serve.py --port 8000
+python -c "import secrets; print(secrets.token_urlsafe(50))"
 ```
 
-The standalone preview serves `pages/` and maps `/static/` to the supplied assets.
-Use an HTTP server rather than opening HTML with `file://`, because links and assets
-use paths from the website root.
+Put the result in `DJANGO_SECRET_KEY`. Keep it stable across deployments and application workers. If your production file already has a private random key, retain it.
 
-## Files
+```python
+# production_env.py — production
+DJANGO_SECRET_KEY = 'replace-with-your-generated-private-secret'
+DJANGO_DEBUG = False
+DJANGO_ALLOWED_HOSTS = 'clientdemo.softfluxit.com'
+DJANGO_CSRF_TRUSTED_ORIGINS = 'https://clientdemo.softfluxit.com'
 
-- `pages/`: 42 standalone HTML routes, plus `404.html` and `500.html`.
-- `templates/dental_family/`: Django templates for all pages.
-- `templates/dental_family/base.html`: shared document structure.
-- `templates/dental_family/includes/`: shared navigation and footer.
-- `static/dental_family/css/theme.css`: centrally editable brand palette.
-- `static/dental_family/css/site.css`: original compiled global/Tailwind CSS and fonts.
-- `static/dental_family/css/components.css`: original component styles with readable selectors.
-- `static/dental_family/css/maps.css`, `not-found.css`, `recovery.css`: remaining page styles.
-- `static/dental_family/css/interactions.css`: hover/tap and interaction styling.
-- `static/dental_family/js/site.js`: all interactive behavior, without framework dependencies.
-- `static/dental_family/assets/`: original photographs, logos, fonts, and other assets.
-- `static/dental_family/fonts/`: compiled local font files used by the original layout.
-- `routes.json`: route-to-template mapping and page titles.
-- `dental_family/`: Django views, URLs, and legacy redirects.
-- `main_server/`: local Django preview project.
-- `validation/`: generated audit reports and browser screenshots (created by validation tools; ignored by Git).
+DJANGO_EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'your-email@gmail.com'
+EMAIL_HOST_PASSWORD = 'replace-with-your-smtp-app-password'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'Dr. Teeth Family <your-email@gmail.com>'
 
-CSS selector names are readable, for example `.hero--scene` and
-`.doctor-nav--dropdown`, while retaining the original cascade and dimensions.
-The `__variable_*` font classes preserve the original locally hosted typefaces.
+PASSWORD_RESET_TIMEOUT = 300
+PASSWORD_RESET_BASE_URL = 'https://clientdemo.softfluxit.com'
+```
 
-## Integrate into your Django project
+Use your actual SMTP account and the SMTP/app password provided for it. Set the sender address to one your provider permits. Django formats the display name for SMTP automatically.
 
-1. Copy `dental_family/`, `templates/`, `static/`, and `routes.json` together into a
-   directory on your project's Python path. The adapter locates the manifest and
-   metadata files relative to its package. Alternatively, adjust `ROOT` in
-   `dental_family/views.py` to your chosen project directory.
-2. Add `dental_family` and `django.contrib.staticfiles` to `INSTALLED_APPS`.
-3. Add the supplied `templates/` directory to `TEMPLATES[0]['DIRS']`.
-4. Add the supplied `static/` directory to `STATICFILES_DIRS`.
-5. Include the website URLs at the root:
+## 4. Deploy on cPanel
 
-   ```python
-   from django.urls import include, path
+1. Upload the project to your Python application's root directory.
+2. Upload **`production_env.py` separately**, beside `manage.py`. Git ignores this private file, so a Git deployment will not include it.
+3. Select a Python runtime compatible with `requirements.txt` and activate the application's virtual environment using the command shown by your hosting panel.
+4. From the application root, run:
 
-   urlpatterns = [path('', include('dental_family.urls'))]
-   handler404 = 'dental_family.views.not_found'
-   handler500 = 'dental_family.views.server_error'
+   ```bash
+   python -m pip install -r requirements.txt
+   python manage.py migrate
+   python manage.py collectstatic --noinput
+   python manage.py check
+   python manage.py check --deploy
    ```
 
-6. Set `STATIC_URL = '/static/'`, set a separate `STATIC_ROOT`, and run
-   `python manage.py collectstatic` for deployment. Serve collected static files
-   using your web server or your project's static-file middleware.
-7. Use your existing production settings, secret key, hosts, and security settings;
-   `main_server/settings.py` is for local preview.
+   Review deployment-check findings for your hosting setup. Create the initial superuser with `python manage.py createsuperuser` if you do not already have one.
 
-URLs use trailing slashes; Django's `CommonMiddleware` supports the previous URLs
-without them. Legacy treatment, payment, author, and form URLs retain their 301
-redirects. Existing external booking links and Google Maps embeds are preserved.
-Unmatched website URLs display the custom 404 with HTTP status 404, including
-when `DEBUG=True`. Include any other application URL patterns before this website
-include, because its final pattern handles unmatched website paths.
+5. Configure the WSGI entry point to load `main_server.wsgi.application`. If your host uses a root-level `passenger_wsgi.py`, its application import can be:
 
-## Edit the website
+   ```python
+   from main_server.wsgi import application
+   ```
 
-Change `static/dental_family/css/theme.css` to update the brand scheme centrally.
-Edit page content in `templates/dental_family/pages/`; edit the shared navigation
-and footer once in `includes/`. The standalone HTML copies are independent preview
-artifacts, so update them too if maintaining both versions after migration.
+   Keep any interpreter or path setup required by your host's generated Passenger file. The project root must be on Python's import path.
 
-The delivered contact form preserves the original email composer: it validates
-fields and opens a `mailto:` draft. It does not save submissions. To replace it
-with a Django form, supply your form view/action and CSRF token, and remove the
-`data-contact-form` hook so the email-composer JavaScript does not intercept it.
+6. Configure the web server to serve `/static/` from `collected-static/` and uploaded `/media/` files from `media/`. Django's development server is not the production server.
+7. Enable HTTPS for your domain, then restart the Python application using cPanel's restart control.
+8. Check dashboard sign-in, form submissions, and a password reset for an existing account. Confirm that the email arrives and the link uses your production HTTPS domain.
 
-## Validate or refresh the migration
+Do not run `createsuperuser` or overwrite the database on every deployment. Back up the database and `media/` separately.
 
-The conversion tools are optional development utilities, not runtime dependencies:
+## 5. Configuration reference
 
-```bash
-pip install -r tools/requirements.txt
-python tools/audit.py
+| Setting | Format and purpose |
+| --- | --- |
+| `DJANGO_SECRET_KEY` | Private, stable random string used for signing. |
+| `DJANGO_DEBUG` | `True` locally; `False` in production. |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated hostnames, without schemes or paths. |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | Comma-separated origins with schemes; include ports when applicable. |
+| `DJANGO_EMAIL_BACKEND` | Console backend locally, SMTP backend for delivery. |
+| `EMAIL_HOST` / `EMAIL_PORT` | SMTP hostname and numeric port. |
+| `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` | SMTP credentials. |
+| `EMAIL_USE_TLS` / `EMAIL_USE_SSL` | STARTTLS or implicit SSL; do not enable both. |
+| `DEFAULT_FROM_EMAIL` | Sender name and email address. |
+| `PASSWORD_RESET_TIMEOUT` | Lifetime in seconds; displayed as minutes in the reset form and email. |
+| `PASSWORD_RESET_BASE_URL` | Optional fixed origin, such as `https://clientdemo.softfluxit.com`, without a path. |
+| `DJANGO_DATABASE_PATH` | Optional SQLite file path; defaults to `db.sqlite3` in the project root. |
+
+Multiple-domain example:
+
+```python
+DJANGO_ALLOWED_HOSTS = 'example.com,www.example.com'
+DJANGO_CSRF_TRUSTED_ORIGINS = 'https://example.com,https://www.example.com'
 ```
 
-`tools/audit.py` renders every Django page, checks local assets/internal links,
-compares standalone and Django content, and checks legacy redirects and errors.
+## 6. Troubleshooting
 
-`tools/browser_check.py` compares desktop/mobile screenshots and exercises the
-interactive controls. Start the original export at port 8011, the Django preview
-at 8012, and the standalone preview at 8013 before running it. Pass `--browser`
-to use a different installed Chromium executable.
+- **`No module named production_env`:** Place the file beside `manage.py` and ensure the project root is on the application's Python import path.
+- **Python syntax error:** Quote strings, and use Python booleans `True` and `False`.
+- **`DisallowedHost`:** Add the requested hostname to `DJANGO_ALLOWED_HOSTS` and restart.
+- **CSRF verification failure:** Check that your browser's HTTPS origin is included in `DJANGO_CSRF_TRUSTED_ORIGINS`, restart, and reload the form. For proxy-related failures, check your hosting HTTPS/proxy configuration.
+- **Emails appear only in logs:** Change the console backend to the SMTP backend.
+- **SMTP delivery fails:** Check credentials, TLS/SSL settings, and whether the host permits outbound SMTP connections.
+- **Old settings remain active:** Restart the cPanel Python application. Changing `.env` has no effect on these settings.
+- **Static files disappear with debug disabled:** Run `collectstatic` and check the web server's static-file mapping.
 
-To regenerate from the Next source while it is still available:
+## 7. Keep private configuration private
 
-```bash
-python tools/build_export.py --source ../main_website/dental_family
-```
+`production_env.py` contains credentials and is excluded by `.gitignore`. Keep it outside publicly served static/media directories and grant file-read access only to the application account as your host permits.
 
-This builds a temporary copy, injects animation markers, and exports all routes.
-It does not modify the original website. It requires the original Node dependencies
-only during regeneration and overwrites generated HTML/templates and compiled CSS.
-Your standalone/Django production website does not require Node or Next.js.
-
-The JavaScript reproduces viewport reveals, hero parallax, counters, menu animation,
-accordion height changes, gallery filters/lightbox, testimonial transitions/autoplay,
-image comparison, contact-form validation, and reading progress. It respects reduced
-motion, keyboard navigation, focus handling, and the desktop/mobile breakpoints.
-Viewport/counter transitions and springs are implemented with Web Animations and
-`requestAnimationFrame`; their timing is matched closely, rather than retaining
-Framer Motion as a runtime dependency.
-
-### Website dashboard preview
-
-Open `/dashboard/` for the Cloudflare-inspired website console (HTML, CSS, JavaScript). It contains a website overview, searchable pages, treatments, doctors, gallery, articles, activity, and workspace settings. It shares the brand variables in `static/dental_family/css/theme.css`.
-
-The console uses Django staff authentication and sessions. Content edits remain browser-local drafts, exportable as JSON; there is no publication API or live analytics. Authentication/session records use the Django database, and image uploads are saved to media storage. Connect Django content models and publishing before using it as a production CMS. No patient records are included.
-
-After regenerating the website export, run `python tools/build_dashboard.py` (requires Beautiful Soup) to refresh the content snapshot and Django dashboard template. The editable dashboard source is `pages/dashboard/index.html`, with `static/dental_family/css/dashboard.css` and `static/dental_family/js/dashboard.js`. The Django template uses the static tag so it supports configured static hosting.
-
-Dashboard refinements include global content search (`Ctrl/Cmd+K`, arrow keys and Enter), title sorting, a dedicated local-drafts view, quick edits from the overview, and a side-panel editor with unsaved-change protection. Mobile content lists become compact cards; navigation has a dismissible backdrop. Filters remain selected after saving a draft. Run `python tools/dashboard_check.py` with the local Django preview on port 8012 for browser regression checks (requires Playwright and Chrome).
-
-Dashboard motion uses native Web Animations and CSS: short page and list entrances, press/hover feedback, animated editor/search/account dialogs with exit transitions, and mobile navigation transitions. Animation cancellation handles rapid repeated actions; final opacity always comes from the normal styles. `prefers-reduced-motion` disables motion, including when the preference changes while the dashboard is open. Run `python tools/dashboard_motion_check.py` to verify animation completion and reduced-motion behavior against the preview on port 8012.
-
-The **Our clinic** dashboard section (`/dashboard/#clinic`) manages the About Us introduction and its featured photo collection. Existing photos, captions and alt text come from the exported `/about-us/` page. Photo drafts include editable title, caption, uploaded image, accessible alt text and display order; new photos receive the next available order. As with other dashboard content, these are browser-local drafts and do not publish to the public page.
-
-The dashboard has a unified visual system in `dashboard.css`: an inset plum navigation rail, lavender canvas, consistent cards and controls, responsive content layouts, and matching editor/search dialogs. Its palette uses the dashboard variables in `theme.css`. This redesign changes presentation only; existing browser-local drafts, content data, and editing behavior remain unchanged.
-
-Dashboard navigation and action icons use locally bundled Phosphor regular SVGs. The bundle loads before `dashboard.js`; its source revision and MIT license are recorded under `static/dental_family/assets/icons/phosphor/`. Native selects share a Phosphor caret with 44px of right padding and a 14px inset, preserving keyboard and mobile selection. No icon CDN or framework runtime is required.
-
-Our clinic photos use a table with uniform thumbnails. Drag the Phosphor grip handle to reorder rows, or focus a handle and press Up/Down. The complete order is saved as local drafts and included in JSON exports. Reordering is enabled only with an empty search, All content, and Default order, avoiding partial-list changes. Mobile keeps the table with horizontal scrolling. Caption/image edits preserve the saved order.
-
-The Gallery dashboard uses the same uniform photo table and drag/keyboard ordering as Our clinic. Gallery drafts include image, caption, accessible alt text, and display order. Ordering is stored independently for each collection; older gallery drafts receive their original snapshot order automatically. Existing search/filter safeguards and mobile horizontal scrolling apply to both tables.
-
-Doctors now use the same sortable table as Gallery: uniform portraits, names, specialties, BM&DC numbers, qualification summaries, status, and profile editing. Drag handles or Up/Down reorder doctors independently of both photo collections. The order survives local draft edits, reloads and JSON exports; new profiles are added at the end. Full qualifications, training and professional roles remain editable in the structured doctor editor.
-
-
-Dashboard image uploads use Pillow. Choose a file in any content editor instead of entering an image URL. JPEG, PNG and still WebP files up to 10 MB and 40 megapixels are accepted. Images are oriented automatically, resized to fit 2400×2400, stripped of source metadata, and saved as WebP with unique filenames under `media/gallery/`. Existing image references stay intact until replaced. Save the draft after uploading to associate the image with the content; drafts still live in this browser and do not publish automatically. Uploaded files remain on disk even if an edit is discarded.
-
-Install dependencies with `pip install -r requirements.txt`. The demo serves `/media/` while DEBUG is enabled. For production, serve MEDIA_ROOT at MEDIA_URL through your web server/storage service, keep DEBUG disabled, and retain Django authentication/session middleware: the upload endpoint requires an active authenticated staff user in all modes. CSRF tokens are required for uploads in both modes. Back up the media folder separately; it is ignored by Git.
-
-
-Treatment drafts have a required service, an optional treatment within that service, short details, rich HTML details, and one thumbnail. Service/treatment dropdowns are seeded from the website’s service groups; Add service and Add treatment create browser-local options (duplicates select the existing option). Changing service resets the treatment choice. Details support H1–H3, paragraphs, bold, italic, underline, strikethrough, lists, quotes, code blocks, alignment, indentation, dividers, safe links, undo/redo and clear formatting. Image insertion is excluded. Pasted content stays plain text; saved HTML uses an allowlist that retains safe links and text alignment. Legacy descriptions populate the editor and remain available as plain text in exports; `short_details` and `details` are stored separately. Catalog options are persisted locally and included in JSON exports. These changes do not automatically publish new content or create public routes.
-
-
-Locations are managed at `/dashboard/#locations`. The page starts with the Chandgaon and Prabortak branches and their existing map pins. Add/edit branch name, area, address, phone, optional opening hours, optional map pin (coordinates, Google Maps Plus Code or place name), and display order. Map previews and directions use the supplied pin, falling back to branch name/address. Search and status filters work as in the other content sections. Location drafts persist in browser storage and JSON exports; they do not automatically update the public homepage. Branch seed data is in `static/dental_family/js/location-data.js`.
-
-
-New treatment drafts generate `slug` and `url` from their title automatically. Names are normalized to lowercase words separated by hyphens, with numeric suffixes (`-2`, `-3`, etc.) when a slug conflicts with an exported page, local draft or reserved dashboard/media/static path. A read-only slug preview appears below the title. Existing treatment URLs remain stable during editing; older drafts using `/services/` receive a generated slug when saved. Slugs are included in JSON exports. Uniqueness is checked against this local workspace; a production CMS should also enforce a database uniqueness constraint when importing/publishing drafts. Generating a draft slug does not create a public Django route automatically.
-
-
-Treatment rows have a Delete action with a confirmation dialog. Confirmed deletions remove the item and any matching local draft from the workspace, persist across reloads, and appear in Activity and the exported `deletions` list. Source snapshot files, public routes, uploaded media and public website content are not deleted by this local dashboard action. Removed slugs remain reserved to avoid accidental reuse before publication.
-
-
-Article drafts now include an automatically generated unique title slug, short details, sanitized rich HTML details, one Pillow thumbnail upload and thumbnail alt text. The article editor shares treatment formatting controls while hiding service/treatment selectors and the old Website path/Description fields. SEO fields include `seo_title`, `meta_description`, comma-separated `keywords` (duplicates removed), absolute HTTP(S) `canonical_url`, `robots`, `og_title` and `og_description`. Blank SEO/social fields may fall back to the article title/short details when integrated into a CMS; the thumbnail is intended as the default social image. Existing article URLs remain stable. All values persist locally and are included in draft exports; public Django templates must consume these fields when you connect publishing before they affect live metadata.
-
-
-Treatments and articles share the Search & social settings section: SEO title, meta description, keywords, canonical URL, search visibility, social title/description, and thumbnail alt text. Both editors validate HTTP(S) canonical URLs and deduplicate keywords. Treatment SEO values persist in local drafts and JSON exports, with existing treatment URLs unchanged; live metadata still requires the publishing integration.
-
-
-Articles now share the treatment Delete action and confirmation flow. Confirmed removals persist locally, remove matching drafts, and appear in Activity and exported `deletions` with the correct content section. The public website and media files remain unchanged until deletion exports are integrated into publishing.
-
-
-Pages also expose the shared Search & social settings: SEO title, meta description, keywords, canonical URL, robots, social sharing title/description and image alt text. Existing page paths and description editing remain available. These values persist in local drafts and JSON exports; publishing integration is required to apply them to live page metadata.
-
-
-### Dashboard login and logout
-
-Open `/dashboard/login/` to sign in with the email address and password on your Django staff account. Dashboard access and image uploads require an active staff account, including during DEBUG development. Anonymous dashboard requests redirect to login. Logout is a CSRF-protected POST, available in the desktop header and account menu (including mobile); it invalidates the Django session. Password visibility and Stay signed in controls are included. Dashboard responses use no-store caching. Existing browser-local drafts survive logout; draft storage is still scoped to the browser rather than the account.
-
-From this directory, initialize authentication tables and create your account:
-
-```bash
-venv/bin/python manage.py migrate
-venv/bin/python manage.py createsuperuser
-```
-
-The current workspace migrations have already been applied. No default username/password is created. `db.sqlite3` is the default local database; `DJANGO_DATABASE_PATH` can select another SQLite database. Integration projects need auth/contenttypes/sessions apps, SessionMiddleware, CsrfViewMiddleware, AuthenticationMiddleware, a database, and LOGIN_URL/LOGIN_REDIRECT_URL/LOGOUT_REDIRECT_URL settings, as configured in `main_server/settings.py`. Login and logout use Django’s authentication views; login credentials are never stored in browser storage. See [Django authentication documentation](https://docs.djangoproject.com/en/6.0/topics/auth/default/).
-
-
-Dashboard login now uses email rather than username. `DashboardAuthenticationForm` validates an email field and `EmailBackend` looks up accounts case-insensitively. Only active staff accounts can access the dashboard; missing, inactive, or duplicate-email matches are rejected. Usernames remain Django’s internal account identifiers, but are not login credentials here. Supply a unique email address when running `createsuperuser`, or set an email on an existing staff account. Integration settings must include `AUTHENTICATION_BACKENDS = ['dental_family.backends.EmailBackend']`.
-
-
-### Admin account management
-
-Open **Admin accounts** in the dashboard sidebar (`/dashboard/admins/`). Active staff admins can create other staff accounts using a name, unique email, and confirmed password. New accounts are not superusers. Passwords are hashed with Django and checked against configured password validators.
-
-Freeze blocks login, authenticated dashboard access, and password-reset requests; unfreeze restores access. Deletion permanently removes the account and requires typing its email address. Admins cannot freeze or delete themselves, keeping an active admin available. Only superusers may manage other superusers. Every change requires a CSRF-protected POST. These changes apply immediately, independently of publishing website content.
-
-Superadmins can change another account’s role between **Admin** and **Superadmin** from Admin accounts. Superadmin maps to Django’s `is_superuser` permission flag and grants all Django permissions. Role changes preserve staff status and frozen status. Admins cannot change roles, and superadmins cannot change their own role, so an active superadmin remains available.
+Use placeholders in shared examples, including `production_env.example.py`; do not copy real passwords into documentation or commit them to Git. Keep separate local and production configurations so development does not send real email or use production data accidentally.
