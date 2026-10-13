@@ -1,32 +1,29 @@
-"""Django settings for main_server, configured through production_env.py."""
+"""Django settings for main_server, configured through environment variables and .env."""
 
+import os
 from email.utils import formataddr, parseaddr
 from pathlib import Path
 from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
-import production_env
+from dotenv import load_dotenv
 
 
-# Paths and file-based configuration
+# Paths and environment
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-def config(name, default=''):
-    """Read only the private Python configuration file, not process variables."""
-    return getattr(production_env, name, default)
-
+load_dotenv(BASE_DIR / '.env', override=False)
 
 
 # Security and debugging
-SECRET_KEY = config(
+SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
     'local-preview-only-not-a-production-secret',
 )
-DEBUG = str(config('DJANGO_DEBUG', '1')).lower() in {'1', 'true', 'yes'}
+DEBUG = str(os.environ.get('DJANGO_DEBUG', '1')).lower() in {'1', 'true', 'yes'}
 ALLOWED_HOSTS = [
     host.strip()
-    for host in config(
+    for host in os.environ.get(
         'DJANGO_ALLOWED_HOSTS',
         'localhost,127.0.0.1,[::1],testserver',
     ).split(',')
@@ -35,7 +32,7 @@ ALLOWED_HOSTS = [
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in config('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
+    for origin in os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '').split(',')
     if origin.strip()
 ]
 
@@ -85,7 +82,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': config('DJANGO_DATABASE_PATH', BASE_DIR / 'db.sqlite3'),
+        'NAME': os.environ.get('DJANGO_DATABASE_PATH', BASE_DIR / 'db.sqlite3'),
     },
 }
 
@@ -103,11 +100,11 @@ AUTH_PASSWORD_VALIDATORS = []
 
 
 # Password reset
-PASSWORD_RESET_TIMEOUT = int(config('PASSWORD_RESET_TIMEOUT', '3600'))
+PASSWORD_RESET_TIMEOUT = int(os.environ.get('PASSWORD_RESET_TIMEOUT', '3600'))
 
 # Optional canonical origin for emailed links, independent of request Host headers.
 PASSWORD_RESET_BASE_URL = (
-    config('PASSWORD_RESET_BASE_URL', '').strip().rstrip('/')
+    os.environ.get('PASSWORD_RESET_BASE_URL', '').strip().rstrip('/')
 )
 if PASSWORD_RESET_BASE_URL:
     reset_origin = urlsplit(PASSWORD_RESET_BASE_URL)
@@ -143,23 +140,23 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Email
-EMAIL_BACKEND = config(
+EMAIL_BACKEND = os.environ.get(
     'DJANGO_EMAIL_BACKEND',
     'django.core.mail.backends.smtp.EmailBackend',
 )
-EMAIL_HOST = config('EMAIL_HOST', 'localhost')
-EMAIL_PORT = int(config('EMAIL_PORT', '587'))
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', '')
-EMAIL_USE_TLS = str(config('EMAIL_USE_TLS', 'true')).lower() in {'1', 'true', 'yes'}
-EMAIL_USE_SSL = str(config('EMAIL_USE_SSL', 'false')).lower() in {'1', 'true', 'yes'}
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = str(os.environ.get('EMAIL_USE_TLS', 'true')).lower() in {'1', 'true', 'yes'}
+EMAIL_USE_SSL = str(os.environ.get('EMAIL_USE_SSL', 'false')).lower() in {'1', 'true', 'yes'}
 EMAIL_TIMEOUT = 15
-DEFAULT_FROM_EMAIL = config(
+DEFAULT_FROM_EMAIL = os.environ.get(
     'DEFAULT_FROM_EMAIL',
     formataddr(('Dr. Teeth', 'noreply@drteethfamilydental.com')),
 )
 
-# Allow readable unquoted display names in production_env.py while supplying valid SMTP syntax.
+# Allow readable unquoted display names in .env while supplying valid SMTP syntax.
 _sender_name, _sender_address = parseaddr(DEFAULT_FROM_EMAIL, strict=False)
 if _sender_name and _sender_address:
     DEFAULT_FROM_EMAIL = formataddr((_sender_name, _sender_address))

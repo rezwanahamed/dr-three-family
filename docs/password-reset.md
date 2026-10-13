@@ -11,15 +11,15 @@ Active registered accounts with usable passwords can reset their passwords, incl
 
 ## Configure email
 
-Django reads `production_env.py` beside `manage.py` directly. Copy `production_env.example.py` to `production_env.py` for a new installation and fill in the Python assignments. The private file is ignored by Git and must be uploaded separately to cPanel. `.env` and process environment variables are not used for these settings.
+Django loads `.env` beside `manage.py` using python-dotenv. Copy `.env.example` to `.env` for a new installation and fill in the values. Existing process environment variables take precedence. The private `.env` file is ignored by Git and must be uploaded separately to cPanel.
 
 Fill in `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, and `DEFAULT_FROM_EMAIL` using your email provider's SMTP settings. Use its SMTP or app password if required. Keep `DJANGO_EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend` for actual delivery. Configure the sender as an address your provider permits.
 
 Use `EMAIL_USE_TLS=true` and `EMAIL_USE_SSL=false` for STARTTLS, normally port 587. For implicit TLS, normally port 465, use `EMAIL_USE_TLS=false` and `EMAIL_USE_SSL=true`. Do not enable both.
 
-Add your deployed hostname to `DJANGO_ALLOWED_HOSTS` and serve the site over HTTPS so emailed links use the correct public address and scheme. `PASSWORD_RESET_TIMEOUT` is in seconds; its default is 3600. The email and form display the configured expiry duration. Set `PASSWORD_RESET_BASE_URL` to your public website origin (for example, `https://clinic.example.com`) to generate reset links using a fixed domain and scheme instead of the request Host. Leave it blank for local development. This is especially relevant when all hosts are allowed. Keep a stable production `DJANGO_SECRET_KEY` in `production_env.py` so reset links remain valid across workers and restarts.
+Add your deployed hostname to `DJANGO_ALLOWED_HOSTS` and serve the site over HTTPS so emailed links use the correct public address and scheme. `PASSWORD_RESET_TIMEOUT` is in seconds; its default is 3600. The email and form display the configured expiry duration. Set `PASSWORD_RESET_BASE_URL` to your public website origin (for example, `https://clinic.example.com`) to generate reset links using a fixed domain and scheme instead of the request Host. Leave it blank for local development. This is especially relevant when all hosts are allowed. Keep a stable production `DJANGO_SECRET_KEY` in `.env` so reset links remain valid across workers and restarts.
 
-Restart Django after changing `production_env.py`. Install dependencies with `pip install -r requirements.txt` if deploying to another environment.
+Restart Django after changing `.env`. Install dependencies with `pip install -r requirements.txt` if deploying to another environment.
 
 For local testing without sending emails, set `DJANGO_EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend`. Django then prints reset emails to the server terminal. Restore the SMTP backend for delivery. Delivery failures show a retry message without exposing SMTP credentials. The reset form deliberately propagates SMTP/network failures and zero-message sends to the view, rather than using Django’s default behavior that logs and suppresses sending errors. A successful confirmation means the configured email backend accepted the reset email; it does not guarantee inbox delivery.
 
