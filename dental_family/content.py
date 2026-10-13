@@ -24,7 +24,7 @@ SECTIONS = {'pages', 'treatments', 'articles', 'gallery', 'clinic', 'doctors', '
 
 
 def script_data(name, variable):
-    text = (ROOT / 'static/dental_family/js' / name).read_text()
+    text = (ROOT / 'static/dental_family/js' / name).read_text(encoding='utf-8')
     return json.JSONDecoder().raw_decode(text.split('window.' + variable + ' =', 1)[1].strip())[0] if 'window.' + variable + ' =' in text else json.JSONDecoder().raw_decode(text.split('window.' + variable + '=', 1)[1].strip())[0]
 
 
@@ -269,7 +269,7 @@ def assign_treatment_urls(records, original, drafts, topics):
     """Generate canonical treatment URLs and retain previous URLs as redirects."""
     edited = {r['id'] for r in drafts if r['section']=='treatments'}
     old = {r['id']:r for r in original}
-    exported = json.loads((ROOT / 'routes.json').read_text())
+    exported = json.loads((ROOT / 'routes.json').read_text(encoding='utf-8'))
     original_urls = {r['url'] for r in original if r['section']=='treatments'}
     used = {'/dashboard/', '/static/', '/media/'} | (set(exported)-original_urls)
     used.update(t['url'] for t in topics)

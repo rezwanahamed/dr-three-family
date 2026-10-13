@@ -168,3 +168,13 @@ DJANGO_CSRF_TRUSTED_ORIGINS='https://example.com,https://www.example.com'
 `.env` contains credentials and is excluded by `.gitignore`. Keep it outside publicly served static/media directories and grant file-read access only to the application account as your host permits.
 
 Use placeholders in shared examples, including `.env.example`; do not copy real passwords into documentation or commit them to Git. Keep separate local and production configurations so development does not send real email or use production data accidentally.
+
+### Restart after uploading code to cPanel
+
+The application reads content files with explicit UTF-8 encoding so it does not depend on the server's default locale. After uploading updated code, run this from the project root:
+
+```bash
+bash tools/restart_passenger.sh
+```
+
+The script locates the project directory, removes application `.pyc` files and empty `__pycache__` folders, then touches `tmp/restart.txt` to request a Passenger restart. It leaves virtual environments and database files untouched. Run it on the production server; running it locally does not restart the deployed application.
