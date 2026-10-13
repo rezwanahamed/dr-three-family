@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from . import views
+from .appointments import appointment_booking
 from .admin_accounts import admin_accounts
 from django.contrib.auth.views import LogoutView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.urls import reverse_lazy
@@ -7,6 +8,7 @@ from .forms import DashboardSetPasswordForm
 
 app_name = 'dental_family'
 urlpatterns = [
+    path('api/appointment/', appointment_booking, name='appointment-booking'),
     path('dashboard/admins/', admin_accounts, name='admin-accounts'),
     path('api/services/', views.public_services, name='public-services'),
     path('simple-ways-to-pay/', views.page, {'route':'/simple-ways-to-pay/'}, name='payment-options'),

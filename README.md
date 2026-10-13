@@ -178,3 +178,7 @@ bash tools/restart_passenger.sh
 ```
 
 The script locates the project directory, removes application `.pyc` files and empty `__pycache__` folders, then touches `tmp/restart.txt` to request a Passenger restart. It leaves virtual environments and database files untouched. Run it on the production server; running it locally does not restart the deployed application.
+
+## Appointment booking
+
+The themed appointment form submits to the existing Dentzo booking system through Django. See [appointment integration and deployment instructions](docs/appointment-booking.md), including remote hosting requirements and how uncertain booking responses are handled.
