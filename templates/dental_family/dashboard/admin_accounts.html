@@ -1,0 +1,49 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin accounts · Dr. Teeth</title>
+  <link rel="stylesheet" href="{% static 'dental_family/css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'dental_family/css/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'dental_family/css/admin-accounts.css' %}">
+</head>
+<body>
+<header class="topbar"><a class="wordmark" href="{% url 'dental_family:dashboard' %}">✳ dr. teeth</a><a href="{% url 'dental_family:dashboard' %}">← Back to dashboard</a></header>
+<main class="accounts-main">
+  <div class="page-heading"><div><div class="eyebrow">WORKSPACE</div><h1>Admin accounts</h1><p>Create admins and manage their access to the website dashboard.</p></div></div>
+  {% if error %}<p class="account-error" role="alert">{{ error }}</p>{% endif %}
+  <section class="panel"><div class="panel-header"><div><h2>Create admin</h2><p>The new admin can sign in with their email and password.</p></div></div>
+    <form method="post" class="settings-form account-create">
+      {% csrf_token %}<input type="hidden" name="action" value="create">
+      {{ form.non_field_errors }}
+      {% for field in form %}<label for="{{ field.id_for_label }}">{{ field.label }}{{ field }}{{ field.errors }}</label>{% endfor %}
+      <button class="primary" type="submit">Create admin</button>
+    </form>
+  </section>
+  <section class="panel"><div class="panel-header"><div><h2>Current admins</h2><p>Frozen accounts cannot sign in, access the dashboard, or request password resets. Unfreeze restores access.</p></div></div>
+    <div class="account-list">
+    {% for account in accounts %}
+      <article class="account-row">
+        <div><h3>{{ account.get_full_name|default:account.email }}{% if account.pk == user.pk %} (you){% endif %}</h3><p>{{ account.email }}</p><span class="badge">{% if account.is_active %}Active{% else %}Frozen{% endif %} · {% if account.is_superuser %}Superadmin{% else %}Admin{% endif %}</span></div>
+        {% if account.can_manage %}<div class="account-actions">
+          {% if user.is_superuser %}
+          <form method="post" class="account-role">
+            {% csrf_token %}<input type="hidden" name="account_id" value="{{ account.pk }}"><input type="hidden" name="action" value="change_role">
+            <label for="role-{{ account.pk }}">Role</label>
+            <select id="role-{{ account.pk }}" name="role"><option value="admin"{% if not account.is_superuser %} selected{% endif %}>Admin</option><option value="superadmin"{% if account.is_superuser %} selected{% endif %}>Superadmin</option></select>
+            <p class="field-help">Superadmins can change roles and manage other superadmins.</p>
+            <button type="submit">Save role</button>
+          </form>
+          {% endif %}
+          <form method="post">{% csrf_token %}<input type="hidden" name="account_id" value="{{ account.pk }}"><button type="submit" name="action" value="{% if account.is_active %}freeze{% else %}unfreeze{% endif %}">{% if account.is_active %}Freeze account{% else %}Unfreeze account{% endif %}</button></form>
+          <details><summary>Delete account</summary><form method="post" class="account-delete">{% csrf_token %}<input type="hidden" name="account_id" value="{{ account.pk }}"><input type="hidden" name="action" value="delete"><p>Deletion is permanent. Enter {{ account.email }} to confirm.</p><label for="confirm-{{ account.pk }}">Admin email<input id="confirm-{{ account.pk }}" type="email" name="confirm_email" required autocomplete="off"></label><button type="submit">Permanently delete admin</button></form></details>
+        </div>{% endif %}
+      </article>
+    {% endfor %}
+    </div>
+  </section>
+</main>
+</body>
+</html>

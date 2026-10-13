@@ -200,3 +200,12 @@ The current workspace migrations have already been applied. No default username/
 
 
 Dashboard login now uses email rather than username. `DashboardAuthenticationForm` validates an email field and `EmailBackend` looks up accounts case-insensitively. Only active staff accounts can access the dashboard; missing, inactive, or duplicate-email matches are rejected. Usernames remain Django’s internal account identifiers, but are not login credentials here. Supply a unique email address when running `createsuperuser`, or set an email on an existing staff account. Integration settings must include `AUTHENTICATION_BACKENDS = ['dental_family.backends.EmailBackend']`.
+
+
+### Admin account management
+
+Open **Admin accounts** in the dashboard sidebar (`/dashboard/admins/`). Active staff admins can create other staff accounts using a name, unique email, and confirmed password. New accounts are not superusers. Passwords are hashed with Django and checked against configured password validators.
+
+Freeze blocks login, authenticated dashboard access, and password-reset requests; unfreeze restores access. Deletion permanently removes the account and requires typing its email address. Admins cannot freeze or delete themselves, keeping an active admin available. Only superusers may manage other superusers. Every change requires a CSRF-protected POST. These changes apply immediately, independently of publishing website content.
+
+Superadmins can change another account’s role between **Admin** and **Superadmin** from Admin accounts. Superadmin maps to Django’s `is_superuser` permission flag and grants all Django permissions. Role changes preserve staff status and frozen status. Admins cannot change roles, and superadmins cannot change their own role, so an active superadmin remains available.

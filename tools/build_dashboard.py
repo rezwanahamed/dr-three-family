@@ -62,6 +62,7 @@ for card in pricing.select('main .price-card'):
 (ROOT/'static/dental_family/js/price-data.js').write_text('window.DashboardPrices='+json.dumps(price_records,ensure_ascii=False)+';\n')
 (ROOT/'static/dental_family/dashboard-content.json').write_text(json.dumps(records,indent=2)+'\n')
 source=(ROOT/'pages/dashboard/index.html').read_text().replace('<body ', '<body data-server-url="/dashboard/content/" data-publish-url="/dashboard/publish/" ', 1)
+source=source.replace('<p>WORKSPACE</p>', '<p>WORKSPACE</p><a href="{% url \'dental_family:admin-accounts\' %}"><span data-icon="doctors"></span>Admin accounts</a>')
 import re
 source=re.sub(r'(["\'])/static/dental_family/([^"\']+)(["\'])',lambda m:m[1]+"{% static 'dental_family/"+m[2]+"' %}"+m[3],source)
 (ROOT/'templates/dental_family/dashboard/index.html').write_text('{% load static %}\n'+source)
