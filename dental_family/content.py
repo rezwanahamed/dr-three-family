@@ -141,7 +141,7 @@ def payment_lines(record):
     return [line for line in lines if line.strip()]
 
 
-def validate_state(data, *, draft=False):
+def validate_state(data, *, draft=False, published=None):
     if not isinstance(data, dict):
         raise ValidationError('Invalid workspace.')
     if 'improvementOptions' in data:
@@ -238,7 +238,7 @@ def validate_state(data, *, draft=False):
                     record.pop('price_min',None)
                     record.pop('price_max',None)
             for field in ['category','price']:
-                if not isinstance(record.get(field),str) or not record[field].strip() or len(record[field])>120:
+                if not isinstance(record.get(field),str) or not record[field].strip() or len(record[field])>(150 if field=='category' and 'service_id' in record else 120):
                     raise ValidationError(f'A valid {"service" if field=="category" else field} is required for price entries.')
                 record[field]=record[field].strip()
             if type(record.get('order')) is not int or not 1<=record['order']<=10000:
@@ -291,6 +291,8 @@ def validate_state(data, *, draft=False):
     for service in data.get('services', []) + list(data.get('serviceEdits', {}).values()):
         if not isinstance(service, dict) or not service.get('id') or not isinstance(service.get('name'), str) or not service['name'].strip() or not isinstance(service.get('treatments'), list) or not all(isinstance(name, str) for name in service['treatments']):
             raise ValidationError('Invalid service.')
+    from .pricing import validate_price_links
+    validate_price_links(data, published or seeds())
     return data
 
 

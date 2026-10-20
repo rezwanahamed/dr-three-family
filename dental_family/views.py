@@ -199,7 +199,9 @@ def workspace_response(workspace):
     base = gallery_snapshot(workspace.published or seeds())
     gallery = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     records = [{**r,'gallery_category':r.get('gallery_category') or gallery.get(r['id']) or 'Our space'} if r['section']=='gallery' else r for r in base['records']]
-    return {'improvement_options': base.get('improvement_options', []), 'records': records, 'topics': base['topics'], 'services': base['services'], 'contact_details':base['contact_details'], 'price_services': base.get('price_services',[]), 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
+    from .pricing import pricing_catalog, resolve_service_id
+    records = [{**r,'pricing_service_id':resolve_service_id(r,base)} if r['section']=='prices' else r for r in records]
+    return {'pricing_catalog':pricing_catalog(base,workspace.draft), 'improvement_options': base.get('improvement_options', []), 'records': records, 'topics': base['topics'], 'services': base['services'], 'contact_details':base['contact_details'], 'price_services': base.get('price_services',[]), 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
             'state': workspace.draft, 'revision': workspace.revision,
             'published_settings': base.get('settings', {}),
             'published': bool(workspace.published)}
@@ -225,7 +227,7 @@ def dashboard_content(request):
             payload = json.loads(request.body)
             if payload.get('revision') != workspace.revision:
                 return JsonResponse({'error': 'Another session changed this workspace. Reload before saving.', 'conflict': True}, status=409)
-            workspace.draft = validate_state(payload.get('state'), draft=True)
+            workspace.draft = validate_state(payload.get('state'), draft=True, published=workspace.published)
         except (ValueError, TypeError, AttributeError, ValidationError) as error:
             return JsonResponse({'error': str(error)}, status=400)
         workspace.revision += 1
@@ -249,7 +251,7 @@ def publish_content(request):
             payload = json.loads(request.body)
             if payload.get('revision') != workspace.revision:
                 return JsonResponse({'error':'Another session changed this workspace. Reload before publishing.','conflict':True}, status=409)
-            state = validate_state(payload.get('state'))
+            state = validate_state(payload.get('state'), published=workspace.published)
             workspace.published = snapshot(workspace.published, state)
         except (ValueError, TypeError, KeyError, AttributeError, ValidationError) as error:
             return JsonResponse({'error':str(error)}, status=400)

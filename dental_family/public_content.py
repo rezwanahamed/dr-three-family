@@ -326,6 +326,14 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
             card=fragment('<section class="price-card"><h2>'+escape(category)+'</h2><dl>'+''.join('<div><dt>'+escape(item['title'])+'</dt><dd>'+escape(item['price'])+'</dd></div>' for item in items)+'</dl></section>').section
             nodes.append(card)
         replace_children(price_grid,nodes)
+    if route in {'/a-little-clarity-on-costs/','/pricing-guide-2/'}:
+        from .pricing import calculator_data
+        for old in soup.select('[data-pricing-calculator]'):
+            old.decompose()
+        calculator = fragment(render_to_string('dental_family/includes/pricing_calculator.html', {'calculator':calculator_data(data)})).section
+        price_grid = soup.select_one('main .prices-grid')
+        if price_grid:
+            price_grid.insert_before(calculator)
     treatment_navigation(soup,data)
     contact_details(soup,data)
     appointment_hours(soup,data)
