@@ -15,8 +15,8 @@ def stars(rating):
     return '<span class="review-rating--stars">'+''.join('<span class="review-star'+(' review-star--empty' if i >= rating else '')+'">'+star+'</span>' for i in range(5))+'</span>'
 
 def google_wordmark():
-    colors = ['#4285f4','#ea4335','#fbbc05','#4285f4','#34a853','#ea4335']
-    return '<span class="review-google-wordmark" role="img" aria-label="Google">'+''.join('<span aria-hidden="true" style="color:'+color+'">'+letter+'</span>' for letter,color in zip('Google',colors))+'</span>'
+    return '<img class="review-google-wordmark" src="/static/dental_family/assets/images/brand/google-wordmark.svg" alt="Google" width="74" height="25" loading="lazy" decoding="async"/>'
+
 
 section = '''<section class="google-style-reviews" aria-labelledby="patient-stories-title"><div class="wrap">
 <header class="google-style-reviews--heading"><div><div class="eyebrow">IN OUR PATIENTS’ WORDS</div><h2 id="patient-stories-title">Good care. <em>Kind words.</em></h2><p>Real experiences from the people behind the smiles.</p></div><a class="google-style-reviews--googleLink" href="'''+escape(data['reviews_url'],quote=True)+'''" target="_blank" rel="noopener noreferrer">Read reviews on Google <span aria-hidden="true">↗</span></a></header>

@@ -7,3 +7,5 @@ The structured snapshot is in `static/dental_family/reviews.json`. Original name
 Reviewer photos from the supplied widget are bundled under `static/dental_family/assets/images/reviews/` at up to 100 × 100 pixels. They do not require third-party image requests at runtime.
 
 Run `venv/bin/python tools/update_review_section.py` after updating the snapshot to regenerate both homepage variants. Styling is in `theme.css`, and carousel controls use the existing review-strip behavior in `site.js`. After changes, run `venv/bin/python manage.py collectstatic --noinput`.
+
+Google wordmark SVG: `static/dental_family/assets/images/brand/google-wordmark.svg`, sourced from https://commons.wikimedia.org/wiki/File:Google_2015_logo.svg. The original vector artwork is bundled locally and retains its original colors and aspect ratio.

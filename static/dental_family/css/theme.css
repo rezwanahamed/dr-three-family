@@ -625,7 +625,7 @@
 /* Google widget snapshot: business summary plus original reviewer details. */
 .google-style-reviews--body { display: grid; grid-template-columns: 245px minmax(0, 1fr); gap: 22px; align-items: start; }
 .google-style-reviews--body > .google-style-reviews--summary { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 18px; background: var(--surface-card); border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
-.review-google-wordmark { display: inline-flex; align-items: center; font-family: Arial, sans-serif; font-size: 23px; line-height: 1; font-weight: 550; letter-spacing: -1.1px; }
+.review-google-wordmark { display: block; width: 74px; height: auto; flex-shrink: 0; }
 .google-style-reviews--summary .review-clinic-name { font-size: 14px; font-weight: 600; line-height: 1.6; color: var(--brand-deep); }
 .google-style-reviews--summary .google-style-reviews--score { gap: 12px; }
 .google-style-reviews--summary .google-style-reviews--score > strong { font-size: 34px; }
@@ -643,7 +643,7 @@
 .google-style-reviews .review-star--empty { color: #dadce0; }
 .google-style-review .review-rating-only { font-size: 12px; line-height: 1.8; color: var(--muted); font-style: italic; margin: 0 0 22px; }
 .google-style-review > footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.google-style-review > footer .review-google-wordmark { font-size: 16px; letter-spacing: -.8px; }
+.google-style-review > footer .review-google-wordmark { width: 54px; height: auto; }
 .google-style-review > footer > a { font-size: 10px; color: var(--text-secondary); text-decoration: none; }
 .google-style-review > footer > a:hover { text-decoration: underline; }
 @media (max-width: 1200px) {
