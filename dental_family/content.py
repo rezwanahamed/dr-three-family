@@ -164,6 +164,8 @@ def validate_state(data):
     for name in ['settings','serviceEdits','treatmentOptions','optionOrder']:
         if name in data and not isinstance(data[name], dict):
             raise ValidationError(f'Invalid {name}.')
+    from .booking_hours import validate_hours
+    validate_hours(data.get('settings', {}))
     for name in ['deletedServices','faqTopicOrder','serviceOrder','galleryCategories','deletedGalleryCategories']:
         if not all(isinstance(value,str) for value in data.get(name,[])):
             raise ValidationError(f'Invalid {name}.')
@@ -261,6 +263,11 @@ def validate_state(data):
                         raise ValidationError('Enter valid opening and closing times.')
                     if status == 'open' and not value:
                         raise ValidationError('Open days need opening and closing times.')
+        if record['section'] == 'doctors':
+            from .doctors import validate_availability
+            validate_availability(record.get('availability', []))
+            if not isinstance(record.get('biography', ''), str):
+                raise ValidationError('Biography must be text.')
         if record.get('details'):
             record['details'] = clean_html(record['details'])
         for key, value in record.items():

@@ -67,7 +67,7 @@ def page(request, route='/'):
             return HttpResponse(managed_html(info['template'], request, route, published, route not in ROUTES))
     if info is None:
         raise Http404('Page not found')
-    if route in {'/gallery/','/services/','/contact/','/','/appointment/','/about-us/'}:
+    if route in {'/gallery/','/services/','/contact/','/','/appointment/','/about-us/','/our-doctors/'}:
         from .content import seeds
         return HttpResponse(managed_html(info['template'], request, route, seeds()))
     from django.template.loader import render_to_string

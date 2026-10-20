@@ -66,8 +66,11 @@ class AppointmentForm(forms.Form):
     appointment_time = forms.TimeField(input_formats=['%H:%M'])
     reason = forms.CharField(required=False, max_length=4000)
 
-    def __init__(self, data=None, *, options):
+    def __init__(self, data=None, *, options, hours=None, schedules=None):
         super().__init__(data)
+        from .booking_hours import hours_for
+        self.hours = hours or hours_for({})
+        self.schedules = schedules or {}
         for name in CHOICES:
             self.fields[name].choices = [('', '')] + options[name]
 
@@ -85,8 +88,8 @@ class AppointmentForm(forms.Form):
 
     def clean_appointment_time(self):
         value = self.cleaned_data['appointment_time']
-        if not time(16) <= value <= time(22):
-            raise forms.ValidationError('Choose a time between 4:00 PM and 10:00 PM.')
+        if not time.fromisoformat(self.hours['start']) <= value <= time.fromisoformat(self.hours['end']):
+            raise forms.ValidationError('Choose a time within appointment hours: '+self.hours['label']+' (Bangladesh time).')
         return value
 
     def clean(self):
@@ -95,6 +98,12 @@ class AppointmentForm(forms.Form):
         now = timezone.localtime()
         if date == now.date() and value and value < now.time().replace(tzinfo=None):
             self.add_error('appointment_time', 'Choose a future appointment time.')
+        doctor = data.get('doctor_name')
+        if date and value and doctor in self.schedules:
+            day = date.strftime('%A').lower()
+            clock = value.strftime('%H:%M')
+            if not any(s['day'] == day and s['start'] <= clock < s['end'] for s in self.schedules[doctor]):
+                self.add_error('appointment_time', 'Choose a time within this doctor’s published availability for the selected day.')
         return data
 
 
@@ -107,9 +116,13 @@ def appointment_booking(request):
         client, token, options = remote_form()
     except (BookingUnavailable, URLError, OSError, ValueError):
         return JsonResponse({'error': 'Online booking is temporarily unavailable. Please use the booking portal or call the clinic.'}, status=503)
+    from .booking_hours import published_data, hours_for, doctor_schedules
+    data = published_data()
+    hours = hours_for(data)
+    schedules = doctor_schedules(data, options)
     if request.method == 'GET':
-        return JsonResponse({'options': options, 'today': timezone.localdate().isoformat()})
-    form = AppointmentForm(request.POST, options=options)
+        return JsonResponse({'options': options, 'today': timezone.localdate().isoformat(), 'hours': hours, 'doctor_schedules': schedules})
+    form = AppointmentForm(request.POST, options=options, hours=hours, schedules=schedules)
     if not form.is_valid():
         return JsonResponse({'errors': dict(form.errors), 'error': 'Please check the highlighted fields.'}, status=422)
     payload = dict(form.cleaned_data)

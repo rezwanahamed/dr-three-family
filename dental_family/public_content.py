@@ -126,6 +126,15 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
             text(card.select_one('figcaption > span'),str(i+1).zfill(2))
             nodes.append(card)
         replace_children(clinic,nodes)
+    from .booking_hours import hours_for
+    from .doctors import profile_url, upcoming_availability
+    def doctor_actions(card, record):
+        for old in card.select('.doctor-card-actions'):
+            old.decompose()
+        for old in card.select('.doctor-biography > a.button'):
+            old.decompose()
+        parent = card.select_one('.doctor-info, .doctor-biography') or card
+        parent.append(fragment('<div class="doctor-card-actions"><a class="doctor-profile-link" href="'+escape(profile_url(record))+'">View profile <span aria-hidden="true">↗</span></a><a class="doctor-book-link" href="/appointment/">Book appointment <span aria-hidden="true">→</span></a></div>').div)
     directory=soup.select_one('main .doctor-directory')
     if directory:
         base=directory.select_one('.doctor-profile')
@@ -141,6 +150,11 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
             entries='\n'.join(r.get(key,'') for key in ['qualifications','training','position']).splitlines()
             replace_children(card.ul,[fragment('<li>'+escape(line)+'</li>').li for line in entries if line.strip()])
             text(card.select_one('.registration'),'BM&DC '+r['registration'] if r.get('registration') else '')
+            for old in card.select('.doctor-list-availability'):
+                old.decompose()
+            hours = render_to_string('dental_family/includes/doctor_availability.html', {'dates': upcoming_availability(r, hours=hours_for(data))})
+            card.select_one('.doctor-biography').append(fragment(hours).section)
+            doctor_actions(card, r)
             nodes.append(card)
         replace_children(directory,nodes)
     for selector in ['.doctor-nav--list','.doctors-grid']:
@@ -158,6 +172,9 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
             text(card.select_one('.doctor-nav--role'),r.get('specialty'))
             text(card.select_one('.doctor-nav--registration'),'BM&DC '+r.get('registration',''))
             text(card.select_one('.doctor-info p'),r.get('specialty'))
+            if selector == '.doctors-grid':
+                text(card.select_one('.doctor-info > span'), 'BM&DC '+r['registration'] if r.get('registration') else '')
+                doctor_actions(card, r)
             text(card.select_one('.doctor-portrait--specialty'),r.get('specialty'))
             nodes.append(card)
         replace_children(container,nodes)
@@ -297,6 +314,7 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
         replace_children(price_grid,nodes)
     treatment_navigation(soup,data)
     contact_details(soup,data)
+    appointment_hours(soup,data)
     return str(soup)
 
 
@@ -330,6 +348,7 @@ def treatment_navigation_html(html,data):
     soup=BeautifulSoup(html,'html.parser')
     treatment_navigation(soup,data)
     contact_details(soup,data)
+    appointment_hours(soup,data)
     return str(soup)
 
 
@@ -367,3 +386,29 @@ def contact_details(soup,data):
     if details['opening_hours']:
         for note in soup.select('.hours-note'):
             text(note,details['opening_hours'])
+
+
+def appointment_hours(soup, data):
+    from .booking_hours import hours_for
+    hours = hours_for(data)
+    label = 'Appointment hours: ' + hours['label'] + ' · Bangladesh time'
+    for display in soup.select('.appointment-hours strong, [data-appointment-hours]'):
+        text(display, hours['label'])
+    for node in soup.select('.booking-hours-note'):
+        node.decompose()
+    for actions in soup.select('.hero--actions, .doctor-card-actions, .appointment-banner, .appointment-panel, .contact-cta, .footer--contact, .page-cta > div'):
+        note = soup.new_tag('p', attrs={'class': 'booking-hours-note'})
+        note.string = label
+        if 'footer--contact' in actions.get('class', []) or (actions.parent and 'page-cta' in actions.parent.get('class', [])):
+            actions.append(note)
+        elif 'appointment-banner' in actions.get('class', []) or 'appointment-panel' in actions.get('class', []):
+            actions.insert(2, note)
+        else:
+            actions.insert_after(note)
+    for link in soup.select('a[href="/appointment/"]'):
+        link['title'] = label
+    for field in soup.select('input[name="appointment_time"]'):
+        field['min'], field['max'] = hours['start'], hours['end']
+        help_text = field.find_next_sibling('small')
+        if help_text:
+            text(help_text, hours['label'] + ' · Bangladesh time')

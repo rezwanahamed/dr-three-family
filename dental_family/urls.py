@@ -7,7 +7,10 @@ from django.urls import reverse_lazy
 from .forms import DashboardSetPasswordForm
 
 app_name = 'dental_family'
+from .doctors import doctor_profile
+
 urlpatterns = [
+    path('our-doctors/<slug:slug>/', doctor_profile, name='doctor-profile'),
     path('api/appointment/', appointment_booking, name='appointment-booking'),
     path('dashboard/admins/', admin_accounts, name='admin-accounts'),
     path('api/services/', views.public_services, name='public-services'),

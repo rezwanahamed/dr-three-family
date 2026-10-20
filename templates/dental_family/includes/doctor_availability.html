@@ -1,0 +1,9 @@
+<section class="doctor-list-availability" aria-label="Upcoming consulting dates and times">
+<h3>Available dates &amp; times</h3>
+{% if dates %}
+<dl>{% for entry in dates %}<div class="doctor-available-date"><dt><time datetime="{{ entry.date|date:'Y-m-d' }}">{{ entry.date|date:"D, j M" }}</time></dt><dd>{% for slot in entry.slots %}<span>{{ slot.start }} – {{ slot.end }}</span>{% endfor %}</dd></div>{% endfor %}</dl>
+<p>Next 7 days · Bangladesh time. Contact us to confirm your appointment.</p>
+{% else %}
+<p>Contact our team to confirm available dates and times.</p>
+{% endif %}
+</section>

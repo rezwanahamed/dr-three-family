@@ -68,12 +68,40 @@
     if (!response.ok) throw Object.assign(new Error(data.error || 'Booking is unavailable. Please call the clinic.'), {data});
     return data;
   }
+  let bookingHours = null, doctorSchedules = {};
+  const timeField = form.elements.appointment_time;
+  const dateField = form.elements.appointment_date;
+  const doctorField = form.elements.doctor_name;
+  const scheduleNote = timeField.parentElement.querySelector('small') || document.createElement('small');
+  scheduleNote.id = 'booking-schedule-note';scheduleNote.setAttribute('aria-live','polite');
+  timeField.parentElement.append(scheduleNote);
+  timeField.setAttribute('aria-describedby','booking-schedule-note');
+  function timeLabel(value){const [h,m]=value.split(':').map(Number);return `${h%12||12}:${String(m).padStart(2,'0')} ${h>=12?'PM':'AM'}`;}
+  function updateBookingHours(){
+    if(!bookingHours)return;
+    timeField.min=bookingHours.start;timeField.max=bookingHours.end;timeField.setCustomValidity('');
+    const schedule=doctorSchedules[doctorField.value];
+    if(schedule && dateField.value){
+      const day=new Date(dateField.value+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'long',timeZone:'Asia/Dhaka'}).toLowerCase();
+      const slots=schedule.filter(s=>s.day===day);
+      scheduleNote.textContent=slots.length?'Doctor’s available times: '+slots.map(s=>timeLabel(s.start)+' – '+timeLabel(s.end)).join(' · ')+' (Bangladesh time)':'This doctor has no published availability on this day. Please choose another date or doctor.';
+      if(!slots.length || (timeField.value && !slots.some(s=>s.start<=timeField.value&&timeField.value<s.end)))timeField.setCustomValidity('Choose a time within this doctor’s availability for the selected day.');
+    }else{
+      scheduleNote.textContent='Appointment hours: '+bookingHours.label+' · Bangladesh time';
+      if(schedule)scheduleNote.textContent+=' · Choose a date to see this doctor’s available times.';
+    }
+  }
+  for(const field of [timeField,dateField,doctorField])field.addEventListener('input',updateBookingHours);
+  doctorField.addEventListener('change',updateBookingHours);
   fetch(form.dataset.endpoint, {credentials: 'same-origin', cache: 'no-store'})
     .then(readResponse).then(data => {
       for (const [name, options] of Object.entries(data.options)) {
         const select = form.elements.namedItem(name);
         for (const [value, label] of options) select.add(new Option(label, value));
       }
+      bookingHours=data.hours;doctorSchedules=data.doctor_schedules||{};
+      document.querySelectorAll('[data-appointment-hours], .appointment-hours strong').forEach(node=>{node.textContent=bookingHours.label;});
+      updateBookingHours();
       styleBranchDropdown();
       form.elements.appointment_date.min = data.today;
       fields.disabled = false;

@@ -473,3 +473,49 @@
   .hero--actions { flex-direction: column; gap: 10px; }
   .hero--careDetails { gap: 12px 16px; font-size: 10px; }
 }
+
+/* Doctor listing actions and individual profiles. */
+.doctor-card-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; margin-top: 22px; }
+.doctor-profile-link, .doctor-book-link { display: inline-flex; align-items: center; justify-content: center; gap: 12px; font-size: 13px; font-weight: 550; text-decoration: none; }
+.doctor-profile-link { color: var(--brand-deep); padding-block: 12px; }
+.doctor-book-link { padding: 13px 19px; border: 1px solid var(--brand-deep); border-radius: 100px; background: var(--brand-deep); color: var(--text-inverse); }
+.doctor-book-link:hover { background: var(--brand-dark); }
+.doctor-profile-link:hover { text-decoration: underline; text-underline-offset: 5px; }
+.doctor-card-actions a:focus-visible { outline: 2px solid var(--brand-deep); outline-offset: 4px; }
+.doctor-detail { padding-block: 40px 80px; }
+.doctor-detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); align-items: center; gap: 60px; margin-top: 28px; }
+.doctor-detail-photo { border-radius: 24px; overflow: hidden; background: var(--sage); }
+.doctor-detail-photo img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.doctor-detail-placeholder { display: grid; place-items: center; min-height: 300px; padding: 30px; }
+.doctor-detail h1 { font-size: clamp(34px, 4vw, 60px); line-height: 1.12; color: var(--brand-deep); margin-block: 16px; }
+.doctor-detail .registration { color: var(--text-secondary); font-size: 13px; }
+.doctor-detail-credentials { padding-left: 20px; margin-top: 24px; color: var(--prose-text-color); line-height: 1.8; }
+.doctor-detail-content { display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; margin-top: 60px; }
+.doctor-detail h2 { color: var(--brand-deep); font-size: 28px; margin-bottom: 18px; }
+.doctor-detail-content p { color: var(--prose-text-color); line-height: 1.85; margin-bottom: 14px; }
+.doctor-availability { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 28px; }
+.doctor-availability dl > div { display: flex; justify-content: space-between; gap: 20px; padding-block: 14px; border-top: 1px solid var(--line); }
+.doctor-availability dd { margin: 0; display: grid; gap: 6px; color: var(--text-secondary); }
+@media (max-width: 760px) {
+  .doctor-detail-grid, .doctor-detail-content { grid-template-columns: 1fr; gap: 28px; }
+  .doctor-detail-content { margin-top: 36px; }
+  .doctor-availability { padding: 20px; }
+  .doctor-card-actions { gap: 10px 16px; }
+}
+
+.doctor-list-availability { margin-top: 24px; max-width: 520px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.doctor-list-availability h3 { font-family: inherit; font-size: 14px; font-weight: 600; color: var(--brand-deep); margin: 0 0 12px; }
+.doctor-list-availability dl { margin: 0; }
+.doctor-available-date { display: grid; grid-template-columns: 105px minmax(0, 1fr); gap: 12px; align-items: baseline; padding-block: 9px; border-top: 1px solid var(--line); }
+.doctor-available-date dt { color: var(--brand-deep); font-size: 12px; font-weight: 550; }
+.doctor-available-date dd { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.doctor-available-date dd span { padding: 4px 9px; border-radius: 6px; background: var(--sage); color: var(--brand-deep); font-size: 11px; white-space: nowrap; }
+.doctor-biography .doctor-list-availability p { font-size: 11px; line-height: 1.6; color: var(--muted); margin: 10px 0 0; }
+@media (max-width: 480px) {
+  .doctor-list-availability { padding: 16px; }
+  .doctor-available-date { grid-template-columns: 1fr; gap: 6px; }
+}
+
+.hero--content > .booking-hours-note, .booking-hours-note { font-family: var(--font-inter), sans-serif; font-size: 11px; line-height: 1.7; color: var(--text-secondary); margin: 12px 0 0; padding: 0; border: 0; max-width: none; }
+.appointment-banner .booking-hours-note { color: var(--text-inverse-muted); position: relative; }
+.doctor-biography .booking-hours-note { font-size: 11px; margin-top: 12px; }
