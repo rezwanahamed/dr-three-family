@@ -13,12 +13,14 @@ def validate_hours(settings):
         raise ValidationError('Appointment closing time must be after opening time. Use valid same-day times.')
 
 
+def format_clock(value):
+    return datetime.strptime(value, '%H:%M').strftime('%I:%M %p').lstrip('0')
+
+
 def hours_for(data):
     settings = data.get('settings', {})
     start, end = settings.get('appointment_start', '16:00'), settings.get('appointment_end', '22:00')
-    def label(value):
-        return datetime.strptime(value, '%H:%M').strftime('%I:%M %p').lstrip('0')
-    return {'start': start, 'end': end, 'label': label(start) + ' – ' + label(end), 'timezone': 'Asia/Dhaka'}
+    return {'start': start, 'end': end, 'label': format_clock(start) + ' – ' + format_clock(end), 'timezone': 'Asia/Dhaka'}
 
 
 def published_data():

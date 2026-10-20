@@ -141,7 +141,7 @@ def payment_lines(record):
     return [line for line in lines if line.strip()]
 
 
-def validate_state(data):
+def validate_state(data, *, draft=False):
     if not isinstance(data, dict):
         raise ValidationError('Invalid workspace.')
     if 'contactDetails' in data:
@@ -265,7 +265,7 @@ def validate_state(data):
                         raise ValidationError('Open days need opening and closing times.')
         if record['section'] == 'doctors':
             from .doctors import validate_availability
-            validate_availability(record.get('availability', []))
+            validate_availability(record.get('availability', []), draft=draft)
             if not isinstance(record.get('biography', ''), str):
                 raise ValidationError('Biography must be text.')
         if record.get('details'):

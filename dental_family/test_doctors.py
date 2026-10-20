@@ -35,8 +35,12 @@ class DoctorProfileTests(TestCase):
         response = self.client.post('/dashboard/publish/', json.dumps({'revision':base['revision'],'state':state}), content_type='application/json')
         self.assertEqual(response.status_code, 200, response.content)
         response = self.client.get(profile_url(doctor))
-        for value in ['Personal approach to care.', 'Monday', '09:00', '12:00', '16:00', '20:00']:
+        for value in ['Personal approach to care.', 'Monday', '9:00 AM', '12:00 PM', '4:00 PM', '8:00 PM']:
             self.assertContains(response, value)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        hours = soup.select_one('.doctor-availability').get_text()
+        self.assertNotIn('16:00', hours)
+        self.assertNotIn('20:00', hours)
         self.assertEqual(next(r for r in WebsiteWorkspace.objects.get(pk=1).published['records'] if r['id']==doctor['id'])['availability'], doctor['availability'])
 
     def test_dashboard_fields_and_invalid_schedule_rejected(self):
@@ -101,3 +105,36 @@ class DoctorProfileTests(TestCase):
         self.assertEqual(len(dates), 1)
         self.assertEqual(dates[0]['slots'], [{'start':'4:00 PM','end':'8:00 PM'}])
         self.assertEqual(upcoming_availability(record, datetime(2026, 10, 19, 15, tzinfo=timezone.utc)), [])
+
+    def test_all_entered_times_survive_draft_save_and_failed_publication(self):
+        staff = get_user_model().objects.create_user(username='draft-scheduler',password='test',is_staff=True)
+        self.client.force_login(staff)
+        base = self.client.get('/dashboard/content/').json()
+        doctor = deepcopy(next(r for r in base['records'] if r['section']=='doctors'))
+        doctor['biography'] = 'Biography retained with unfinished hours.'
+        doctor['availability'] = [
+            {'day':'saturday','start':'10:00','end':'11:00'},
+            {'day':'saturday','start':'14:04','end':'15:05'},
+            {'day':'sunday','start':'10:00','end':'00:00'},
+            {'day':'sunday','start':'15:00','end':'20:00'},
+        ]
+        state = {'drafts':[doctor], 'deletions':[], 'activity':[]}
+        response = self.client.put('/dashboard/content/',json.dumps({'revision':base['revision'],'state':state}),content_type='application/json')
+        self.assertEqual(response.status_code,200,response.content)
+        saved = self.client.get('/dashboard/content/').json()
+        self.assertEqual(saved['state']['drafts'][0]['availability'],doctor['availability'])
+        self.assertEqual(saved['state']['drafts'][0]['biography'],doctor['biography'])
+        response = self.client.post('/dashboard/publish/',json.dumps({'revision':saved['revision'],'state':state}),content_type='application/json')
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(self.client.get('/dashboard/content/').json()['state']['drafts'][0]['availability'],doctor['availability'])
+        doctor['availability'][2]['end'] = '12:00'
+        response = self.client.post('/dashboard/publish/',json.dumps({'revision':saved['revision'],'state':state}),content_type='application/json')
+        self.assertEqual(response.status_code,200,response.content)
+        record = next(r for r in WebsiteWorkspace.objects.get(pk=1).published['records'] if r['id']==doctor['id'])
+        self.assertEqual(record['availability'],doctor['availability'])
+
+    def test_unfinished_time_range_can_be_saved_but_not_published(self):
+        slots = [{'day':'saturday','start':'10:00','end':''}]
+        validate_availability(slots,draft=True)
+        with self.assertRaises(ValidationError):
+            validate_availability(slots)

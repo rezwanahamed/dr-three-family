@@ -606,18 +606,32 @@
     }
   }
   const doctorDays=['saturday','sunday','monday','tuesday','wednesday','thursday','friday'];
+  function doctorScheduleWarnings(){
+    const rows=$$('#doctor-schedule-rows .doctor-time-row');
+    const slots=rows.map(row=>({row,day:row.querySelector('select').value,start:row.querySelector('[data-start]').value,end:row.querySelector('[data-end]').value}));
+    for(const slot of slots){
+      let message='';
+      if(!slot.start||!slot.end)message='Add both times before publishing. This unfinished range can be saved as a draft.';
+      else if(slot.start>=slot.end)message=slot.end==='00:00'?'12:00 AM is midnight. If you mean noon, choose 12:00 PM. Your draft can still be saved.':'End time must be after start time on the same day. Correct this before publishing.';
+      else if(slots.some(other=>other!==slot&&other.day===slot.day&&other.start&&other.end&&other.start<other.end&&slot.start<other.end&&slot.end>other.start))message='This range overlaps another session on the same day. Correct this before publishing.';
+      const notice=slot.row.querySelector('[data-time-warning]');notice.textContent=message;notice.hidden=!message;
+      slot.row.querySelector('[data-use-noon]').hidden=!(slot.end==='00:00'&&slot.start&&slot.start<'12:00');
+    }
+  }
   function syncDoctorSchedule(){
     const input=$('#editor-form').elements.availability;
     input.value=JSON.stringify($$('#doctor-schedule-rows .doctor-time-row').map(row=>({day:row.querySelector('select').value,start:row.querySelector('[data-start]').value,end:row.querySelector('[data-end]').value})));
+    doctorScheduleWarnings();
   }
   function addDoctorTime(slot={}){
     if($$('#doctor-schedule-rows .doctor-time-row').length>=100){toast('Use at most 100 time ranges.');return;}
     const row=document.createElement('div');row.className='doctor-time-row';
-    row.innerHTML=`<label>Day<select aria-label="Available day">${doctorDays.map(day=>`<option value="${day}">${capitalizeText(day)}</option>`).join('')}</select></label><label>From<input type="time" data-start required aria-label="Availability start time"></label><label>Until<input type="time" data-end required aria-label="Availability end time"></label><button type="button" aria-label="Remove time range">Remove</button>`;
+    row.innerHTML=`<label>Day<select aria-label="Available day">${doctorDays.map(day=>`<option value="${day}">${capitalizeText(day)}</option>`).join('')}</select></label><label>From<input type="time" data-start aria-label="Availability start time"></label><label>Until<input type="time" data-end aria-label="Availability end time"></label><button type="button" data-remove-time aria-label="Remove time range">Remove</button><div class="doctor-time-feedback"><p data-time-warning role="status" hidden></p><button type="button" data-use-noon hidden>Use 12:00 PM (noon)</button></div>`;
     row.querySelector('select').value=doctorDays.includes(slot.day)?slot.day:'saturday';
     row.querySelector('[data-start]').value=slot.start||'';row.querySelector('[data-end]').value=slot.end||'';
     row.oninput=syncDoctorSchedule;row.onchange=syncDoctorSchedule;
-    row.querySelector('button').onclick=()=>{row.remove();syncDoctorSchedule();};
+    row.querySelector('[data-remove-time]').onclick=()=>{row.remove();syncDoctorSchedule();};
+    row.querySelector('[data-use-noon]').onclick=()=>{row.querySelector('[data-end]').value='12:00';syncDoctorSchedule();};
     $('#doctor-schedule-rows').append(row);syncDoctorSchedule();
   }
   $('#doctor-add-time').onclick=()=>addDoctorTime();
@@ -653,7 +667,7 @@
   $('#faq-topic').onchange=()=>{if(!editing)$('#editor-form').elements.faq_order.value=Math.max(0,...all().filter(r=>r.section==='faqs'&&r.topic===$('#faq-topic').value).map(r=>Number(r.order)||0))+1;};
   $('#add').onclick=()=>openEditor();function closeEditor(){syncDetails();if(JSON.stringify(Object.fromEntries(new FormData($('#editor-form'))))!==editorInitial){$('#discard-notice').hidden=false;motion($('#discard-notice'),[{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}]);$('#keep-editing').focus();}else closeDialog($('#editor'));}
   $('#close-editor').onclick=$('#cancel-editor').onclick=closeEditor;$('#editor').addEventListener('cancel',e=>{e.preventDefault();closeEditor();});$('#keep-editing').onclick=()=>{$('#discard-notice').hidden=true;$('#editor-form input[name="title"]').focus();};$('#discard-editing').onclick=()=>closeDialog($('#editor'));
-  $('#editor-form').onsubmit=e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}syncDetails();const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(data.section==='faqs'){const topic=faqTopics().find(t=>t.id===data.topic);data.order=Number(data.faq_order);delete data.faq_order;if(!topic||!Number.isInteger(data.order)||data.order<1){toast('Select a topic and a display order of 1 or more.');return;}data.url=topic.url;data.image='';}
+  $('#editor-form').onsubmit=async e=>{e.preventDefault();if(uploading){toast('Wait for the image upload to finish.');return;}syncDetails();if(e.target.elements.section.value==='doctors')syncDoctorSchedule();const data=Object.fromEntries(new FormData(e.target));Object.keys(data).forEach(k=>data[k]=data[k].trim());if(data.section==='faqs'){const topic=faqTopics().find(t=>t.id===data.topic);data.order=Number(data.faq_order);delete data.faq_order;if(!topic||!Number.isInteger(data.order)||data.order<1){toast('Select a topic and a display order of 1 or more.');return;}data.url=topic.url;data.image='';}
     if(data.section==='pages'){const previous=all().find(record=>record.id===editing);data.url=previous?.url||`/${uniqueContentSlug(data.title)}/`;data.slug=previous?.slug??data.url.replace(/^\/+|\/+$/g,'');if(previous?.image_alt)data.image_alt=previous.image_alt;}if(['articles','treatments','pages'].includes(data.section)){
       if(data.canonical_url&&!/^https?:\/\//i.test(data.canonical_url)){toast('Canonical URLs must begin with https:// or http://.');return;}
       if(!['index,follow','noindex,follow','noindex,nofollow'].includes(data.robots)){toast('Select a valid search engine visibility option.');return;}
@@ -664,12 +678,6 @@
       if(!data.short_details||!data.description){toast('Enter short details and article details.');return;}
     }if(data.section==='treatments'){data.title=capitalizeText(data.title);data.slug=contentSlug();data.url=`/${data.slug}/`;data.details=cleanDetails(data.details);const text=document.createElement('div');text.innerHTML=data.details;data.description=text.textContent.trim();if(!serviceCatalog().some(service=>service.id===data.service)||!data.short_details||!data.description){toast('Select a service and enter short details and details.');return;}if(data.treatment&&!serviceCatalog().find(service=>service.id===data.service).treatments.includes(data.treatment)){toast('Choose a treatment belonging to the selected service.');return;}}if(data.section==='doctors'){
       data.availability=JSON.parse(data.availability||'[]');
-      const ranges={};
-      for(const slot of data.availability){
-        if(!doctorDays.includes(slot.day)||!slot.start||!slot.end||slot.start>=slot.end){toast('Choose a day and an end time after the start time for every range.');return;}
-        (ranges[slot.day]??=[]).push(slot);
-      }
-      for(const slots of Object.values(ranges)){slots.sort((a,b)=>a.start.localeCompare(b.start));if(slots.some((slot,i)=>i&&slots[i-1].end>slot.start)){toast('Time ranges on the same day cannot overlap.');return;}}
       const previous=all().find(r=>r.id===editing);Object.assign(data,{description:previous?.description||'',url:previous?.url||'/our-doctors/',image:data.image||previous?.image||'',appointment_url:previous?.appointment_url||'/appointment/',order:Number(previous?.order)||Math.max(0,...all().filter(r=>r.section==='doctors').map(r=>Number(r.order)||0))+1});}if(!data.title||(!data.description&&data.section!=='doctors')||!/^\/(?!\/)/.test(data.url)){toast('Enter a title, required details, and website path beginning with /.');return;}if(data.section==='doctors'&&(!data.specialty||!data.qualifications)){toast('Enter a specialty and qualifications.');return;}if(data.image&&!/^(\/(?!\/)|https?:\/\/)/.test(data.image)){toast('Use a local image path or an HTTPS image URL.');return;}const entry={...data,id:editing||`draft-${crypto.randomUUID()}`,status:'Draft'};
     if(data.section==='locations'){
       const branches=all().filter(r=>r.section==='locations'&&r.id!==entry.id);
@@ -681,7 +689,20 @@
       }
       for(const record of updates.values()){store.drafts=store.drafts.filter(r=>r.id!==record.id);store.drafts.push({...record,status:'Draft'});}
     }
-    store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){closeDialog($('#editor'));render(true);toast(serverURL?'Draft saved · Ready to publish':'Draft saved in this browser');}};
+    store.drafts=store.drafts.filter(r=>r.id!==entry.id);store.drafts.push(entry);store.activity.unshift({title:`Saved draft: ${entry.title}`,time:new Date().toISOString()});store.activity=store.activity.slice(0,100);if(save()){
+      if(data.section==='doctors'&&serverURL){
+        const submit=e.target.querySelector('[type="submit"]');submit.disabled=true;submit.textContent='Saving…';
+        clearTimeout(syncTimer);
+        try{
+          await syncChain;
+          if(serverConflict)throw Error('Reload to resolve a workspace conflict. Your draft is retained in this browser.');
+          await serverRequest(serverURL,'PUT',store);syncStatus('Draft saved to server');
+        }catch(error){syncStatus(error.message,true);toast('Could not save to server: '+error.message);return;}
+        finally{submit.disabled=false;submit.textContent='Save draft';}
+      }
+      const needsCorrection=data.section==='doctors'&&$$('#doctor-schedule-rows [data-time-warning]').some(node=>!node.hidden);
+      closeDialog($('#editor'));render(true);toast(needsCorrection?'Draft saved with all times · Correct highlighted ranges before publishing':serverURL?'Draft saved · Ready to publish':'Draft saved in this browser');
+    }};
   const serverURL=document.body.dataset.serverUrl;
   let serverRevision=0,syncTimer=null,syncChain=Promise.resolve(),serverConflict=false;
   function syncStatus(message,error=false){const node=$('#server-save-status');if(node){node.textContent=message;node.classList.toggle('save-error',error);}}

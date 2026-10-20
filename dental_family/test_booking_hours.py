@@ -80,3 +80,8 @@ class BookingHoursTests(TestCase):
         self.assertEqual(response.status_code,422)
         self.assertIn('doctor',response.json()['errors']['appointment_time'][0])
         upstream.open.assert_not_called()
+
+    def test_12_hour_clock_formats_midnight_noon_and_minutes(self):
+        from .booking_hours import format_clock
+        for value, label in [('00:00','12:00 AM'),('12:00','12:00 PM'),('14:04','2:04 PM'),('23:00','11:00 PM')]:
+            self.assertEqual(format_clock(value),label)

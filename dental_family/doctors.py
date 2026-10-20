@@ -12,7 +12,7 @@ def profile_url(record):
     return '/our-doctors/' + slugify(record['id']) + '/'
 
 
-def validate_availability(value):
+def validate_availability(value, *, draft=False):
     if not isinstance(value, list) or len(value) > 100:
         raise ValidationError('Availability must contain at most 100 time ranges.')
     by_day = {}
@@ -20,10 +20,12 @@ def validate_availability(value):
         if not isinstance(slot, dict) or slot.get('day') not in DAYS:
             raise ValidationError('Choose a valid availability day.')
         for key in ('start', 'end'):
-            if not isinstance(slot.get(key), str) or not re.fullmatch(r'(?:[01]\d|2[0-3]):[0-5]\d', slot[key]):
+            if not isinstance(slot.get(key), str) or not (re.fullmatch(r'(?:[01]\d|2[0-3]):[0-5]\d', slot[key]) or (draft and slot[key] == '')):
                 raise ValidationError('Enter valid availability times.')
+        if draft:
+            continue
         if slot['start'] >= slot['end']:
-            raise ValidationError('Availability end time must be after its start time.')
+            raise ValidationError('Availability end time must be after its start time on the same day. 12:00 AM is midnight; choose 12:00 PM for noon.')
         by_day.setdefault(slot['day'], []).append((slot['start'], slot['end']))
     for ranges in by_day.values():
         ranges.sort()
@@ -64,14 +66,17 @@ def doctor_profile(request, slug):
     doctor = next((r for r in data['records'] if r['section'] == 'doctors' and slugify(r['id']) == slug), None)
     if doctor is None:
         raise Http404('Doctor not found')
-    from .booking_hours import hours_for, effective_slots
+    from .booking_hours import hours_for, effective_slots, format_clock
     hours = hours_for(data)
     availability = effective_slots(doctor, hours)
     schedule = []
     for day in DAYS:
         slots = sorted((s for s in availability if s['day'] == day), key=lambda s:s['start'])
         if slots:
-            schedule.append({'day': day.title(), 'slots': slots})
+            schedule.append({'day': day.title(), 'slots': [
+                {'start': format_clock(slot['start']), 'end': format_clock(slot['end'])}
+                for slot in slots
+            ]})
     return render(request, 'dental_family/doctor_detail.html', {
         'doctor': doctor, 'schedule': schedule, 'booking_hours': hours,
         'credentials': '\n'.join(doctor.get(k, '') for k in ('qualifications', 'training', 'position')).splitlines(),

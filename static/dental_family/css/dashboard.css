@@ -732,3 +732,8 @@ button.danger:hover { background: #852036; color: white; }
 .doctor-time-row button, #doctor-add-time { padding: 10px 12px; border: 1px solid var(--dashboard-border); border-radius: 8px; background: var(--dashboard-surface); color: var(--brand-deep); cursor: pointer; }
 #doctor-add-time { margin-top: 12px; }
 @media (max-width: 600px) { .doctor-time-row { grid-template-columns: 1fr 1fr; } }
+
+.doctor-time-feedback { grid-column: 1 / -1; }
+.doctor-time-feedback:has([data-time-warning][hidden]):has([data-use-noon][hidden]) { display: none; }
+.doctor-time-feedback p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--dashboard-danger, #b4233c); }
+.doctor-time-feedback [data-use-noon] { margin-top: 8px; }

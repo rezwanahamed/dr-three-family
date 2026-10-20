@@ -221,7 +221,7 @@ def dashboard_content(request):
             payload = json.loads(request.body)
             if payload.get('revision') != workspace.revision:
                 return JsonResponse({'error': 'Another session changed this workspace. Reload before saving.', 'conflict': True}, status=409)
-            workspace.draft = validate_state(payload.get('state'))
+            workspace.draft = validate_state(payload.get('state'), draft=True)
         except (ValueError, TypeError, AttributeError, ValidationError) as error:
             return JsonResponse({'error': str(error)}, status=400)
         workspace.revision += 1

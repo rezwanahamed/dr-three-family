@@ -62,6 +62,20 @@ const root = path.resolve(__dirname, '..');
     assert.equal(await page.locator('.doctor-time-row').count(), 2);
     assert.equal(await page.locator('[data-start]').last().inputValue(), '16:00');
     assert.equal(state.settings.appointment_start, '10:00');
+    // An invalid time is retained as a draft, rather than silently blocking saving.
+    await page.locator('[data-end]').first().fill('00:00');
+    assert((await page.locator('[data-time-warning]').first().textContent()).includes('midnight'));
+    await page.getByRole('button',{name:'Save draft',exact:true}).click();
+    await page.waitForFunction(()=>!document.querySelector('#editor').open);
+    assert.equal(state.drafts[0].availability[0].end,'00:00');
+    await page.reload();
+    await page.locator('button.edit').first().click();
+    assert.equal(await page.locator('[data-end]').first().inputValue(),'00:00');
+    assert.equal(await page.locator('[name="biography"]').inputValue(),'Saved doctor biography');
+    await page.getByRole('button',{name:'Use 12:00 PM (noon)',exact:true}).click();
+    await page.getByRole('button',{name:'Save draft',exact:true}).click();
+    await page.waitForFunction(()=>!document.querySelector('#editor').open);
+    assert.equal(state.drafts[0].availability[0].end,'12:00');
     assert.deepEqual(errors, []);
     console.log('PASS: collected dashboard assets save biography and split-day hours to the server and restore them after reload.');
   } finally { await browser.close(); }
