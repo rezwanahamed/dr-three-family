@@ -3150,3 +3150,51 @@
 
 .treatment-comparison{margin:40px 0;width:100%;max-width:760px}.treatment-comparison .smile-comparison--comparison{aspect-ratio:1.42}
 .treatment-comparison .smile-comparison--comparison img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* Quick treatment navigation beneath the home hero. */
+.treatment-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  padding-block: 25px;
+  border-bottom: 1px solid var(--line);
+}
+.treatment-strip--item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 8px 20px;
+  color: var(--brand-deep);
+  text-decoration: none;
+  border-inline-start: 1px solid var(--line);
+}
+.treatment-strip--item:first-child { border-inline-start: 0; padding-inline-start: 0; }
+.treatment-strip--item:last-child { padding-inline-end: 0; }
+.treatment-strip--icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--sage);
+}
+.treatment-strip--text { display: grid; gap: 5px; }
+.treatment-strip--text strong { font-size: 13px; font-weight: 650; line-height: 1.35; }
+.treatment-strip--text > span { color: var(--muted); font-size: 10px; line-height: 1.5; }
+.treatment-strip--item:hover .treatment-strip--icon { background: var(--brand-deep); color: var(--text-inverse); }
+.treatment-strip--item:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; border-radius: 6px; }
+@media (max-width: 1100px) and (min-width: 761px) {
+  .treatment-strip--item { padding-inline: 12px; gap: 8px; }
+  .treatment-strip--icon { flex-basis: 38px; width: 38px; height: 38px; }
+  .treatment-strip--text strong { font-size: 11px; }
+}
+@media (max-width: 760px) {
+  .treatment-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-block: 14px; }
+  .treatment-strip--item { padding: 14px 12px; }
+  .treatment-strip--item:nth-child(odd) { border-inline-start: 0; padding-inline-start: 0; }
+  .treatment-strip--item:last-child { grid-column: 1 / -1; border-top: 1px solid var(--line); margin-top: 4px; padding-top: 18px; }
+  .treatment-strip--icon { flex-basis: 40px; width: 40px; height: 40px; }
+  .treatment-strip--text strong { font-size: 12px; }
+}
