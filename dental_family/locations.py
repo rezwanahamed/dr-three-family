@@ -45,7 +45,7 @@ def location_card(record, index):
     rows = schedule_rows(record)
     return f'''<article class="location-card location-card--photo"><div class="location-photo-wrap"><img class="location-clinic-photo" src="{escape(photo, quote=True)}" alt="{value('photo_alt', 'Clinic interior')}" loading="lazy" width="600" height="340"><span class="location-number">{index + 1:02d}</span></div>
 <div class="location-card-content"><header class="location-card-heading"><div class="eyebrow">{value('area')}</div><h3>{value('title')}</h3></header>
-<address class="location-full-address">{value('address')}</address>
+<address class="location-full-address"><svg class="location-address-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path fill="currentColor" fill-rule="evenodd" stroke="none" d="M12 2a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8Zm0 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/></svg><span>{value('address')}</span></address>
 <p class="location-phone">Clinic phone: <a href="tel:{value('phone')}">{value('phone')}</a></p>
 <section class="location-hours-panel" aria-label="Weekly opening hours"><h4>Opening hours</h4><dl class="location-weekly-hours">{''.join(rows)}</dl></section>
 {('<p class="location-hours-extra">' + value('hours') + '</p>') if record.get('hours') else ''}
