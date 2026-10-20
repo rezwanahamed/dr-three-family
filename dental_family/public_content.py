@@ -89,7 +89,7 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
                     body.append(comparison)
 
     # Goal navigation belongs on the homepage; treatment pages provide the results.
-    for previous in soup.select('.treatment-goals'):
+    for previous in soup.select('.treatment-goals, .smile-goals-section, #smile-goals'):
         previous.decompose()
     if route=='/':
         from .improvements import goal_library, goal_url

@@ -816,3 +816,13 @@
 .pricing-calculator .calculator-disclaimer { margin-bottom: 22px; }
 .pricing-calculator :focus-visible { outline: 2px solid var(--brand-deep); outline-offset: 3px; }
 @media (max-width:760px) { .pricing-calculator-layout { grid-template-columns: 1fr; gap: 22px; } .pricing-calculator-estimate { padding: 20px; } }
+
+/* Goal navigation shares the homepage treatment card and section system. */
+.smile-goals-section { scroll-margin-top: 110px; }
+.smile-goals-section h2 em { color: var(--accent-earth); }
+.smile-goals-section .services-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1000px) { .smile-goals-section .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .smile-goals-section .services-grid { grid-template-columns: 1fr; } }
+.smile-goals-section .services-grid { gap: 16px; }
+@media (max-width: 600px) { .smile-goals-section .services-grid { gap: 12px; } }
+.smile-goals-section .treatment-card--content h3 { font-size: clamp(18px, 1.4vw, 22px); line-height: 1.2; letter-spacing: -.3px; }

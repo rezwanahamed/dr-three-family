@@ -32,7 +32,9 @@ class ImprovementOptionsTests(TestCase):
         record=next(r for r in data['records'] if r['id']==self.record['id'])
         self.assertNotContains(self.client.get(record['url']), 'class="treatment-goals"')
         soup=BeautifulSoup(self.client.get('/').content,'html.parser')
-        cards=soup.select('.treatment-goal-card')
+        self.assertEqual(len(soup.select('#smile-goals')),1)
+        self.assertFalse(soup.select('#smile-goals .treatment-card--number'))
+        cards=soup.select('#smile-goals .treatment-card--card')
         self.assertEqual(len(cards),2)
         self.assertEqual(cards[0]['href'],'/smile-goals/goal-smile/')
         self.assertIn('Improve my smile',cards[0].text)
@@ -57,7 +59,7 @@ class ImprovementOptionsTests(TestCase):
         record=next(r for r in data['records'] if r['id']==self.record['id'])
         self.assertEqual(record['improvement_options'],[])
         self.assertNotContains(self.client.get(record['url']),'class="treatment-goals"')
-        self.assertFalse(BeautifulSoup(self.client.get('/').content,'html.parser').select('.treatment-goal-card'))
+        self.assertFalse(BeautifulSoup(self.client.get('/').content,'html.parser').select('#smile-goals .treatment-card--card'))
         self.assertEqual(self.client.get('/smile-goals/goal-smile/').status_code,404)
 
     def test_rejects_unsafe_images_and_invalid_selection_shapes(self):
