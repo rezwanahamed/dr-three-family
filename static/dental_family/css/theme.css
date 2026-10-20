@@ -387,7 +387,62 @@
   font-weight: 500;
   gap: 14px;
 }
-.hero--secondary:hover { background: transparent; border-color: var(--brand-deep); }
+/* Keep the existing button geometry and palette; refine finish and feedback. */
+.hero--actions .hero--primary,
+.hero--actions .hero--secondary {
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.hero--actions .hero--primary {
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--brand-deep) 14%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--text-inverse) 12%, transparent);
+}
+.hero--actions .hero--primary:hover {
+  background: var(--brand-deep);
+  border-color: var(--brand-deep);
+}
+.hero--actions .hero--secondary:hover {
+  background: transparent;
+  border-color: var(--accent-soft);
+}
+.hero--actions > a > svg {
+  transform: scale(1.25);
+  transform-origin: center;
+  display: block;
+  stroke: none;
+  fill: currentColor;
+  overflow: visible;
+}
+.hero--actions > a:focus-visible {
+  outline: 2px solid var(--brand-deep);
+  outline-offset: 5px;
+}
+@media (hover: hover) {
+  .hero--actions .hero--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--brand-deep) 20%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--text-inverse) 12%, transparent);
+  }
+  .hero--actions .hero--secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px color-mix(in srgb, var(--brand-deep) 8%, transparent);
+  }
+}
+.hero--actions .hero--primary:active,
+.hero--actions .hero--secondary:active {
+  transform: translateY(0);
+  box-shadow: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero--actions .hero--primary,
+  .hero--actions .hero--secondary { transition: none; transform: none; }
+}
+
 .hero--careDetails {
   display: flex;
   flex-wrap: wrap;
