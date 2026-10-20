@@ -519,3 +519,48 @@
 .hero--content > .booking-hours-note, .booking-hours-note { font-family: var(--font-inter), sans-serif; font-size: 11px; line-height: 1.7; color: var(--text-secondary); margin: 12px 0 0; padding: 0; border: 0; max-width: none; }
 .appointment-banner .booking-hours-note { color: var(--text-inverse-muted); position: relative; }
 .doctor-biography .booking-hours-note { font-size: 11px; margin-top: 12px; }
+
+/* Two complementary treatment stories immediately below the hero. */
+.treatment-focus { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding-block: 26px 16px; }
+.treatment-focus-card { position: relative; display: grid; grid-template-columns: 34% minmax(0, 1fr); overflow: hidden; border: 1px solid var(--line); border-radius: 24px; background: var(--surface-rose); }
+.treatment-focus-photo { min-width: 0; position: relative; background: var(--blush); overflow: hidden; }
+.treatment-focus-photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 44% center; }
+.treatment-focus-copy { min-width: 0; position: relative; z-index: 1; padding: 32px 26px; }
+.treatment-focus-eyebrow { display: flex; align-items: center; gap: 8px; font-size: 8px; letter-spacing: 1.5px; font-weight: 600; line-height: 1.6; color: var(--brand-deep); }
+.treatment-focus-eyebrow > span { width: 5px; height: 5px; flex-shrink: 0; border-radius: 50%; background: var(--brand-deep); }
+.treatment-focus-copy h2 { font-family: var(--font-recife), Georgia, serif; font-size: clamp(30px, 2.7vw, 43px); font-weight: 400; line-height: 1.08; letter-spacing: -1px; color: var(--brand-deep); margin: 18px 0 14px; }
+.treatment-focus-copy h2 em { color: var(--accent-earth); font-weight: 400; }
+.treatment-focus-subtitle { color: var(--brand-deep); font-size: 13px; font-weight: 550; line-height: 1.5; }
+.treatment-focus-description { font-size: 12px; line-height: 1.8; color: var(--prose-text-color); margin: 14px 0 20px; text-wrap: pretty; }
+.treatment-focus-features { display: grid; gap: 9px; list-style: none; padding: 0; margin: 0 0 26px; }
+.treatment-focus-features li { display: flex; gap: 8px; align-items: flex-start; color: var(--text-secondary); font-size: 11px; line-height: 1.5; }
+.treatment-focus-features li::before { content: "✓"; display: grid; place-items: center; flex: 0 0 16px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-light); color: var(--brand-deep); font-size: 10px; font-weight: 650; }
+.treatment-focus-link { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 46px; padding: 12px 16px; border: 1px solid var(--brand-deep); border-radius: 100px; background: var(--brand-deep); color: var(--text-inverse); font-size: 11px; line-height: 1.5; font-weight: 550; text-decoration: none; transition: background 180ms ease, box-shadow 180ms ease; }
+.treatment-focus-link svg { flex-shrink: 0; }
+.treatment-focus-link:hover { background: var(--brand-dark); box-shadow: var(--shadow-soft); }
+.treatment-focus-link:focus-visible { outline: 2px solid var(--brand-deep); outline-offset: 4px; }
+.treatment-focus-card--aligners { grid-template-columns: minmax(0, 1fr) 38%; background: var(--sage); }
+.treatment-focus-card--aligners .treatment-focus-photo { grid-column: 2; grid-row: 1; }
+.treatment-focus-card--aligners .treatment-focus-copy { grid-column: 1; grid-row: 1; }
+.treatment-focus-card--aligners .treatment-focus-photo img { object-position: 55% center; }
+@media (max-width: 1100px) {
+  .treatment-focus { gap: 16px; }
+  .treatment-focus-copy { padding: 26px 20px; }
+  .treatment-focus-card, .treatment-focus-card--aligners { grid-template-columns: 1fr; }
+  .treatment-focus-photo { height: 220px; }
+  .treatment-focus-photo img { object-position: center 40%; }
+  .treatment-focus-card--aligners .treatment-focus-photo, .treatment-focus-card--aligners .treatment-focus-copy { grid-column: auto; grid-row: auto; }
+  .treatment-focus-card--aligners .treatment-focus-photo img { object-position: center 30%; }
+  .treatment-focus-copy h2 br { display: none; }
+}
+@media (max-width: 600px) {
+  .treatment-focus { grid-template-columns: minmax(0, 1fr); gap: 18px; padding-block: 20px 12px; }
+  .treatment-focus-card { border-radius: 20px; }
+  .treatment-focus-photo { height: 240px; }
+  .treatment-focus-copy { padding: 26px 24px; }
+  .treatment-focus-copy h2 { font-size: 36px; }
+  .treatment-focus-description { max-width: 380px; font-size: 13px; }
+  .treatment-focus-features li { font-size: 12px; }
+  .treatment-focus-link { width: 100%; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .treatment-focus-link { transition: none; } }
