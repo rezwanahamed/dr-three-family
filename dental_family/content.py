@@ -236,6 +236,23 @@ def validate_state(data):
                 raise ValidationError('Price display order must be an integer from 1 to 10000.')
             if record['url']!='/pricing-guide-2/':
                 raise ValidationError('Price entries must use the price guide URL.')
+        if record['section'] == 'locations':
+            for field in ('photo_alt', 'directions_label', 'booking_label', 'directions_url', 'booking_url'):
+                if field in record and (not isinstance(record[field], str) or len(record[field]) > 1000):
+                    raise ValidationError(f'Invalid {field}.')
+            for field in ('directions_url', 'booking_url'):
+                if record.get(field) and (not safe_url(record[field]) or (not record[field].startswith('/') and urlsplit(record[field]).scheme not in {'http', 'https'})):
+                    raise ValidationError('Use a local path or an HTTP(S) button link.')
+            for day in ('saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'):
+                status = record.get(day + '_status', 'unconfirmed')
+                if status not in ('open', 'closed', 'unconfirmed'):
+                    raise ValidationError('Invalid opening day status.')
+                for suffix in ('_open', '_close'):
+                    value = record.get(day + suffix, '')
+                    if not isinstance(value, str) or (value and not re.fullmatch(r'(?:[01]\d|2[0-3]):[0-5]\d', value)):
+                        raise ValidationError('Enter valid opening and closing times.')
+                    if status == 'open' and not value:
+                        raise ValidationError('Open days need opening and closing times.')
         if record.get('details'):
             record['details'] = clean_html(record['details'])
         for key, value in record.items():

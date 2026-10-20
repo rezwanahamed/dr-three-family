@@ -162,27 +162,8 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
             nodes.append(card)
         replace_children(container,nodes)
     for container in soup.select('.locations-grid'):
-        base=container.select_one('.location-card')
-        if not base:
-            continue
-        nodes=[]
-        for i,r in enumerate(group('locations')):
-            card=deepcopy(base)
-            text(card.select_one('h3,h2'),r['title'])
-            text(card.select_one('.eyebrow'),r.get('area'))
-            text(card.select_one('.location-number'),str(i+1).zfill(2))
-            text(card.select_one('p'),r.get('address'))
-            query=quote(r.get('map_pin') or r.get('address',''))
-            for link in card.select('a'):
-                link['href']='tel:'+r.get('phone','') if link.get('href','').startswith('tel:') else 'https://www.google.com/maps/search/?api=1&query='+query
-            iframe=card.select_one('iframe')
-            if iframe:
-                iframe['src']='https://www.google.com/maps?q='+query+'&z=17&t=m&iwloc=A&output=embed'
-                iframe['title']='Google Maps — '+r['title']
-            if r.get('hours'):
-                card.append(fragment('<p class="hours-note">'+escape(r['hours'])+'</p>').p)
-            nodes.append(card)
-        replace_children(container,nodes)
+        from .locations import location_card
+        replace_children(container, [fragment(location_card(r, i)).article for i, r in enumerate(group('locations'))])
     branches=soup.select('.footer--branch')
     if branches:
         parent=branches[0].parent

@@ -82,7 +82,8 @@ class ContentIntegrationTests(TestCase):
         self.assertContains(self.client.get('/about-us/'),clinic['description'])
         public=self.soup('/contact/')
         self.assertIn(location['address'],public.select_one('.location-card').text)
-        self.assertIn('22.3%2C%2091.8',public.select_one('.location-card iframe')['src'])
+        self.assertIsNone(public.select_one('.location-card iframe'))
+        self.assertIn('22.3%2C%2091.8',public.select_one('.location-card .location-directions')['href'])
         self.assertContains(self.client.get('/'),location['title'])
 
     def test_services_navigation_and_rich_text_sanitization(self):
@@ -385,4 +386,23 @@ class ContentIntegrationTests(TestCase):
 
     def test_treatment_comparison_rejects_unsafe_image_urls(self):
         self.edit('treatments', before_image='javascript:alert(1)', after_image='/media/gallery/after.webp')
+        self.assertEqual(self.submit().status_code, 400)
+
+    def test_branch_schedule_photo_and_buttons_publish(self):
+        self.edit('locations', image='/media/gallery/branch.webp', photo_alt='Branch reception', saturday_status='open', saturday_open='10:00', saturday_close='20:00', friday_status='closed', booking_label='Reserve a visit', booking_url='/appointment/?branch=chandgaon', directions_label='Find our clinic', directions_url='https://maps.google.com/?q=clinic')
+        self.assertNotContains(self.client.get('/contact/'), 'Reserve a visit')
+        self.assertEqual(self.submit().status_code, 200)
+        card = self.soup('/contact/').select_one('.location-card')
+        self.assertEqual(card.select_one('img')['src'], '/media/gallery/branch.webp')
+        self.assertEqual(card.select_one('img')['alt'], 'Branch reception')
+        self.assertIn('10:00 AM – 8:00 PM', card.text)
+        self.assertIn('FridayClosed', card.get_text('', strip=True))
+        self.assertEqual(card.select_one('.location-booking')['href'], '/appointment/?branch=chandgaon')
+        self.assertIn('Reserve a visit', card.text)
+        self.assertEqual(len(card.select('.location-links a')), 2)
+
+    def test_invalid_branch_schedule_and_links_are_rejected(self):
+        record = self.edit('locations', saturday_status='open', saturday_open='25:00', saturday_close='20:00')
+        self.assertEqual(self.submit().status_code, 400)
+        record.update(saturday_open='10:00', booking_url='javascript:alert(1)')
         self.assertEqual(self.submit().status_code, 400)

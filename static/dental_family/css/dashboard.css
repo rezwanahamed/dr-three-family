@@ -688,3 +688,10 @@ button.danger:hover { background: #852036; color: white; }
 .comparison-upload>button{align-self:flex-start;min-height:36px;padding:7px 12px;font-size:11px;margin:0}
 .comparison-upload>button:disabled{opacity:.45;cursor:default}
 @media(max-width:480px){.treatment-comparison-uploads{grid-template-columns:1fr}}
+
+.location-day-editor { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 12px; padding-block: 8px; border-bottom: 1px solid var(--dashboard-border); }
+.location-day-editor label { min-width: 0; }
+.location-clinic-photo { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 12px; margin-block: 20px; }
+.location-weekly-hours > div { display: flex; justify-content: space-between; gap: 12px; padding-block: 6px; }
+.location-weekly-hours dd { margin: 0; text-align: right; }
+@media(max-width: 560px) { .location-day-editor { grid-template-columns: 1fr 1fr; } .location-day-editor label:first-child { grid-column: 1 / -1; } }

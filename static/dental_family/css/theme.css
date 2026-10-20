@@ -75,3 +75,77 @@
 .prose h6 {
   color: var(--brand-heading);
 }
+
+/* Branch photos, weekly schedules and booking actions. */
+.location-card--photo .location-clinic-photo,
+.location-clinic-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-block: 22px;
+}
+.location-full-address { font-style: normal; color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+.location-card--photo h4 { font-size: 15px; margin-bottom: 10px; }
+.location-weekly-hours { margin: 0; font-size: 13px; }
+.location-weekly-hours > div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.location-weekly-hours dd { margin: 0; color: var(--muted); text-align: right; }
+.location-card--photo .location-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.location-card--photo .location-links .button { font-size: 12px; padding: 14px 18px; }
+.location-card--photo .location-directions { background: transparent; color: var(--brand-deep); border: 1px solid var(--line); }
+.location-hours-extra { margin-top: 12px; color: var(--muted); font-size: 13px; }
+
+/* Photo-led branch cards with compact day and time ranges. */
+.locations-grid { align-items: stretch; }
+.location-card.location-card--photo {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--brand-dark) 4%, transparent);
+}
+.location-photo-wrap { position: relative; }
+.location-card--photo .location-clinic-photo { aspect-ratio: 16 / 8; border-radius: 0; margin: 0; }
+.location-card--photo .location-number {
+  position: absolute;
+  inset: 18px auto auto 18px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--brand-deep);
+  font-size: 21px;
+  box-shadow: var(--shadow-soft);
+}
+.location-card-content { display: flex; flex: 1; flex-direction: column; padding: 28px 30px 30px; }
+.location-card-heading .eyebrow { margin-bottom: 10px; letter-spacing: 2px; }
+.location-card--photo h3 { margin: 0 0 18px; font-size: clamp(28px, 2.7vw, 38px); line-height: 1.15; }
+.location-card--photo .location-full-address { font-size: 13px; line-height: 1.8; margin-bottom: 14px; }
+.location-card--photo .location-phone { font-size: 12px; color: var(--muted); margin: 0 0 24px; }
+.location-phone a { color: var(--brand-deep); font-weight: 600; white-space: nowrap; }
+.location-hours-panel { padding: 18px 20px; border-radius: 12px; background: var(--surface-hover); margin-bottom: 24px; }
+.location-card--photo .location-hours-panel h4 { color: var(--brand-deep); font-size: 11px; font-weight: 650; letter-spacing: 1.2px; text-transform: uppercase; margin: 0 0 10px; }
+.location-hours-panel .location-weekly-hours > div { border: 0; padding: 7px 0; font-size: 12px; align-items: baseline; }
+.location-weekly-hours dt { font-weight: 500; }
+.location-hours-panel .location-hours-row--open dd { color: var(--brand-deep); font-weight: 600; }
+.location-hours-panel .location-hours-row--closed dd { color: var(--muted); font-weight: 600; }
+.location-card--photo .location-links { margin-top: auto; padding-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.location-card--photo .location-links .button { display: flex; justify-content: center; text-align: center; border-radius: 10px; min-height: 46px; padding: 12px; font-size: 12px; }
+.location-card--photo .location-booking { background: var(--brand-deep); color: var(--text-inverse); }
+.location-card--photo .location-directions:hover { background: var(--sage); }
+.location-card--photo .location-booking:hover { background: var(--brand-dark); }
+@media (max-width: 600px) {
+  .location-card-content { padding: 24px 20px; }
+  .location-hours-panel { padding: 16px; }
+  .location-hours-panel .location-weekly-hours > div { flex-wrap: wrap; gap: 4px 12px; }
+  .location-weekly-hours dd { text-align: left; }
+}
+@media (max-width: 360px) { .location-card--photo .location-links { grid-template-columns: 1fr; } }
