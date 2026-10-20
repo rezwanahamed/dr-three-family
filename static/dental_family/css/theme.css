@@ -564,3 +564,9 @@
   .treatment-focus-link { width: 100%; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .treatment-focus-link { transition: none; } }
+
+/* Homepage locations: a soft blush backdrop from the shared plum palette. */
+#locations.locations-section {
+  background-color: var(--blush);
+  background-image: linear-gradient(135deg, var(--surface-rose) 0%, var(--blush) 55%, var(--sage) 100%);
+}
