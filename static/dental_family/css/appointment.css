@@ -101,3 +101,60 @@
 .appointment-field .branch-select-wrap select:disabled { cursor: not-allowed; }
 .branch-select-wrap option { color: var(--ink); background: var(--surface-card); font-weight: 400; }
 .branch-address { margin: 10px 0 0; padding: 12px 15px; border-left: 2px solid var(--accent-soft); border-radius: 0 8px 8px 0; background: var(--paper); font-size: 12px; line-height: 1.75; color: var(--muted); overflow-wrap: anywhere; }
+
+/* Two-step appointment flow. */
+.appointment-step[hidden] { display: none !important; }
+.appointment-progress { display: flex; gap: 16px; list-style: none; padding: 0; margin: 24px 0 30px; }
+.appointment-progress li { flex: 1; display: flex; align-items: center; gap: 9px; padding-bottom: 14px; border-bottom: 2px solid var(--line); color: var(--muted); font-size: 12px; }
+.appointment-progress li > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sage); color: var(--brand-deep); flex-shrink: 0; }
+.appointment-progress li[aria-current="step"], .appointment-progress li.is-complete { border-color: var(--brand-deep); color: var(--brand-deep); font-weight: 600; }
+.appointment-progress li[aria-current="step"] > span, .appointment-progress li.is-complete > span { background: var(--brand-deep); color: var(--text-inverse); }
+.appointment-step-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.appointment-submit-area .appointment-step-actions { width: 100%; margin-top: 0; }
+.appointment-step-actions .appointment-previous { margin-right: auto; background: transparent; color: var(--brand-deep); border: 1px solid var(--line); }
+.appointment-step h3:focus { outline: none; }
+@media(max-width: 480px) {
+  .appointment-progress { gap: 12px; }
+  .appointment-step-actions .button { padding-inline: 16px; }
+}
+.appointment-submit-area .appointment-step-actions .button { width: auto; justify-content: center; }
+.appointment-submit-area .appointment-step-actions .appointment-previous { background: transparent; color: var(--brand-deep); }
+.appointment-submit-area .appointment-step-actions .appointment-previous:hover { background: var(--sage); }
+@media(max-width: 380px) { .appointment-submit-area .appointment-step-actions .button { width: 100%; } }
+
+/* Use the same rectangular controls throughout both booking steps. */
+.appointment-panel .appointment-step-actions .button {
+  min-height: 54px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  gap: 24px;
+  justify-content: center;
+}
+
+/* SweetAlert-style confirmation after a verified booking response. */
+.appointment-success {
+  width: min(440px, calc(100% - 32px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--brand-dark) 22%, transparent);
+}
+.appointment-success::backdrop { background: color-mix(in srgb, var(--brand-dark) 45%, transparent); backdrop-filter: blur(4px); }
+.appointment-success-content { padding: 36px 28px 28px; text-align: center; }
+.appointment-success-icon { display: grid; place-items: center; width: 80px; height: 80px; margin: 0 auto 24px; border: 2px solid var(--accent-light); border-radius: 50%; background: var(--sage); color: var(--brand-deep); }
+.appointment-success .eyebrow { font-size: 9px; letter-spacing: 1.5px; }
+.appointment-success h2 { font-size: 34px; margin: 12px 0; }
+.appointment-success p { margin: 0 0 26px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+.appointment-success .button { display: flex; justify-content: center; gap: 14px; width: 100%; min-height: 50px; padding: 14px 24px; border-radius: 12px; background: var(--brand-deep); color: var(--text-inverse); }
+.appointment-success .button:hover { background: var(--brand-dark); }
+.appointment-success .button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) {
+  .appointment-success[open] { animation: appointment-success-enter 220ms ease-out; }
+  @keyframes appointment-success-enter { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+}

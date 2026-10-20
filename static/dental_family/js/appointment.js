@@ -4,7 +4,38 @@
   const fields = form.querySelector('fieldset');
   const status = document.querySelector('#appointment-status');
   const button = form.querySelector('[type="submit"]');
+  const successDialog = document.querySelector('#appointment-success');
+  document.querySelector('#appointment-success-close').addEventListener('click', () => window.location.reload());
+  successDialog.addEventListener('close', () => status.focus());
   let busy = false;
+  let currentStep = 0;
+  const steps = [...form.querySelectorAll('[data-booking-step]')];
+  form.noValidate = true;
+  function showStep(index, focus = true) {
+    currentStep = index;
+    steps.forEach((step, i) => { step.hidden = i !== index; });
+    form.querySelectorAll('[data-step-indicator]').forEach((indicator, i) => {
+      indicator.classList.toggle('is-complete', i < index);
+      if (i === index) indicator.setAttribute('aria-current', 'step');
+      else indicator.removeAttribute('aria-current');
+    });
+    if (focus) steps[index].querySelector('h3').focus();
+  }
+  function validateStep(index) {
+    const invalid = [...steps[index].querySelectorAll('input, select, textarea')].find(input => !input.checkValidity());
+    if (!invalid) return true;
+    showStep(index, false);
+    invalid.reportValidity();
+    invalid.focus();
+    return false;
+  }
+  document.querySelector('#appointment-next').addEventListener('click', () => {
+    if (!fields.disabled && !busy && validateStep(0)) showStep(1);
+  });
+  document.querySelector('#appointment-previous').addEventListener('click', () => {
+    if (!busy) showStep(0);
+  });
+  form.addEventListener('reset', () => showStep(0, false));
   function message(text, error = false) {
     status.textContent = text;
     status.dataset.error = String(error);
@@ -50,7 +81,12 @@
     }).catch(() => message('Online booking is temporarily unavailable. Please open the booking portal below or call the clinic.', true));
   form.addEventListener('submit', async event => {
     event.preventDefault();
-    if (busy || !form.reportValidity()) return;
+    if (busy || fields.disabled) return;
+    if (currentStep === 0) {
+      if (validateStep(0)) showStep(1);
+      return;
+    }
+    if (!validateStep(0) || !validateStep(1)) return;
     form.querySelectorAll('.booking-error').forEach(node => node.remove());
     form.querySelectorAll('[aria-invalid]').forEach(node => {node.removeAttribute('aria-invalid'); if (node.id === 'booking-branch') node.setAttribute('aria-describedby', 'booking-branch-address'); else node.removeAttribute('aria-describedby');});
     const payload = new FormData(form);
@@ -65,23 +101,28 @@
       completed = true;
       form.reset(); message(data.message);
       button.textContent = 'Request received';
+      document.querySelector('#appointment-success-message').textContent = data.message || 'Your appointment request has been received. The clinic will confirm your visit.';
+      successDialog.showModal();
     } catch (error) {
       // A lost response can follow a saved booking. Never retry automatically.
       const uncertain = !error.data || error.data.uncertain;
       completed = Boolean(uncertain);
       message(error.data?.error || 'We could not confirm the booking result. Please call the clinic before submitting again to avoid a duplicate.', true);
+      let errorStep = null;
       for (const [name, errors] of Object.entries(error.data?.errors || {})) {
         const input = form.elements.namedItem(name);
         if (!input) continue;
+        if (errorStep === null) errorStep = steps.indexOf(input.closest('[data-booking-step]'));
         const node = document.createElement('p');
         node.id = `${input.id}-error`; node.className = 'booking-error';
         node.textContent = errors.join(' '); input.after(node);
         input.setAttribute('aria-invalid', 'true'); input.setAttribute('aria-describedby', name === 'chamber_address' ? `booking-branch-address ${node.id}` : node.id);
 
       }
+      if (errorStep !== null && errorStep >= 0) showStep(errorStep, false);
       button.textContent = uncertain ? 'Please contact the clinic' : 'Request appointment →';
     } finally {
-      busy = false; fields.disabled = completed; status.focus();
+      busy = false; fields.disabled = completed; if (!successDialog.open) status.focus();
     }
   });
 })();

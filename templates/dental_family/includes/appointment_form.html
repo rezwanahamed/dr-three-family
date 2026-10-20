@@ -5,15 +5,25 @@
   <form id="appointment-form" data-endpoint="{% url 'dental_family:appointment-booking' %}">
     <fieldset disabled>
       <legend class="appointment-sr-only">Patient and appointment details</legend>
+      <ol class="appointment-progress" aria-label="Appointment progress">
+        <li data-step-indicator="0" aria-current="step"><span>1</span>Your details</li>
+        <li data-step-indicator="1"><span>2</span>Your visit</li>
+      </ol>
+      <div class="appointment-step" data-booking-step="0" aria-labelledby="appointment-personal-heading">
       <div class="appointment-fields">
-        <div class="appointment-section-heading"><span aria-hidden="true">01</span><div><h3>A little about you</h3><p>Your details help us prepare for your visit.</p></div></div>
+        <div class="appointment-section-heading"><span aria-hidden="true">01</span><div><h3 id="appointment-personal-heading" tabindex="-1">A little about you</h3><p>Your details help us prepare for your visit.</p></div></div>
         <div class="appointment-field full"><label for="booking-name">Patient name <span aria-hidden="true">*</span></label><input id="booking-name" name="en_name" autocomplete="name" required maxlength="255" placeholder="Your full name"></div>
         <div class="appointment-field"><label for="booking-age">Age <span aria-hidden="true">*</span></label><input id="booking-age" name="en_age" type="number" min="0" max="130" required placeholder="Your age"></div>
         <div class="appointment-field"><label for="booking-gender">Gender <span>(optional)</span></label><select id="booking-gender" name="gender_id"><option value="">Select gender</option></select></div>
         <div class="appointment-field"><label for="booking-phone">Phone number <span aria-hidden="true">*</span></label><input id="booking-phone" name="en_number" type="tel" autocomplete="tel" required maxlength="14" pattern="\+?[0-9]{7,14}" placeholder="01XXXXXXXXX"></div>
         <div class="appointment-field"><label for="booking-email">Gmail address <span aria-hidden="true">*</span></label><input id="booking-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@gmail.com"><small>The booking portal requires a Gmail address.</small></div>
         <div class="appointment-field full"><label for="booking-address">Address <span>(optional)</span></label><textarea id="booking-address" name="en_address" autocomplete="street-address" rows="2" maxlength="2000"></textarea></div>
-        <div class="appointment-section-heading appointment-section-divider"><span aria-hidden="true">02</span><div><h3>Make it your visit</h3><p>Choose where, when, and who you’d like to see.</p></div></div>
+      </div>
+      <div class="appointment-step-actions"><button class="button" type="button" id="appointment-next">Next: your visit <span aria-hidden="true">→</span></button></div>
+      </div>
+      <div class="appointment-step" data-booking-step="1" aria-labelledby="appointment-visit-heading" hidden>
+      <div class="appointment-fields">
+        <div class="appointment-section-heading"><span aria-hidden="true">02</span><div><h3 id="appointment-visit-heading" tabindex="-1">Make it your visit</h3><p>Choose where, when, and who you’d like to see.</p></div></div>
         <div class="appointment-field full"><label id="booking-branch-label" for="booking-branch">Preferred branch <span>(optional)</span></label><div class="branch-select-wrap"><select id="booking-branch" name="chamber_address" aria-describedby="booking-branch-address"><option value="">No preference</option></select><svg class="branch-select-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m7 10 5 5 5-5"/></svg></div><p id="booking-branch-address" class="branch-address" aria-live="polite">Choose a branch, or leave this as no preference.</p></div>
         <div class="appointment-field full"><label for="booking-doctor">Preferred doctor <span>(optional)</span></label><select id="booking-doctor" name="doctor_name"><option value="">No preference</option></select></div>
         <div class="appointment-field"><label for="booking-date">Appointment date <span aria-hidden="true">*</span></label><input id="booking-date" name="appointment_date" type="date" required></div>
@@ -21,10 +31,20 @@
         <div class="appointment-field full"><label for="booking-reason">Reason for your visit <span>(optional)</span></label><textarea id="booking-reason" name="reason" rows="3" maxlength="4000" placeholder="How can we help?"></textarea></div>
       </div>
       <div class="appointment-submit-area"><p class="small-note">Your details will be sent to the clinic’s Dentzo booking system to arrange your visit.</p>
-      <button class="button" type="submit">Request appointment <span aria-hidden="true">→</span></button></div>
+      <div class="appointment-step-actions"><button class="button appointment-previous" type="button" id="appointment-previous">← Previous</button><button class="button" type="submit">Request appointment <span aria-hidden="true">→</span></button></div></div>
+      </div>
     </fieldset>
     <p id="appointment-status" role="status" aria-live="polite" tabindex="-1">Loading available booking options…</p>
     <noscript><p>JavaScript is needed for this form. Please use the booking portal below.</p></noscript>
   </form>
+  <dialog id="appointment-success" class="appointment-success" aria-labelledby="appointment-success-title" aria-describedby="appointment-success-message">
+    <div class="appointment-success-content">
+      <span class="appointment-success-icon"><svg aria-hidden="true" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg></span>
+      <div class="eyebrow">THANK YOU FOR CHOOSING US</div>
+      <h2 id="appointment-success-title">Request received!</h2>
+      <p id="appointment-success-message">Your appointment request has been received. The clinic will confirm your visit.</p>
+      <button class="button" type="button" id="appointment-success-close" autofocus>Done <span aria-hidden="true">✓</span></button>
+    </div>
+  </dialog>
   <div class="appointment-alternative"><span>Prefer the original booking form?</span><a class="text-link" href="https://drteethfamily.dentzobd.com/appointment">Open the booking portal ↗</a></div>
 </section>
