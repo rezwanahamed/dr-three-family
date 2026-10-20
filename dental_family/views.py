@@ -67,6 +67,10 @@ def page(request, route='/'):
             return HttpResponse(managed_html(info['template'], request, route, published, route not in ROUTES))
     if info is None:
         raise Http404('Page not found')
+    from .content import seeds
+    seed_data = seeds()
+    if any(r['section']=='treatments' and r['url']==route for r in seed_data['records']):
+        return HttpResponse(managed_html(info['template'], request, route, seed_data))
     if route in {'/gallery/','/services/','/contact/','/','/appointment/','/about-us/','/our-doctors/'}:
         from .content import seeds
         return HttpResponse(managed_html(info['template'], request, route, seeds()))
@@ -195,7 +199,7 @@ def workspace_response(workspace):
     base = gallery_snapshot(workspace.published or seeds())
     gallery = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     records = [{**r,'gallery_category':r.get('gallery_category') or gallery.get(r['id']) or 'Our space'} if r['section']=='gallery' else r for r in base['records']]
-    return {'records': records, 'topics': base['topics'], 'services': base['services'], 'contact_details':base['contact_details'], 'price_services': base.get('price_services',[]), 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
+    return {'improvement_options': base.get('improvement_options', []), 'records': records, 'topics': base['topics'], 'services': base['services'], 'contact_details':base['contact_details'], 'price_services': base.get('price_services',[]), 'gallery_sections': base.get('gallery_sections',['Our space','Our team','Our technology']),
             'state': workspace.draft, 'revision': workspace.revision,
             'published_settings': base.get('settings', {}),
             'published': bool(workspace.published)}

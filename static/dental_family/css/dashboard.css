@@ -737,3 +737,19 @@ button.danger:hover { background: #852036; color: white; }
 .doctor-time-feedback:has([data-time-warning][hidden]):has([data-use-noon][hidden]) { display: none; }
 .doctor-time-feedback p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--dashboard-danger, #b4233c); }
 .doctor-time-feedback [data-use-noon] { margin-top: 8px; }
+
+.improvement-manager { padding: 24px; margin-bottom: 24px; }
+.improvement-manager > p { margin: 12px 0; color: var(--dashboard-secondary); line-height: 1.7; }
+.improvement-manager details > summary, #improvement-select > summary { cursor: pointer; padding: 14px; border: 1px solid var(--dashboard-border); border-radius: 10px; }
+#improvement-option-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-block: 20px; }
+#improvement-option-form > div, #improvement-upload-status { grid-column: 1 / -1; }
+.improvement-option-list > div { display: flex; align-items: center; gap: 12px; padding-block: 12px; border-top: 1px solid var(--dashboard-border); }
+.improvement-option-list img { width: 56px; height: 42px; object-fit: cover; border-radius: 8px; }
+.improvement-option-list strong { flex: 1; }
+.improvement-field { margin-block: 20px; }
+.improvement-field > .field-label { display: block; margin-bottom: 10px; }
+#improvement-checkboxes { max-height: 300px; overflow-y: auto; padding: 10px; }
+#improvement-checkboxes label { display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px; cursor: pointer; }
+#improvement-checkboxes input { width: 18px; height: 18px; flex-shrink: 0; }
+#improvement-checkboxes img { width: 44px; height: 34px; object-fit: cover; border-radius: 6px; }
+@media (max-width: 600px) { #improvement-option-form { grid-template-columns: 1fr; } .improvement-option-list > div { flex-wrap: wrap; } }

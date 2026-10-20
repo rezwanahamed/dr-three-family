@@ -1,0 +1,107 @@
+{
+  "options": [
+    {
+      "id": "goal-smile",
+      "title": "Improve my smile",
+      "image": "/static/dental_family/assets/images/goals/smile-plum-v1.webp",
+      "treatment_id": "/cosmetic_dentistry/"
+    },
+    {
+      "id": "goal-aligners",
+      "title": "Straighten my teeth",
+      "image": "/static/dental_family/assets/images/goals/aligners-plum-v1.webp",
+      "treatment_id": "/clear_aligner/"
+    },
+    {
+      "id": "goal-implant",
+      "title": "Replace a missing tooth",
+      "image": "/static/dental_family/assets/images/goals/implant-plum-v1.webp",
+      "treatment_id": "/advanced_oral_surgery/"
+    },
+    {
+      "id": "goal-whitening",
+      "title": "Whiten my teeth",
+      "image": "/static/dental_family/assets/images/goals/whitening-plum-v1.webp",
+      "treatment_id": "/teeth-whitening/"
+    },
+    {
+      "id": "goal-repair",
+      "title": "Repair a damaged tooth",
+      "image": "/static/dental_family/assets/images/goals/repair-plum-v1.webp",
+      "treatment_id": "/restorative_dentistry/"
+    },
+    {
+      "id": "goal-family",
+      "title": "Family dental care",
+      "image": "/static/dental_family/assets/images/goals/family-plum-v1.webp",
+      "treatment_id": "/general_dentistry/"
+    },
+    {
+      "id": "goal-comfort",
+      "title": "Get help with tooth pain",
+      "image": "/static/dental_family/assets/images/goals/comfort-plum-v1.webp",
+      "treatment_id": "/root-canals/"
+    },
+    {
+      "id": "goal-urgent",
+      "title": "Get urgent dental care",
+      "image": "/static/dental_family/assets/images/goals/urgent-plum-v1.webp",
+      "treatment_id": "/emergency_dental_care/"
+    }
+  ],
+  "selections": {
+    "/advanced_oral_surgery/": [
+      "goal-implant",
+      "goal-urgent"
+    ],
+    "/clear_aligner/": [
+      "goal-aligners",
+      "goal-smile"
+    ],
+    "/cosmetic-bonding/": [
+      "goal-smile",
+      "goal-repair"
+    ],
+    "/cosmetic_dentistry/": [
+      "goal-smile",
+      "goal-whitening"
+    ],
+    "/emergency_dental_care/": [
+      "goal-urgent",
+      "goal-comfort",
+      "goal-repair"
+    ],
+    "/fillings/": [
+      "goal-repair",
+      "goal-comfort"
+    ],
+    "/general_dentistry/": [
+      "goal-family",
+      "goal-repair",
+      "goal-comfort"
+    ],
+    "/gum-reshaping/": [
+      "goal-smile"
+    ],
+    "/regular-dental-checkup/": [
+      "goal-family"
+    ],
+    "/restorative_dentistry/": [
+      "goal-repair",
+      "goal-implant",
+      "goal-comfort"
+    ],
+    "/root-canals/": [
+      "goal-comfort",
+      "goal-repair"
+    ],
+    "/teeth-whitening/": [
+      "goal-whitening",
+      "goal-smile"
+    ],
+    "/veneers/": [
+      "goal-smile",
+      "goal-repair"
+    ]
+  }
+}

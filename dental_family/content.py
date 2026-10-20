@@ -144,6 +144,9 @@ def payment_lines(record):
 def validate_state(data, *, draft=False):
     if not isinstance(data, dict):
         raise ValidationError('Invalid workspace.')
+    if 'improvementOptions' in data:
+        from .improvements import validate_options
+        validate_options(data['improvementOptions'])
     if 'contactDetails' in data:
         validate_contact_details(data['contactDetails'])
     for name in ['drafts','deletions','activity','services','faqTopics','deletedFAQTopics','deletedServices','faqTopicOrder','serviceOrder','galleryCategories','deletedGalleryCategories']:
@@ -263,6 +266,10 @@ def validate_state(data, *, draft=False):
                         raise ValidationError('Enter valid opening and closing times.')
                     if status == 'open' and not value:
                         raise ValidationError('Open days need opening and closing times.')
+        if record['section'] == 'treatments' and 'improvement_options' in record:
+            values = record['improvement_options']
+            if not isinstance(values,list) or len(values)>100 or any(not isinstance(value,str) for value in values) or len(set(values))!=len(values):
+                raise ValidationError('Select valid improvement options.')
         if record['section'] == 'doctors':
             from .doctors import validate_availability
             validate_availability(record.get('availability', []), draft=draft)
@@ -394,6 +401,11 @@ def snapshot(published, state):
         service['treatments'] = ordered(options, state.get('optionOrder', {}).get(service_id, []), lambda value: value)
     assign_treatment_urls(list(by_id.values()), base['records'], state.get('drafts',[]), list(topics.values()))
     result = {'payments_initialized':True, 'price_guide_initialized':True, 'records': list(by_id.values()), 'topics': ordered(list(topics.values()), state.get('faqTopicOrder', []), lambda item: item['id']), 'services': ordered(list(services.values()), state.get('serviceOrder', []), lambda item: item['id']), 'settings': state.get('settings', base.get('settings', {}))}
+    result['improvement_options'] = state.get('improvementOptions', base.get('improvement_options', []))
+    available_goals = {item['id'] for item in result['improvement_options']}
+    for record in result['records']:
+        if record['section']=='treatments' and 'improvement_options' in record:
+            record['improvement_options'] = [value for value in record['improvement_options'] if value in available_goals]
     result['contact_details']=state.get('contactDetails',base.get('contact_details',script_data('contact-data.js','DashboardContactDetails')))
     price_services = list(state.get('priceServices',base.get('price_services',[])))
     for record in result['records']:

@@ -88,6 +88,20 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
                 else:
                     body.append(comparison)
 
+    # Goal navigation belongs on the homepage; treatment pages provide the results.
+    for previous in soup.select('.treatment-goals'):
+        previous.decompose()
+    if route=='/':
+        from .improvements import goal_library, goal_url
+        goals = [{**option, 'url':goal_url(option)} for option in goal_library(data) if safe_url(option.get('image',''))]
+        if goals:
+            panel = fragment(render_to_string('dental_family/includes/treatment_goals.html', {'goals':goals,'homepage':True})).section
+            anchor = soup.select_one('main .smile-comparison--section')
+            if anchor:
+                anchor.insert_after(panel)
+            elif soup.select_one('main'):
+                soup.select_one('main').append(panel)
+
     for hero in soup.select('main .article-hero'):
         hero.decompose()
 

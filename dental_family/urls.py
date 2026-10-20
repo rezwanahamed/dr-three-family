@@ -8,8 +8,10 @@ from .forms import DashboardSetPasswordForm
 
 app_name = 'dental_family'
 from .doctors import doctor_profile
+from .improvements import goal_treatments_page
 
 urlpatterns = [
+    path('smile-goals/<slug:slug>/', goal_treatments_page, name='goal-treatments'),
     path('our-doctors/<slug:slug>/', doctor_profile, name='doctor-profile'),
     path('api/appointment/', appointment_booking, name='appointment-booking'),
     path('dashboard/admins/', admin_accounts, name='admin-accounts'),
