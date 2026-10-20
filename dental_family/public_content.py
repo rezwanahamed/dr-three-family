@@ -235,7 +235,7 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
         if route=='/' and section=='treatments':
             container=cards[0].parent
             originals={card.get('href'):deepcopy(card) for card in cards}
-            selected=sorted((r for r in records if r['section']=='treatments' and r.get('show_on_homepage')),key=lambda r:r.get('homepage_order',0))[:6]
+            selected=sorted((r for r in records if r['section']=='treatments' and r.get('show_on_homepage')),key=lambda r:r.get('homepage_order',0))[:3]
             nodes=[]
             for index,r in enumerate(selected,1):
                 card=deepcopy(originals.get(r['url'],cards[0]));card['href']=r['url']

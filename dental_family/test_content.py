@@ -195,17 +195,17 @@ class ContentIntegrationTests(TestCase):
 
     def test_homepage_treatment_selection_order_and_limit(self):
         treatments=[r for r in self.base['records'] if r['section']=='treatments']
-        self.assertEqual(len([r for r in treatments if r.get('show_on_homepage')]),6)
-        chosen=list(reversed(treatments[-6:]))
+        self.assertEqual(len([r for r in treatments if r.get('show_on_homepage')]),3)
+        chosen=list(reversed(treatments[-3:]))
         self.state['homepageTreatmentOrder']=[r['id'] for r in chosen]
         self.assertEqual(self.submit().status_code,200)
         cards=self.soup('/').select('main .treatment-card--card')
         self.assertEqual([card['href'] for card in cards],[r['url'] for r in chosen])
         self.base=self.client.get('/dashboard/content/').json()
-        self.state['homepageTreatmentOrder']=[r['id'] for r in treatments[:7]]
+        self.state['homepageTreatmentOrder']=[r['id'] for r in treatments[:4]]
         self.assertEqual(self.submit('/dashboard/content/').status_code,400)
         self.assertEqual(self.submit().status_code,400)
-        self.assertEqual(len(self.soup('/').select('main .treatment-card--card')),6)
+        self.assertEqual(len(self.soup('/').select('main .treatment-card--card')),3)
 
     def test_homepage_treatment_selection_survives_edit_and_can_be_empty(self):
         selected=next(r for r in self.base['records'] if r['section']=='treatments' and r.get('show_on_homepage'))

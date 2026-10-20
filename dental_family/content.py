@@ -71,6 +71,10 @@ def gallery_snapshot(data):
             record.setdefault('service', LEGACY_TREATMENT_SERVICES.get(record['id'],''))
             record.setdefault('show_on_homepage', default.get('show_on_homepage', False))
             record.setdefault('homepage_order', default.get('homepage_order', 0))
+    featured = sorted((r for r in result['records'] if r['section']=='treatments' and r.get('show_on_homepage')), key=lambda r:r.get('homepage_order', 0))
+    for record in featured[3:]:
+        record['show_on_homepage'] = False
+        record['homepage_order'] = 0
     original = {r['id']:r.get('gallery_category') for r in seeds()['records'] if r['section']=='gallery'}
     for record in result['records']:
         if record['section']=='gallery':
@@ -147,8 +151,8 @@ def validate_state(data):
             raise ValidationError(f'Invalid {name}.')
     if 'homepageTreatmentOrder' in data:
         ids = data['homepageTreatmentOrder']
-        if not isinstance(ids, list) or len(ids)>6 or not all(isinstance(value,str) for value in ids) or len(set(ids))!=len(ids):
-            raise ValidationError('Select up to six unique homepage treatments.')
+        if not isinstance(ids, list) or len(ids)>3 or not all(isinstance(value,str) for value in ids) or len(set(ids))!=len(ids):
+            raise ValidationError('Select up to three unique homepage treatments.')
     if 'priceServices' in data:
         names=data['priceServices']
         if not isinstance(names,list) or len(names)>200 or any(not isinstance(name,str) or not name.strip() or len(name)>120 for name in names):
@@ -363,8 +367,8 @@ def snapshot(published, state):
             record[field] = position
     selected = state.get('homepageTreatmentOrder', [r['id'] for r in sorted(by_id.values(), key=lambda r:r.get('homepage_order',0)) if r['section']=='treatments' and r.get('show_on_homepage')])
     selected = [identifier for identifier in selected if identifier not in {d['id'] for d in state.get('deletions', [])}]
-    if len(selected)>6 or any(identifier not in by_id or by_id[identifier]['section']!='treatments' for identifier in selected):
-        raise ValidationError('Select up to six existing treatments for the homepage.')
+    if len(selected)>3 or any(identifier not in by_id or by_id[identifier]['section']!='treatments' for identifier in selected):
+        raise ValidationError('Select up to three existing treatments for the homepage.')
     for record in by_id.values():
         if record['section']=='treatments':
             record['show_on_homepage'] = record['id'] in selected
