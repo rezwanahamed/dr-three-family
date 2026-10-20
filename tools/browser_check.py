@@ -85,7 +85,7 @@ with sync_playwright() as p:
     report['interactions'].append('Accordion expand/collapse and ARIA')
 
     track = page.locator('.google-style-reviews--track')
-    assert track.locator('.google-style-review').count() == 6
+    assert track.locator('.google-style-review').count() == 11
     page.locator('[data-review-next]').click()
     page.wait_for_function("document.querySelector('.google-style-reviews--track').scrollLeft > 0")
     page.locator('[data-review-previous]').click()
