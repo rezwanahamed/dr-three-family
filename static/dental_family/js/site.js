@@ -234,6 +234,32 @@
     update();
   });
 
+  // Google-style cards: native swipe/keyboard scrolling and explicit navigation.
+  $$('[data-review-strip]').forEach(strip => {
+    const track = $('.google-style-reviews--track', strip);
+    const cards = $$('.google-style-review', track);
+    const previous = $('[data-review-previous]', strip), next = $('[data-review-next]', strip);
+    const position = $('[data-review-position]', strip);
+    function update() {
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      const step = cards[0].getBoundingClientRect().width + gap;
+      const first = Math.min(cards.length, Math.round(track.scrollLeft / step) + 1);
+      const count = Math.max(1, Math.floor((track.clientWidth + gap) / step));
+      previous.disabled = track.scrollLeft < 2;
+      next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+      position.textContent = `${first}–${Math.min(cards.length, first + count - 1)} of ${cards.length}`;
+    }
+    function move(direction) {
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      track.scrollBy({left: direction * (cards[0].getBoundingClientRect().width + gap), behavior: reduced.matches ? 'instant' : 'smooth'});
+    }
+    previous.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    track.addEventListener('scroll', update, {passive:true});
+    new ResizeObserver(update).observe(track);
+    update();
+  });
+
   // Testimonials: fade/slide, six-second autoplay, focus/hover pause, swipe, dots.
   const carousel = $('[aria-roledescription=carousel]');
   if (carousel) {

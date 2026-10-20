@@ -84,12 +84,13 @@ with sync_playwright() as p:
     assert button.get_attribute('aria-expanded')==str(initially_open).lower()
     report['interactions'].append('Accordion expand/collapse and ARIA')
 
-    before = page.locator('[aria-label="Show review 1 of 6: Tasfia Ayesha"]')
-    page.locator('[aria-label="Next review"]').click()
-    assert page.locator('[aria-label^="Show review 2 "]').get_attribute('aria-current')=='true'
-    page.locator('[aria-label="Previous review"]').click()
-    assert page.locator('[aria-label^="Show review 1 "]').get_attribute('aria-current')=='true'
-    report['interactions'].append('Testimonial next/previous and dot state')
+    track = page.locator('.google-style-reviews--track')
+    assert track.locator('.google-style-review').count() == 6
+    page.locator('[data-review-next]').click()
+    page.wait_for_function("document.querySelector('.google-style-reviews--track').scrollLeft > 0")
+    page.locator('[data-review-previous]').click()
+    page.wait_for_function("document.querySelector('.google-style-reviews--track').scrollLeft < 2")
+    report['interactions'].append('Review cards next/previous and scroll position')
 
     load(args.converted,'/gallery/')
     total=page.locator('.gallery-grid > button').count()

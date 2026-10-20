@@ -26,16 +26,11 @@ with sync_playwright() as p:
     page.wait_for_timeout(2300)
     assert page.locator('.clinic-stats--animatedNumber').all_text_contents()==['10','25','8','15K']
     report.append('Animated counters reach original final values')
-    carousel=page.locator('[aria-roledescription=carousel]')
-    carousel.scroll_into_view_if_needed()
-    page.mouse.move(0,0)
-    page.wait_for_timeout(6300)
-    assert page.locator('[aria-label^="Show review 2 "]').get_attribute('aria-current')=='true'
-    report.append('Testimonials automatically advance after six seconds')
-    carousel.hover()
-    page.wait_for_timeout(6300)
-    assert page.locator('[aria-label^="Show review 2 "]').get_attribute('aria-current')=='true'
-    report.append('Testimonial autoplay pauses while hovered')
+    track=page.locator('.google-style-reviews--track')
+    track.scroll_into_view_if_needed()
+    page.locator('[data-review-next]').click()
+    page.wait_for_function("document.querySelector('.google-style-reviews--track').scrollLeft > 0")
+    report.append('Review cards scroll with explicit next/previous controls')
     browser.close()
 (ROOT/'validation/motion.json').write_text(json.dumps({'checks':report,'errors':[]},indent=2)+'\n')
 print(json.dumps(report,indent=2))
