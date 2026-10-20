@@ -161,9 +161,31 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
             text(card.select_one('.doctor-portrait--specialty'),r.get('specialty'))
             nodes.append(card)
         replace_children(container,nodes)
+    homepage_locations = sorted(
+        [r for r in group('locations') if r.get('show_on_homepage', True)],
+        key=lambda r: (int(r.get('homepage_order') or r.get('order') or 1), not bool(r.get('homepage_order'))),
+    )[:2]
+    if route == '/':
+        hero_location = soup.select_one('.hero--location')
+        if hero_location:
+            if not homepage_locations:
+                hero_location.decompose()
+            else:
+                label = hero_location.select_one('span')
+                text(label, 'YOUR LOCAL DENTAL FAMILY')
+                link = hero_location.select_one('a')
+                if link:
+                    text(link, ' · '.join(r['title'].removesuffix(' branch') for r in homepage_locations) + ' ↗')
+                    link['href'] = '#locations'
     for container in soup.select('.locations-grid'):
         from .locations import location_card
-        replace_children(container, [fragment(location_card(r, i)).article for i, r in enumerate(group('locations'))])
+        replace_children(container, [fragment(location_card(r, i)).article for i, r in enumerate(homepage_locations if route == '/' else group('locations'))])
+        if route == '/':
+            section = container.find_parent('section')
+            if section:
+                section['id'] = 'locations'
+                if not homepage_locations:
+                    section.decompose()
     branches=soup.select('.footer--branch')
     if branches:
         parent=branches[0].parent

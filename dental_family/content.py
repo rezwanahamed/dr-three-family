@@ -237,6 +237,10 @@ def validate_state(data):
             if record['url']!='/pricing-guide-2/':
                 raise ValidationError('Price entries must use the price guide URL.')
         if record['section'] == 'locations':
+            if 'show_on_homepage' in record and type(record['show_on_homepage']) is not bool:
+                raise ValidationError('Invalid homepage branch visibility.')
+            if 'homepage_order' in record and (type(record['homepage_order']) is not int or not 1 <= record['homepage_order'] <= 10000):
+                raise ValidationError('Homepage branch order must be an integer from 1 to 10000.')
             for field in ('photo_alt', 'directions_label', 'booking_label', 'directions_url', 'booking_url'):
                 if field in record and (not isinstance(record[field], str) or len(record[field]) > 1000):
                     raise ValidationError(f'Invalid {field}.')
@@ -342,6 +346,21 @@ def snapshot(published, state):
             by_id[record['id']]['created_at'] = previous.get('created_at','') if previous else timezone.now().isoformat()
     for deletion in state.get('deletions', []):
         by_id.pop(deletion['id'], None)
+    # Treat requested branch positions as moves, so editing one branch cannot
+    # leave it tied with another branch at the same position.
+    branches = [r for r in by_id.values() if r['section'] == 'locations']
+    for field in ('order', 'homepage_order'):
+        arranged = sorted(branches, key=lambda r: (int(r.get(field) or r.get('order') or 1), not bool(r.get(field))))
+        for edit in state.get('drafts', []):
+            if edit['section'] != 'locations' or field not in edit:
+                continue
+            record = by_id.get(edit['id'])
+            if record is None:
+                continue
+            arranged = [r for r in arranged if r['id'] != edit['id']]
+            arranged.insert(min(int(edit[field]) - 1, len(arranged)), record)
+        for position, record in enumerate(arranged, 1):
+            record[field] = position
     selected = state.get('homepageTreatmentOrder', [r['id'] for r in sorted(by_id.values(), key=lambda r:r.get('homepage_order',0)) if r['section']=='treatments' and r.get('show_on_homepage')])
     selected = [identifier for identifier in selected if identifier not in {d['id'] for d in state.get('deletions', [])}]
     if len(selected)>6 or any(identifier not in by_id or by_id[identifier]['section']!='treatments' for identifier in selected):

@@ -406,3 +406,41 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(self.submit().status_code, 400)
         record.update(saturday_open='10:00', booking_url='javascript:alert(1)')
         self.assertEqual(self.submit().status_code, 400)
+
+    def test_homepage_branches_are_selected_ordered_and_limited_to_two(self):
+        locations = [deepcopy(r) for r in self.base['records'] if r['section'] == 'locations']
+        first, second = locations[:2]
+        first.update(show_on_homepage=True, homepage_order=3)
+        second.update(show_on_homepage=True, homepage_order=2)
+        third = {**first, 'id': 'third-branch', 'title': 'Third branch', 'homepage_order': 1}
+        self.state['drafts'] = [first, second, third]
+        self.assertEqual(self.submit().status_code, 200)
+        home = self.soup('/')
+        self.assertEqual([node.text for node in home.select('.locations-grid .location-card h3')], [third['title'], second['title']])
+        self.assertEqual(home.select_one('.hero--location a')['href'], '#locations')
+        self.assertIn('Third', home.select_one('.hero--location').text)
+        self.assertNotIn(first['title'].removesuffix(' branch'), home.select_one('.hero--location').text)
+        self.assertEqual(len(self.soup('/contact/').select('.locations-grid .location-card')), 3)
+        self.base = self.client.get('/dashboard/content/').json()
+        self.state['drafts'] = [{**record, 'show_on_homepage': False} for record in (first, second, third)]
+        self.assertEqual(self.submit().status_code, 200)
+        home = self.soup('/')
+        self.assertIsNone(home.select_one('.hero--location'))
+        self.assertIsNone(home.select_one('#locations'))
+        self.assertEqual(len(self.soup('/contact/').select('.locations-grid .location-card')), 3)
+
+    def test_moving_one_branch_to_first_shifts_the_existing_branch(self):
+        branches = sorted((r for r in self.base['records'] if r['section'] == 'locations'), key=lambda r: r['order'])
+        moved = deepcopy(branches[1])
+        moved.update(homepage_order=1, order=1, show_on_homepage=True)
+        self.state['drafts'] = [moved]
+        saved = self.submit('/dashboard/content/')
+        self.assertEqual(saved.status_code, 200)
+        self.assertEqual(self.submit(revision=saved.json()['revision']).status_code, 200)
+        for route in ('/', '/contact/'):
+            titles = [node.text for node in self.soup(route).select('.locations-grid .location-card h3')]
+            self.assertEqual(titles[:2], [branches[1]['title'], branches[0]['title']])
+        published = self.client.get('/dashboard/content/').json()['records']
+        locations = [r for r in published if r['section'] == 'locations']
+        self.assertEqual(sorted(r['homepage_order'] for r in locations), [1, 2])
+        self.assertEqual(sorted(r['order'] for r in locations), [1, 2])

@@ -695,3 +695,32 @@ button.danger:hover { background: #852036; color: white; }
 .location-weekly-hours > div { display: flex; justify-content: space-between; gap: 12px; padding-block: 6px; }
 .location-weekly-hours dd { margin: 0; text-align: right; }
 @media(max-width: 560px) { .location-day-editor { grid-template-columns: 1fr 1fr; } .location-day-editor label:first-child { grid-column: 1 / -1; } }
+
+.location-card header .location-drag-handle { flex: 0 0 auto; touch-action: none; cursor: grab; margin-right: 12px; }
+.location-card header .location-number { margin-right: auto; }
+.location-card.location-dragging { opacity: .65; outline: 2px dashed var(--dashboard-purple); outline-offset: -3px; }
+.location-card.location-dragging .location-drag-handle { cursor: grabbing; }
+.location-drag-handle:disabled { cursor: not-allowed; opacity: .4; }
+
+/* Keep branch visibility checkboxes inline with their labels. */
+#location-fields .payment-visible-control {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+#location-fields .payment-visible-control input[type="checkbox"] {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--dash-accent);
+  cursor: pointer;
+}
+#location-fields .payment-visible-control input:focus-visible {
+  outline: 2px solid var(--dash-accent);
+  outline-offset: 3px;
+}
