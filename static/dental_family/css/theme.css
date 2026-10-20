@@ -262,3 +262,118 @@
   .hero--primary { min-height: 52px; }
   .hero--bottomline { padding: 20px 24px; gap: 18px; }
 }
+
+/* Stronger typography and a plum information rail for the portrait hero. */
+.hero--eyebrow { font-weight: 650; letter-spacing: 1.6px; gap: 12px; margin-bottom: 22px; }
+.hero--eyebrow > span { width: 24px; background: var(--brand-deep); }
+.hero--content h1 { font-size: clamp(54px, 5.8vw, 84px); line-height: 1.08; letter-spacing: -2.2px; }
+.hero--content h1 em { color: var(--surface-dark-raised); }
+.hero--content > p { max-width: 390px; font-size: 15px; line-height: 1.85; color: var(--prose-text-color); margin-top: 24px; }
+.hero--actions { margin-top: 32px; gap: 14px; }
+.hero--primary { min-height: 54px; border-radius: 12px; gap: 28px; padding: 12px 16px 12px 24px; font-weight: 550; }
+.hero--primary > span { border-radius: 8px; }
+.hero--secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 54px; padding: 12px 18px; gap: 14px; border: 1px solid var(--accent-soft); border-radius: 12px; background: color-mix(in srgb, var(--surface) 65%, transparent); font-weight: 500; }
+.hero--secondary:hover { background: var(--surface); }
+.hero--bottomline { background: var(--brand-deep); border: 0; padding-block: 24px; gap: 28px; }
+.hero--people { gap: 16px; }
+.hero--people strong { color: var(--text-inverse); font-size: 13px; font-weight: 550; }
+.hero--people div > span { color: var(--text-inverse-muted); font-size: 11px; margin-top: 5px; }
+.hero--people div > span > span { color: var(--text-inverse); }
+.hero--avatars img { border: 2px solid var(--brand-deep); }
+.hero--scroll { width: 44px; height: 44px; color: var(--text-inverse); border: 1px solid var(--border-inverse); background: var(--surface-dark-raised); }
+.hero--scroll:hover { background: var(--brand-dark); }
+.hero--location { border-left: 1px solid var(--border-inverse); padding-left: 28px; }
+.hero--location > span { color: var(--text-inverse-muted); font-size: 8px; letter-spacing: 1.4px; }
+.hero--location > a, .hero--location > a > span { color: var(--text-inverse); font-size: 13px; }
+.hero--bottomline a:focus-visible { outline-color: var(--accent-light); }
+@media (max-width: 1000px) {
+  .hero--content h1 { font-size: clamp(46px, 8vw, 68px); letter-spacing: -1.5px; }
+  .hero--actions { align-items: stretch; width: 100%; gap: 12px; }
+  .hero--primary, .hero--secondary { justify-content: space-between; }
+}
+@media (max-width: 760px) {
+  .hero--bottomline { grid-template-columns: 1fr; gap: 20px; padding: 24px; }
+  .hero--scroll { display: none; }
+  .hero--location { border-left: 0; border-top: 1px solid var(--border-inverse); padding: 18px 0 0; justify-self: stretch; text-align: left; }
+  .hero--location > a { justify-content: flex-start; }
+}
+
+/* Premium editorial typography for the left hero panel. */
+.hero--content { padding-top: 62px; padding-bottom: 68px; padding-left: clamp(30px, 4.5vw, 76px); }
+.hero--eyebrow {
+  display: inline-flex;
+  gap: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--brand-deep);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 2.4px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+.hero--eyebrow > span:first-child { width: 32px; height: 1px; border-radius: 0; background: var(--accent-earth); }
+.hero--content h1 {
+  color: var(--brand-deep);
+  font-size: clamp(52px, 5.1vw, 76px);
+  line-height: 1.14;
+  font-weight: 400;
+  letter-spacing: -1.8px;
+}
+.hero--content h1 em { display: inline-block; color: var(--accent-earth); font-weight: 400; }
+.hero--content h1 em::after { content: none; }
+.hero--content > p {
+  max-width: 355px;
+  margin-top: 28px;
+  padding-left: 19px;
+  border-left: 1px solid var(--accent-soft);
+  color: var(--prose-text-color);
+  font-size: 14px;
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+.hero--actions { gap: 18px; margin-top: 34px; align-items: center; }
+.hero--primary {
+  min-height: 54px;
+  padding: 12px 15px 12px 23px;
+  border: 1px solid var(--brand-deep);
+  border-radius: 8px;
+  background: var(--brand-deep);
+  color: var(--text-inverse);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .2px;
+  gap: 26px;
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--brand-deep) 10%, transparent);
+}
+.hero--primary > span { width: 28px; height: 28px; border-radius: 50%; background: color-mix(in srgb, var(--text-inverse) 10%, transparent); }
+.hero--primary:hover { background: var(--brand-dark); border-color: var(--brand-dark); }
+.hero--secondary {
+  display: inline-flex;
+  min-height: 54px;
+  padding: 12px 18px;
+  border: 1px solid var(--accent-soft);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--brand-deep);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .1px;
+  gap: 20px;
+}
+.hero--secondary:hover { background: color-mix(in srgb, var(--surface) 60%, transparent); border-color: var(--accent-earth); }
+@media (max-width: 1200px) and (min-width: 1001px) {
+  .hero--content { padding-left: 34px; }
+  .hero--actions { gap: 12px; }
+  .hero--secondary { padding-inline: 14px; gap: 12px; }
+}
+@media (max-width: 1000px) {
+  .hero--content { padding: 34px 26px 40px; }
+  .hero--eyebrow { font-size: 8px; letter-spacing: 1.8px; margin-bottom: 24px; }
+  .hero--content h1 { font-size: clamp(44px, 8vw, 66px); letter-spacing: -1.2px; }
+  .hero--content > p { max-width: 390px; margin-top: 24px; }
+  .hero--actions { align-items: stretch; gap: 12px; margin-top: 28px; }
+  .hero--primary, .hero--secondary { justify-content: space-between; }
+}
