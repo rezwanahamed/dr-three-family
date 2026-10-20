@@ -162,3 +162,59 @@
   color: var(--brand-deep);
   margin-top: 0;
 }
+
+/* Compact floating quick actions for mobile visitors. */
+.mobile-action-bar { display: none; }
+@media (max-width: 760px) {
+  body:has(.mobile-action-bar) { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
+  html:has(.mobile-action-bar) { scroll-padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .mobile-action-bar {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 45;
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--surface);
+    box-shadow: 0 -3px 18px color-mix(in srgb, var(--brand-dark) 7%, transparent);
+  }
+  .mobile-action-bar--link {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px 3px;
+    border-radius: 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 550;
+    line-height: 1.2;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+  .mobile-action-bar--link svg { width: 21px; height: 21px; flex-shrink: 0; }
+  .mobile-action-bar--link:hover { background: var(--surface-hover); color: var(--brand-deep); }
+  .mobile-action-bar--link:active { background: var(--sage); }
+  .mobile-action-bar--link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+  .mobile-action-bar--booking { flex-grow: 1; }
+  .mobile-action-bar--booking[aria-current="page"] {
+    background: var(--brand-deep);
+    color: var(--text-inverse);
+    font-weight: 600;
+    box-shadow: 0 3px 8px color-mix(in srgb, var(--brand-deep) 15%, transparent);
+  }
+  .mobile-action-bar--booking[aria-current="page"]:hover,
+  .mobile-action-bar--booking[aria-current="page"]:active { background: var(--brand-dark); color: var(--text-inverse); }
+  .mobile-action-bar--booking[aria-current="page"]:focus-visible { outline-color: var(--accent-light); outline-offset: -4px; }
+}
+@media print { .mobile-action-bar { display: none; } }
