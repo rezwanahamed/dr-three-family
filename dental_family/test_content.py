@@ -318,11 +318,13 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual(hero['src'], treatment['image'])
         self.assertEqual(hero['alt'], 'Treatment photo')
 
-    def test_initial_article_details_have_no_thumbnail(self):
+    def test_initial_article_details_use_saved_hero_image(self):
         for article in [r for r in self.base['records'] if r['section']=='articles']:
             if article['url'].startswith('/category/'):
                 continue
-            self.assertIsNone(self.soup(article['url']).select_one('main .article-hero'))
+            detail = self.soup(article['url'])
+            self.assertIsNone(detail.select_one('main .article-hero'))
+            self.assertEqual(detail.select_one('main .page-intro-photo')['src'], article['image'])
 
     def test_treatment_service_filter_uses_published_catalog_and_assignments(self):
         self.state['services']=[{'id':'new-service-filter','name':'New service filter','treatments':[]}]
