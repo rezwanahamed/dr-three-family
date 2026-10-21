@@ -418,7 +418,7 @@ def appointment_hours(soup, data):
         text(display, hours['label'])
     for node in soup.select('.booking-hours-note'):
         node.decompose()
-    for actions in soup.select('.hero--actions, .doctor-card-actions, .appointment-banner, .appointment-panel, .contact-cta, .footer--contact, .page-cta > div'):
+    for actions in soup.select('.hero--actions, .appointment-banner, .appointment-panel, .contact-cta, .footer--contact, .page-cta > div'):
         note = soup.new_tag('p', attrs={'class': 'booking-hours-note'})
         note.string = label
         if 'footer--contact' in actions.get('class', []) or (actions.parent and 'page-cta' in actions.parent.get('class', [])):

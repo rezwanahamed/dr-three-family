@@ -94,6 +94,18 @@ class DoctorProfileTests(TestCase):
         self.assertIn('4:00 PM – 8:00 PM', panel.text)
         self.assertIn('Bangladesh time', panel.text)
 
+    def test_doctor_sections_omit_general_appointment_hours(self):
+        WebsiteWorkspace.objects.create(pk=1, published=seeds())
+        for route, selector in [('/our-doctors/', '.doctor-directory'), ('/', '.doctors-grid')]:
+            with self.subTest(route=route):
+                response = self.client.get(route)
+                self.assertEqual(response.status_code, 200)
+                section = BeautifulSoup(response.content, 'html.parser').select_one(selector)
+                self.assertIsNotNone(section)
+                self.assertIsNone(section.select_one('.booking-hours-note'))
+                self.assertNotIn('Appointment hours:', section.get_text())
+                self.assertIsNotNone(section.select_one('.doctor-book-link'))
+
     def test_upcoming_dates_use_bangladesh_time_and_omit_ended_sessions(self):
         from datetime import datetime, timezone
         from .doctors import upcoming_availability
