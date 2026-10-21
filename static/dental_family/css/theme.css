@@ -818,6 +818,21 @@
 @media (max-width:760px) { .pricing-calculator-layout { grid-template-columns: 1fr; gap: 22px; } .pricing-calculator-estimate { padding: 20px; } }
 
 /* Goal navigation shares the homepage treatment card and section system. */
+@media (max-width: 600px) {
+  #services { display: none; }
+  .footer--connection > p,
+  .not-found--footer > span { display: none; }
+  .footer--booking {
+    min-height: 44px;
+    padding: 8px 12px 8px 18px;
+    gap: 14px;
+    font-size: 12px;
+  }
+  .footer--booking > span {
+    width: 26px;
+    height: 26px;
+  }
+}
 .smile-goals-section { scroll-margin-top: 110px; }
 .smile-goals-section h2 em { color: var(--accent-earth); }
 .smile-goals-section .services-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
