@@ -181,12 +181,12 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual([node.text for node in public.select('.filter-label')],['All photos','Our space','Our team','Our technology'])
         self.assertEqual(public.select_one('.filter-row button')['aria-pressed'],'true')
 
-    def test_treatment_thumbnail_only_shown_on_listing_cards(self):
+    def test_treatment_image_shown_in_hero_and_listing_cards(self):
         treatment=self.edit('treatments',title='Treatment without detail thumbnail',image='/media/gallery/treatment-thumb.webp',short_details='Treatment card summary',details='<p>Treatment details remain visible.</p>')
         self.assertEqual(self.submit().status_code,200)
         detail=self.soup(treatment['url'])
         self.assertIsNone(detail.select_one('main .article-hero'))
-        self.assertFalse(any(img.get('src')==treatment['image'] for img in detail.select('main img')))
+        self.assertEqual(detail.select_one('main .page-intro-photo')['src'], treatment['image'])
         self.assertIn('Treatment details remain visible.',detail.select_one('.prose').text)
         listing=self.soup('/services/')
         canonical=self.client.get(treatment["url"]).url
@@ -291,25 +291,32 @@ class ContentIntegrationTests(TestCase):
         self.assertEqual([card.select_one('.doctor-nav--serviceTitle').text for card in cards],[service['name'] for service in self.base['services'][:6]])
         self.assertNotIn('Extra service',self.soup('/services/').select_one('.doctor-nav--serviceGrid').text)
 
-    def test_article_thumbnail_is_only_shown_on_listing_card(self):
+    def test_article_image_is_shown_in_hero_and_listing_card(self):
         article=self.edit('articles',image='/media/gallery/article-thumb.webp',details='<h2>Article heading</h2><p>Article body remains visible.</p>')
         self.assertEqual(self.submit().status_code,200)
         detail=self.soup(article['url'])
         self.assertIsNone(detail.select_one('main .article-hero'))
-        self.assertFalse(any(img.get('src')==article['image'] for img in detail.select('main img')))
+        self.assertEqual(detail.select_one('main .page-intro-photo')['src'], article['image'])
         self.assertIn('Article body remains visible.',detail.select_one('.prose').text)
         card=self.soup('/blog/').select_one(f'a.blog-card[href="{article["url"]}"]')
         self.assertEqual(card.img['src'],article['image'])
 
-    def test_new_article_details_do_not_insert_thumbnail(self):
+    def test_new_article_hero_uses_saved_image(self):
         original=next(r for r in self.base['records'] if r['section']=='articles')
         article={**original,'id':'new-article-no-hero','title':'New article without hero','url':'/new-article-no-hero/','image':'/media/gallery/new-article-thumb.webp','details':'<p>New article body.</p>'}
         self.state['drafts']=[article]
         self.assertEqual(self.submit().status_code,200)
         detail=self.soup(article['url'])
         self.assertIsNone(detail.select_one('main .article-hero'))
-        self.assertFalse(any(img.get('src')==article['image'] for img in detail.select('main img')))
+        self.assertEqual(detail.select_one('main .page-intro-photo')['src'], article['image'])
         self.assertIsNotNone(self.soup('/blog/').select_one(f'a.blog-card[href="{article["url"]}"] img'))
+
+    def test_treatment_hero_uses_published_image(self):
+        treatment = self.edit('treatments', image='/media/gallery/treatment-hero.webp', image_alt='Treatment photo')
+        self.assertEqual(self.submit().status_code, 200)
+        hero = self.soup(treatment['url']).select_one('main .page-intro-photo')
+        self.assertEqual(hero['src'], treatment['image'])
+        self.assertEqual(hero['alt'], 'Treatment photo')
 
     def test_initial_article_details_have_no_thumbnail(self):
         for article in [r for r in self.base['records'] if r['section']=='articles']:

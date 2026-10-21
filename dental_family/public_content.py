@@ -41,6 +41,8 @@ def managed_html(template, request, route, data, is_new=False, filter_services=N
         if link['href'] in aliases:
             link['href'] = aliases[link['href']]
     record = next((r for r in records if r['section'] in {'pages','articles','treatments'} and r['url'] == route), None)
+    if record and record['section'] in {'treatments', 'articles'}:
+        image(soup.select_one('main .page-intro-photo'), record)
     if record and (record.get('_edited') or is_new):
         text(soup.select_one('main h1'), record['title'])
         text(soup.select_one('.page-intro-content > p'), record.get('short_details') or record.get('description'))

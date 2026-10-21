@@ -69,7 +69,7 @@ def page(request, route='/'):
         raise Http404('Page not found')
     from .content import seeds
     seed_data = seeds()
-    if any(r['section']=='treatments' and r['url']==route for r in seed_data['records']):
+    if any(r['section'] in {'treatments', 'articles'} and r['url']==route for r in seed_data['records']):
         return HttpResponse(managed_html(info['template'], request, route, seed_data))
     if route in {'/gallery/','/services/','/contact/','/','/appointment/','/about-us/','/our-doctors/'}:
         from .content import seeds
