@@ -5,7 +5,7 @@
 <div class="doctor-detail-grid"><div class="doctor-detail-photo">{% if doctor.image %}<img src="{{ doctor.image }}" alt="{{ doctor.title }}">{% else %}<div class="doctor-detail-placeholder">{{ doctor.title }}</div>{% endif %}</div>
 <div><div class="eyebrow">{{ doctor.specialty }}</div><h1>{{ doctor.title }}</h1>{% if doctor.registration %}<p class="registration">BM&amp;DC {{ doctor.registration }}</p>{% endif %}
 <ul class="doctor-detail-credentials">{% for line in credentials %}{% if line %}<li>{{ line }}</li>{% endif %}{% endfor %}</ul>
-<p class="booking-hours-note">Appointment hours: {{ booking_hours.label }} · Bangladesh time</p><div class="doctor-card-actions"><a class="doctor-book-link" href="/appointment/">Book appointment <span aria-hidden="true">→</span></a></div>
+<div class="doctor-card-actions"><a class="doctor-book-link" href="/appointment/">Book appointment <span aria-hidden="true">→</span></a></div>
 </div></div>
 <div class="doctor-detail-content"><section><h2>About {{ doctor.title }}</h2>{% if doctor.biography %}<div class="doctor-detail-bio">{{ doctor.biography|linebreaks }}</div>{% else %}<p>Contact our team to learn more about this doctor and arrange a consultation.</p>{% endif %}</section>
 <section class="doctor-availability"><h2>Consulting hours</h2>{% if schedule %}<p>Weekly availability · Bangladesh time. Please confirm your appointment with our team.</p><dl>{% for day in schedule %}<div><dt>{{ day.day }}</dt><dd>{% for slot in day.slots %}<span>{{ slot.start }} – {{ slot.end }}</span>{% endfor %}</dd></div>{% endfor %}</dl>{% else %}<p>Contact our team to confirm available days and times.</p>{% endif %}</section></div>
